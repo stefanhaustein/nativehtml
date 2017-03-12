@@ -1,9 +1,7 @@
 package org.kobjects.nativehtml.swing;
 
-import java.awt.Color;
-import java.util.HashMap;
-
 import javax.swing.JLabel;
+import javax.swing.text.View;
 
 import org.kobjects.nativehtml.dom.CSSStyleDeclaration;
 import org.kobjects.nativehtml.dom.Element;
@@ -77,13 +75,34 @@ public class TextComponent extends JLabel implements org.kobjects.nativehtml.dom
 	}
 
 	private void update() {
-		setBackground(Color.RED);
 		String htmlContent = "<HTML>" + HtmlSerializer.toString(children) + "</HTML>";
 		System.out.println("Notify: " + htmlContent);
 		setText(htmlContent); 
 	
 	}
 
+	public int getIntrinsicMinimumWidth() {
+		return getMinimumSize().width;
+	}
+	
+	public int getIntrinsicHeightForWidth(int width) {
+		if (width == getWidth()) {
+			return getPreferredSize().height;
+		}
+		
+		JLabel resizer = new JLabel();
+		resizer.setText(getText());
+		 
+	    View view = (View) resizer.getClientProperty(
+	                javax.swing.plaf.basic.BasicHTML.propertyKey);
+	 
+        view.setSize(width, 0);
+        float h = view.getPreferredSpan(View.Y_AXIS);
+		return Math.round(h);
+		
+	}
+	
+	
 	@Override
 	public void setBorderBoxBounds(int x, int y, int width, int height) {
 		setBounds(x, y, width, height);

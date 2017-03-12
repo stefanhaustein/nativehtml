@@ -1,15 +1,15 @@
 package org.kobjects.nativehtml.layout;
 
-import org.kobjects.nativehtml.dom.Element;
+import org.kobjects.nativehtml.dom.Component;
 
 public class ElementLayoutHelper {
 	
-	static int getMinWidth(Element element) {
-		return 100;		
+	static int getMinWidth(Component component) {
+		return component.getIntrinsicMinimumWidth();		
 	}
 	
-	static int getHeight(Element element, int width) {
-		return 50;
+	static int getHeight(Component component, int width) {
+		return component.getIntrinsicHeightForWidth(width);
 	}
 
 }
