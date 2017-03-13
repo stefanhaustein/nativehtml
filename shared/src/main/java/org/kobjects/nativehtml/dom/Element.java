@@ -1,12 +1,15 @@
 package org.kobjects.nativehtml.dom;
 
+import org.kobjects.nativehtml.css.CssStyleDeclaration;
+
 public interface Element {
   String getLocalName();
   void setAttribute(String name, String value);
   String getAttribute(String name);
 
   Element getParentElement();
-
+  void setComputedStyle(CssStyleDeclaration style);
+  
   /**
    * Used internally
    */
@@ -17,10 +20,10 @@ public interface Element {
    */
   void setParentElement(Element parent);
 
-  HTMLCollection getChildren();
+  HtmlCollection getChildren();
 
-  CSSStyleDeclaration getStyle();
-  CSSStyleDeclaration getComputedStyle();
+  CssStyleDeclaration getStyle();
+  CssStyleDeclaration getComputedStyle();
 
   String getTextContent();
 

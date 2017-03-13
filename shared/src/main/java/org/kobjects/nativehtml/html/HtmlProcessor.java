@@ -1,5 +1,6 @@
 package org.kobjects.nativehtml.html;
 
+import org.kobjects.nativehtml.css.CssStyleSheet;
 import org.kobjects.nativehtml.dom.Document;
 import org.kobjects.nativehtml.dom.Element;
 import org.kobjects.nativehtml.dom.ElementType;
@@ -18,7 +19,7 @@ import java.io.Reader;
 public class HtmlProcessor {
   private HtmlParser parser;
   private Document document;
-
+  private CssStyleSheet styleSheet;
 
   public HtmlProcessor(Document document) {
     this.document = document;
@@ -34,6 +35,8 @@ public class HtmlProcessor {
       parser.setInput(reader);
       parser.next();
 
+      styleSheet = CssStyleSheet.createDefault(16);
+      
       // Skip insignificant
       while (parser.getEventType() != XmlPullParser.START_TAG) {
         parser.next();
@@ -45,6 +48,8 @@ public class HtmlProcessor {
       while (parser.getEventType() != XmlPullParser.END_DOCUMENT) {
         parser.next();
       }
+      
+      styleSheet.apply(result, document.getBaseURI());
 
       return result;
 

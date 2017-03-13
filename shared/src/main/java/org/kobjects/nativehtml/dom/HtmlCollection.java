@@ -1,8 +1,8 @@
 package org.kobjects.nativehtml.dom;
 
-public interface HTMLCollection {
+public interface HtmlCollection {
 
-    HTMLCollection EMPTY = new HTMLCollection() {
+    HtmlCollection EMPTY = new HtmlCollection() {
         @Override
         public int getLength() {
             return 0;

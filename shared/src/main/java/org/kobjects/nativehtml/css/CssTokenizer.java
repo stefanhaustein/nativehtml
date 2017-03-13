@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.kobjects.css;
+package org.kobjects.nativehtml.css;
 
 import java.net.URI;
 

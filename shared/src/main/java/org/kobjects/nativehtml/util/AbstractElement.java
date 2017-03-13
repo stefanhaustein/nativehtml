@@ -1,11 +1,16 @@
-package org.kobjects.nativehtml.dom;
+package org.kobjects.nativehtml.util;
 
 import java.util.HashMap;
+
+import org.kobjects.nativehtml.css.CssStyleDeclaration;
+import org.kobjects.nativehtml.dom.Element;
 
 public abstract class AbstractElement implements Element {
     protected Element parent;
     protected String name;
     private HashMap<String, String> attributes;
+    private CssStyleDeclaration style;
+    private CssStyleDeclaration computedStyle;
 
     protected AbstractElement(String name) {
         this.name = name;
@@ -29,16 +34,19 @@ public abstract class AbstractElement implements Element {
 
 
     @Override
-    public CSSStyleDeclaration getStyle() {
-        return null;
+    public CssStyleDeclaration getStyle() {
+        return style;
     }
 
     @Override
-    public CSSStyleDeclaration getComputedStyle() {
-        return null;
+    public CssStyleDeclaration getComputedStyle() {
+        return computedStyle;
     }
 
-
+    @Override
+    public void setComputedStyle(CssStyleDeclaration computedStyle) {
+    	this.computedStyle = computedStyle;
+    }
 
     @Override
     public void setAttribute(String name, String value) {

@@ -3,11 +3,11 @@ package org.kobjects.nativehtml.swing;
 
 import org.kobjects.nativehtml.dom.Element;
 import org.kobjects.nativehtml.dom.ElementType;
-import org.kobjects.nativehtml.dom.HTMLCollection;
+import org.kobjects.nativehtml.dom.HtmlCollection;
 import org.kobjects.nativehtml.layout.BlockLayout;
 import org.kobjects.nativehtml.layout.Layout;
 
-public class ComponentContainer extends AbstractHtmlComponent implements HTMLCollection {
+public class ComponentContainer extends AbstractHtmlComponent implements HtmlCollection {
 
 	Layout layout = new BlockLayout();
 	
@@ -22,7 +22,7 @@ public class ComponentContainer extends AbstractHtmlComponent implements HTMLCol
 	}
 
 	@Override
-	public HTMLCollection getChildren() {
+	public HtmlCollection getChildren() {
 		return this;
 	}
 
@@ -37,12 +37,12 @@ public class ComponentContainer extends AbstractHtmlComponent implements HTMLCol
 	}
 
 	@Override
-	public int getIntrinsicMinimumWidth() {
+	public int getIntrinsicMinimumBorderBoxWidth() {
 		return getMinimumSize().width;
 	}
 
 	@Override
-	public int getIntrinsicHeightForWidth(int width) {
+	public int getIntrinsicBorderBoxHeightForWidth(int width) {
 		int[] result = new int[2];
 		layout.layout(this, 0, 0, width, true, result);
 		return result[1];

@@ -5,12 +5,14 @@ import java.util.HashMap;
 
 import javax.swing.JComponent;
 
-import org.kobjects.nativehtml.dom.CSSStyleDeclaration;
+import org.kobjects.nativehtml.css.CssStyleDeclaration;
 import org.kobjects.nativehtml.dom.Element;
 
-public abstract class AbstractHtmlComponent extends JComponent implements org.kobjects.nativehtml.dom.Component {
+public abstract class AbstractHtmlComponent extends JComponent implements org.kobjects.nativehtml.html.HtmlComponent {
 	private final String name;
 	private HashMap<String, String> attributes;
+	private CssStyleDeclaration style;
+	private CssStyleDeclaration computedStyle;
 	
 	protected AbstractHtmlComponent(String name) {
 		this.name = name;
@@ -45,15 +47,20 @@ public abstract class AbstractHtmlComponent extends JComponent implements org.ko
 
 
 	@Override
-	public CSSStyleDeclaration getStyle() {
-		return null;
+	public CssStyleDeclaration getStyle() {
+		return style;
 	}
 
 	@Override
-	public CSSStyleDeclaration getComputedStyle() {
-		return null;
+	public CssStyleDeclaration getComputedStyle() {
+		return computedStyle;
 	}
 
+	@Override
+	public void setComputedStyle(CssStyleDeclaration computedStyle) {
+		this.computedStyle = computedStyle;
+	}
+	
 	@Override
 	public String getTextContent() {
 		return "";
@@ -70,7 +77,7 @@ public abstract class AbstractHtmlComponent extends JComponent implements org.ko
 	}
 	
 
-	public void setBorderBoxBounds(int x, int y, int width, int height) {
+	public void setBorderBoxBoundsDp(int x, int y, int width, int height) {
 		setBounds(x, y, width, height);
 		
 	}

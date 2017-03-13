@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.kobjects.css;
+package org.kobjects.nativehtml.css;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -21,6 +21,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import org.kobjects.nativehtml.dom.Element;
+import org.kobjects.nativehtml.dom.HtmlCollection;
 
 /**
  * This class represents a CSS style sheet. It is also used to represent parts of a style sheet in 
@@ -287,7 +290,7 @@ public class CssStyleSheet {
             media.append(ct.sval);
             ct.nextToken(false);
           }
-          if (matchesMediaType(media.toString(), mediaTypes)) {
+          if (dependencies != null && matchesMediaType(media.toString(), mediaTypes)) {
             int [] dependencyNesting = new int[nesting.length + 1];
             System.arraycopy(nesting, 0, dependencyNesting, 0, nesting.length);
             dependencyNesting[nesting.length] = position;
@@ -538,7 +541,7 @@ public class CssStyleSheet {
    * @param key element name or attribute value
    * @param queue queue of matching rules to be processed further
    */
-  private static void collectStyles(CssStylableElement element, Map<String, CssStyleSheet> map, String key,
+  private static void collectStyles(Element element, Map<String, CssStyleSheet> map, String key,
                                     List<CssStyleDeclaration> queue, List<CssStyleSheet> children, List<CssStyleSheet> descendants) {
     if (key == null || map == null) {
       return;
@@ -553,7 +556,7 @@ public class CssStyleSheet {
    * Performs a depth first search of all matching selectors and enqueues the
    * corresponding style information.
    */
-  public void collectStyles(CssStylableElement element, List<CssStyleDeclaration> queue,
+  public void collectStyles(Element element, List<CssStyleDeclaration> queue,
                             List<CssStyleSheet> children, List<CssStyleSheet> descendants) {
     
     if (properties != null) {
@@ -694,7 +697,7 @@ public class CssStyleSheet {
     }
   }
 
-  public void apply(CssStylableElement element, URI baseUri) {
+  public void apply(Element element, URI baseUri) {
     ArrayList<CssStyleSheet> applyAnywhere = new ArrayList<>();
     applyAnywhere.add(this);
     CssStyleSheet.apply(element, baseUri, null, new ArrayList<CssStyleSheet>(), applyAnywhere);
@@ -710,7 +713,7 @@ public class CssStyleSheet {
    * applied, the inheritance rules and finally the style attribute are taken 
    * into account.
    */
-  private static void apply(CssStylableElement element, URI baseUri, CssStyleDeclaration inherit,
+  private static void apply(Element element, URI baseUri, CssStyleDeclaration inherit,
                             List<CssStyleSheet> applyHere, List<CssStyleSheet> applyAnywhere) {
     CssStyleDeclaration style = new CssStyleDeclaration();
 
@@ -742,9 +745,10 @@ public class CssStyleSheet {
   
     element.setComputedStyle(style);
     // recurse....
-    Iterator<? extends CssStylableElement> iterator = element.getChildElementIterator();
-    while(iterator.hasNext()) {
-      apply(iterator.next(), baseUri, style, childStyles, descendantStyles);
+    
+    HtmlCollection children = element.getChildren();
+    for (int i = 0; i < children.getLength(); i++) {
+      apply(children.item(i), baseUri, style, childStyles, descendantStyles);
     }
   }
 

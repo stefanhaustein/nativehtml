@@ -1,15 +1,19 @@
-package org.kobjects.nativehtml.dom;
+package org.kobjects.nativehtml.util;
+
+import org.kobjects.nativehtml.dom.Element;
+import org.kobjects.nativehtml.dom.ElementType;
+import org.kobjects.nativehtml.dom.HtmlCollection;
 
 public class ElementDataElement extends AbstractElement {
-    private HTMLCollectionImpl children;
+    private HtmlCollectionImpl children;
 
     public ElementDataElement(String name) {
         super(name);
     }
 
     @Override
-    public HTMLCollection getChildren() {
-        return children == null ? HTMLCollection.EMPTY : children;
+    public HtmlCollection getChildren() {
+        return children == null ? HtmlCollection.EMPTY : children;
     }
 
     @Override
@@ -40,7 +44,7 @@ public class ElementDataElement extends AbstractElement {
 	public void insertBefore(Element newChild, Element referenceChild) {
 		int index;
 		if (children == null) {
-			children = new HTMLCollectionImpl();
+			children = new HtmlCollectionImpl();
 			index = 0;
 		} else if (referenceChild != null && children != null) {
 			index = children.indexOf(referenceChild);

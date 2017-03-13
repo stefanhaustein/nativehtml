@@ -1,4 +1,4 @@
-package org.kobjects.css;
+package org.kobjects.nativehtml.css;
 
 public enum CssEnum {
   ERROR,

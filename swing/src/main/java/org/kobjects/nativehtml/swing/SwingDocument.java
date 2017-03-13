@@ -2,9 +2,9 @@ package org.kobjects.nativehtml.swing;
 
 import org.kobjects.nativehtml.dom.Document;
 import org.kobjects.nativehtml.dom.Element;
-import org.kobjects.nativehtml.dom.ElementDataElement;
 import org.kobjects.nativehtml.dom.ElementType;
-import org.kobjects.nativehtml.dom.TextDataElement;
+import org.kobjects.nativehtml.util.ElementDataElement;
+import org.kobjects.nativehtml.util.TextDataElement;
 
 public class SwingDocument extends Document {
 

@@ -1,8 +1,11 @@
-package org.kobjects.nativehtml.dom;
+package org.kobjects.nativehtml.util;
 
 import java.util.ArrayList;
 
-public class HTMLCollectionImpl extends ArrayList<Element> implements HTMLCollection {
+import org.kobjects.nativehtml.dom.Element;
+import org.kobjects.nativehtml.dom.HtmlCollection;
+
+public class HtmlCollectionImpl extends ArrayList<Element> implements HtmlCollection {
     @Override
     public int getLength() {
         return this.size();

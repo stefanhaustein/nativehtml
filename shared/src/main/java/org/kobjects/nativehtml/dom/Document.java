@@ -1,8 +1,13 @@
 package org.kobjects.nativehtml.dom;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.LinkedHashMap;
 
 public abstract class Document {
+	private URI baseURI;
+	
+	
     private static final LinkedHashMap<String, ElementType> ELEMENT_TYPES = new LinkedHashMap<>();
     static {
         ELEMENT_TYPES.put("#TEXT", ElementType.LEAF_TEXT);
@@ -18,7 +23,7 @@ public abstract class Document {
         ELEMENT_TYPES.put("i", ElementType.TEXT_CONTAINER);
         ELEMENT_TYPES.put("img", ElementType.INLINE_IMAGE);  // Might be an image (=LEAF_COMPONENT), too; will get adjusted
         ELEMENT_TYPES.put("input", ElementType.LEAF_COMPONENT);
-        ELEMENT_TYPES.put("ins", ElementType.LEAF_TEXT);
+        ELEMENT_TYPES.put("ins", ElementType.TEXT_CONTAINER);
         ELEMENT_TYPES.put("link", ElementType.TEXT_DATA);
         ELEMENT_TYPES.put("meta", ElementType.TEXT_DATA);
         ELEMENT_TYPES.put("option", ElementType.TEXT_DATA);
@@ -44,12 +49,27 @@ public abstract class Document {
         return result == null ? ElementType.COMPONENT_CONTAINER : result;
     }
 
-
+	protected Document() {
+		try {
+			baseURI = new URI("file:///");
+		} catch (URISyntaxException e) {
+			throw new RuntimeException();
+		}
+	}
+    
     public Element createElement(String name) {
         return createElement(getElementType(name), name);
     }
 
     protected abstract Element createElement(ElementType elementType, String elementName);
+
+    public void setBaseURI(URI baseURI) {
+    	this.baseURI = baseURI;
+    }
+
+	public URI getBaseURI() {
+		return baseURI;
+	}
 
 
 }

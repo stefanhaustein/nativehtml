@@ -12,14 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.kobjects.css;
-
-import org.kobjects.nativehtml.dom.CSSStyleDeclaration;
+package org.kobjects.nativehtml.css;
 
 import java.net.URI;
 import java.util.LinkedHashMap;
 
-public class CssStyleDeclaration implements CSSStyleDeclaration {
+public class CssStyleDeclaration {
   /**
    * CSS DPI constant.
    */
@@ -31,7 +29,6 @@ public class CssStyleDeclaration implements CSSStyleDeclaration {
   private static final int[] TOP_LEVEL = new int[0];
 
   private static final CssStyleDeclaration EMPTY_STYLE = new CssStyleDeclaration();
-  private static final String TAG = "CssStyleDeclaration";
 
   // values() has to create a defensive copy each time, so we cache them here.
   private static final CssUnit[] CSS_UNITS = CssUnit.values();
@@ -261,6 +258,10 @@ public class CssStyleDeclaration implements CSSStyleDeclaration {
     }
   }
 
+  public int getPx(CssProperty property, float base) {
+	  return Math.round(get(property, CssUnit.PX, base));
+  }
+  
   public int getBackgroundReferencePoint(CssProperty property, int containerLength, int imageLength) {
     float percent;
     switch(getUnit(property)) {
@@ -415,22 +416,25 @@ public class CssStyleDeclaration implements CSSStyleDeclaration {
     return display == CssEnum.BLOCK || display == CssEnum.TABLE || display == CssEnum.LIST_ITEM;
   }
 
+  public boolean isLenghtFixed(CssProperty property) {
+	    switch (getUnit(property)) {
+	      case CM:
+	      case EM:
+	      case EX:
+	      case IN:
+	      case MM:
+	      case NUMBER:
+	      case PC:
+	      case PX:
+	      case PT:
+	        return true;
+	      default: 
+	       	return false;
+	    }
+  }
+  
   public boolean isLengthFixedOrPercent(CssProperty property) {
-    switch (getUnit(property)) {
-      case CM:
-      case EM:
-      case EX:
-      case IN:
-      case MM:
-      case NUMBER:
-      case PERCENT:
-      case PC:
-      case PX:
-      case PT:
-        return true;
-      default:
-        return false;
-    }
+     return getUnit(property) == CssUnit.PERCENT || isLenghtFixed(property);
   }
 
   /**
@@ -534,6 +538,9 @@ public class CssStyleDeclaration implements CSSStyleDeclaration {
 
 
   public void setFrom(CssStyleDeclaration from) {
+	if (from == null) {
+		return;
+	}
     if (from.values != null) {
       for (int i = 0; i < from.values.length; i++) {
         CssProperty property = CSS_PROPERTIES[i];
@@ -714,7 +721,7 @@ public class CssStyleDeclaration implements CSSStyleDeclaration {
 
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    toString("", sb);
+    toString(null, sb);
     return sb.toString();
   }
 
@@ -723,15 +730,21 @@ public class CssStyleDeclaration implements CSSStyleDeclaration {
       for (int id = 0; id < values.length; id++){
         CssProperty property = CSS_PROPERTIES[id];
         if (isSet(property)) {
-          sb.append(indent).append(Css.cssName(property.name())).append(": ");
+          if (indent != null) {
+        	  sb.append(indent);
+          }
+          sb.append(Css.cssName(property.name())).append(": ");
           sb.append(getString(property));
-          sb.append(indent.length() == 0 ? "; " : ";\n");
+          sb.append(indent == null ? "; " : ";\n");
         }
       }
     }
-    sb.append("/* specifity: " + specificity + " */\n");
+    if (indent != null) {
+    	sb.append("/* specifity: " + specificity + " */\n");
+    }
   }
 
+/*
   @Override
   public String getPropertyValue(String name) {
     throw new RuntimeException("NYI");
@@ -741,4 +754,5 @@ public class CssStyleDeclaration implements CSSStyleDeclaration {
   public void setProperty(String name, String value) {
     throw new RuntimeException("NYI");
   }
+  */
 }
