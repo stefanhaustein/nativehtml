@@ -109,15 +109,23 @@ public class HtmlProcessor {
     return sb.toString();
   }
 
+  String indent = "";
+  
   private Element parseElement() throws IOException, XmlPullParserException {
     assert parser.getEventType() == XmlPullParser.START_TAG;
 
     String elementName = parser.getName();
+    
+    System.out.println(indent + "Entering " + elementName);
+    indent += "  ";
+    
     Element element = document.createElement(elementName);
     ElementType elementType = element.getElementType();
 
     for (int i = 0; i < parser.getAttributeCount(); i++) {
-      element.setAttribute(parser.getAttributeName(i), parser.getAttributeValue(i));
+    	String attributeName = parser.getAttributeName(i);
+    	String attributeValue = parser.getAttributeValue(i);
+        element.setAttribute(attributeName, attributeValue);
     }
 
     parser.next();
@@ -129,6 +137,12 @@ public class HtmlProcessor {
     } else {
       parseChildren(element);
     }
+
+    assert parser.getEventType() == XmlPullParser.END_TAG;
+    indent = indent.substring(2);
+    System.out.println(indent + "Leaving " + elementName);
+
+    
     return element;
   }
 
@@ -142,12 +156,13 @@ public class HtmlProcessor {
 
         case XmlPullParser.START_TAG:
           child = parseElement();
+          assert parser.getEventType() == XmlPullParser.END_TAG;
           parser.next();
           break;
 
         case XmlPullParser.TEXT: {
           StringBuilder sb = new StringBuilder();
-          sb.append(normalizeText(parser.getText(), false));
+          sb.append(normalizeText(parser.getText(), true));
           /*
           boolean textContainer = (container instanceof Hv2DomElement) &&
                   ((Hv2DomElement) container).componentType == ElementType.LEAF_TEXT;
@@ -162,7 +177,7 @@ public class HtmlProcessor {
           }*/
 
           parser.next();
-          while (parser.getEventType() == XmlPullParser.TEXT
+       /*   while (parser.getEventType() == XmlPullParser.TEXT
                   || (parser.getEventType() == XmlPullParser.START_TAG && parser.getName().equals("br"))) {
             if (parser.getEventType() == XmlPullParser.TEXT) {
               sb.append(normalizeText(parser.getText(), false));
@@ -171,7 +186,7 @@ public class HtmlProcessor {
               sb.append("\n");
             }
             parser.next();
-          }
+          }*/
 
           if (sb.length() > 0) {
             child = document.createElement("span");
@@ -201,5 +216,6 @@ public class HtmlProcessor {
         parent.insertBefore(child, null);
       }
     }
+    assert parser.getEventType() == XmlPullParser.END_TAG;
   }
 }

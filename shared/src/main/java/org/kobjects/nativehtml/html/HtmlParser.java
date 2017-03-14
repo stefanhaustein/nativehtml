@@ -137,11 +137,19 @@ public class HtmlParser {
     if (currentEvent == XmlPullParser.START_TAG && openTags.size() > 0
         && Arrays.binarySearch(getElementData(openTags.get(openTags.size() - 1)).closedBy,
                                parser.getName()) >= 0) {
-      currentEvent = XmlPullParser.END_TAG;
+
+        System.out.println("auto-closing <" + openTags.get(openTags.size() - 1) + "> via <" + parser.getName() + ">");
+
+        
+    	currentEvent = XmlPullParser.END_TAG;
       currentName = openTags.get(openTags.size() - 1);
       openTags.remove(openTags.size() - 1);
       insertedEvent = true;
+      
+      	System.out.println("Open stack: " + openTags);
+      
       return currentEvent;
+//      throw new RuntimeException();
     }
 
     if (currentEvent == XmlPullParser.START_TAG) {

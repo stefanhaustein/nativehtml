@@ -1,6 +1,7 @@
 package org.kobjects.nativehtml.swing;
 
 
+import org.kobjects.nativehtml.css.CssProperty;
 import org.kobjects.nativehtml.dom.Document;
 import org.kobjects.nativehtml.dom.Element;
 import org.kobjects.nativehtml.dom.ElementType;
@@ -46,7 +47,11 @@ public class ComponentContainer extends AbstractHtmlComponent implements HtmlCol
 	public int getIntrinsicBorderBoxHeightForWidth(int width) {
 		int[] result = new int[2];
 		layout.layout(this, 0, 0, width, true, result);
-		return result[1];
+		return computedStyle.getPx(CssProperty.BORDER_TOP_WIDTH, width) 
+				+ computedStyle.getPx(CssProperty.PADDING_TOP, width)
+				+ result[1]
+				+ computedStyle.getPx(CssProperty.PADDING_BOTTOM, width)
+				+ computedStyle.getPx(CssProperty.BORDER_BOTTOM_WIDTH, width);
 	}
 
 }

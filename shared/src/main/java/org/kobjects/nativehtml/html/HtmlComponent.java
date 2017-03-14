@@ -4,7 +4,7 @@ import org.kobjects.nativehtml.dom.Element;
 
 public interface HtmlComponent extends Element {
 	
-	public void setBorderBoxBoundsDp(int x, int y, int width, int height);
+	public void setBorderBoxBounds(int x, int y, int width, int height, int containingBoxWidth);
 	
 	public int getIntrinsicMinimumBorderBoxWidth();
 	public int getIntrinsicBorderBoxHeightForWidth(int width);

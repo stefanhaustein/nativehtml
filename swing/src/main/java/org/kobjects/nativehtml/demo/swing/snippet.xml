@@ -1,0 +1,43 @@
+<body>
+<!--
+<div style="border:5px solid green;background-color:yellow;padding:5px;float:right">
+    float:right with<br>green border</div>
+-->
+<h1>HtmlLayout Demo</h1>
+
+<h2>Block Styles and Positioning</h2>
+
+<div style="position:absolute; padding: 5px; right:0px;top:0px;background-color: #ddf;">position:absolute;<br>right:0;<br>top:0;</div>
+
+<p style="border:1px solid #000; padding: 5px; position:relative; left:20px; width:50%;background-color:#eee;">padding: 5px;position:relative; width: 50%; left:20px</p>
+
+<p style="border:1px solid #000; background-color: green; padding:5px">padding:5px; background-color: green;</p>
+
+<h2>Input Elements</h2>
+
+<p>Text input:<br>
+<input>
+
+<p>Submit button:<br>
+<input type="submit" value="submit" />
+
+<p>Checkbox:<br>
+<input type="checkbox" value="checkbox">
+
+<p>Select:<br>
+<select><option>option 1</option><option>option 2</option><option>option 3</option></select>
+
+
+<h2>Character Styles</h2>
+
+<p>HtmlLayout supports <b>bold</b>, <big>big</big>, <del>deleted</del>, <em>emphasized</em>,
+    <i>italics</i>, <ins>inserted</ins>, <small>small</small>, <strong>strong</strong>,
+    <sub>subscript</sub>, <sup>superscript</sup>, <tt>typewriter</tt> and <u>underlined</u>
+    text using the corresponding html tags.
+
+<p>All text attributes are also supported using
+    <span style="color: red">style attributes</span>.
+
+<p>This is a <a href="http://heise.de">clickable link</a>.</p>
+
+</body>

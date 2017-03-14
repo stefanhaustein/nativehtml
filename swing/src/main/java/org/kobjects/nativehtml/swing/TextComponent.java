@@ -40,6 +40,7 @@ public class TextComponent extends JLabel implements org.kobjects.nativehtml.htm
 	private boolean dirty;
 	private HtmlCollectionImpl children = new HtmlCollectionImpl();
 	private CssStyleDeclaration computedStyle;
+	private int containingBoxWidth;
 	
 	public TextComponent(Document document) {
 		this.document = document;
@@ -149,10 +150,12 @@ public class TextComponent extends JLabel implements org.kobjects.nativehtml.htm
 	
 	
 	@Override
-	public void setBorderBoxBoundsDp(int x, int y, int width, int height) {
+	public void setBorderBoxBounds(int x, int y, int width, int height, int containingBoxWidth) {
 		setBounds(x, y, width, height);
+		this.containingBoxWidth = containingBoxWidth;
 		check();
 	}
+
 
 	
 	

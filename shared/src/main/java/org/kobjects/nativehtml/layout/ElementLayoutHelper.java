@@ -12,7 +12,7 @@ public class ElementLayoutHelper {
 		if (style.isSet(CssProperty.WIDTH) && style.isLenghtFixed(CssProperty.WIDTH)) {
 			return style.getPx(CssProperty.WIDTH, 0);
 		}
-		return component.getIntrinsicMinimumBorderBoxWidth();		
+		return component.getIntrinsicMinimumBorderBoxWidth(); 
 	}
 	
 	static int getBorderBoxHeight(HtmlComponent component, int borderBoxWidth, int containingBoxWidth) {

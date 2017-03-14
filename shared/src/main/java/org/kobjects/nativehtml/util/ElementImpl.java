@@ -2,7 +2,9 @@ package org.kobjects.nativehtml.util;
 
 import java.util.HashMap;
 
+import org.kobjects.nativehtml.css.Css;
 import org.kobjects.nativehtml.css.CssStyleDeclaration;
+import org.kobjects.nativehtml.css.CssStyleSheet;
 import org.kobjects.nativehtml.dom.Document;
 import org.kobjects.nativehtml.dom.Element;
 import org.kobjects.nativehtml.dom.ElementType;
@@ -67,6 +69,9 @@ public class ElementImpl implements Element {
             attributes = new HashMap<>();
         }
         attributes.put(name, value);
+        if (name.equals("style")) {
+        	style = CssStyleDeclaration.fromString(value);
+        }
     }
 
     @Override
@@ -74,13 +79,11 @@ public class ElementImpl implements Element {
         return attributes == null ? null : attributes.get(name);
     }
     
-
 	@Override
 	public void setTextContent(String textContent) {
 		this.textContent = textContent;
 		this.children = null;
 	}
-	
 
 	@Override
 	public void insertBefore(Element newChild, Element referenceChild) {

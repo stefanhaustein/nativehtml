@@ -50,6 +50,13 @@ public class CssStyleDeclaration {
       NAME_TO_UNIT_MAP.put(unit == CssUnit.PERCENT ? "%" : Css.cssName(unit.name()), unit);
     }
   }
+  
+  public static CssStyleDeclaration fromString(String s) {
+	  CssStyleDeclaration decl = new CssStyleDeclaration();
+	  decl.read(null, s);
+	  return decl;
+  }
+  
 
   private float[] values;
   private byte[] units;

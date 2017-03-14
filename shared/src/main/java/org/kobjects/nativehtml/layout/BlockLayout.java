@@ -41,8 +41,8 @@ public class BlockLayout implements Layout {
 			int h = ElementLayoutHelper.getBorderBoxHeight(child, containingBoxWidth - marginLeft - marginRight, containingBoxWidth);
 			
 			if (!measureOnly) {
-				child.setBorderBoxBoundsDp(xOfs + marginLeft, y, 
-						containingBoxWidth - marginLeft - marginRight, h);
+				child.setBorderBoxBounds(xOfs + marginLeft, y, 
+						containingBoxWidth - marginLeft - marginRight, h, containingBoxWidth);
 			}
 			
 			y += h;
