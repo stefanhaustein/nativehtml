@@ -3,6 +3,7 @@ package org.kobjects.nativehtml.html;
 import org.kobjects.nativehtml.css.CssStyleSheet;
 import org.kobjects.nativehtml.dom.Document;
 import org.kobjects.nativehtml.dom.Element;
+import org.kobjects.nativehtml.dom.ElementFactory;
 import org.kobjects.nativehtml.dom.ElementType;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -17,12 +18,13 @@ import java.io.Reader;
  * Can be re-used, but is not thread safe.
  */
 public class HtmlProcessor {
-  private HtmlParser parser;
-  private Document document;
+  private final HtmlParser parser;
+  private final ElementFactory elementFactory;
   private CssStyleSheet styleSheet;
+  private Document document;
 
-  public HtmlProcessor(Document document) {
-    this.document = document;
+  public HtmlProcessor(ElementFactory elementFactory) {
+    this.elementFactory = elementFactory;
     try {
       this.parser = new HtmlParser();
     } catch (XmlPullParserException e) {
@@ -35,6 +37,7 @@ public class HtmlProcessor {
       parser.setInput(reader);
       parser.next();
 
+      document = new Document(elementFactory);
       styleSheet = CssStyleSheet.createDefault(16);
       
       // Skip insignificant

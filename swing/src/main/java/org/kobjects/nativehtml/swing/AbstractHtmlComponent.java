@@ -6,15 +6,18 @@ import java.util.HashMap;
 import javax.swing.JComponent;
 
 import org.kobjects.nativehtml.css.CssStyleDeclaration;
+import org.kobjects.nativehtml.dom.Document;
 import org.kobjects.nativehtml.dom.Element;
 
 public abstract class AbstractHtmlComponent extends JComponent implements org.kobjects.nativehtml.html.HtmlComponent {
+	private final Document document;
 	private final String name;
 	private HashMap<String, String> attributes;
 	private CssStyleDeclaration style;
 	private CssStyleDeclaration computedStyle;
 	
-	protected AbstractHtmlComponent(String name) {
+	protected AbstractHtmlComponent(Document document, String name) {
+		this.document = document;
 		this.name = name;
 	}
 	

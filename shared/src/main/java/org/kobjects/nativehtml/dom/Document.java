@@ -4,9 +4,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.LinkedHashMap;
 
-public abstract class Document {
-	private URI baseURI;
-	
+import org.kobjects.nativehtml.util.ElementImpl;
+
+public class Document {
 	
     private static final LinkedHashMap<String, ElementType> ELEMENT_TYPES = new LinkedHashMap<>();
     static {
@@ -49,7 +49,11 @@ public abstract class Document {
         return result == null ? ElementType.COMPONENT_CONTAINER : result;
     }
 
-	protected Document() {
+	private URI baseURI;
+	private final ElementFactory elementFactory;
+
+	public Document(ElementFactory elementFactory) {
+		this.elementFactory = elementFactory;
 		try {
 			baseURI = new URI("file:///");
 		} catch (URISyntaxException e) {
@@ -58,10 +62,10 @@ public abstract class Document {
 	}
     
     public Element createElement(String name) {
-        return createElement(getElementType(name), name);
+    	ElementType elementType = getElementType(name);
+        Element result = elementFactory.createElement(this, elementType, name);
+        return result == null ? new ElementImpl(this, elementType, name) : result;
     }
-
-    protected abstract Element createElement(ElementType elementType, String elementName);
 
     public void setBaseURI(URI baseURI) {
     	this.baseURI = baseURI;

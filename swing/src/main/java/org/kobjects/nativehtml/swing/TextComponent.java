@@ -4,6 +4,7 @@ import javax.swing.JLabel;
 import javax.swing.text.View;
 
 import org.kobjects.nativehtml.css.CssStyleDeclaration;
+import org.kobjects.nativehtml.dom.Document;
 import org.kobjects.nativehtml.dom.Element;
 import org.kobjects.nativehtml.dom.ElementType;
 import org.kobjects.nativehtml.dom.HtmlCollection;
@@ -35,9 +36,14 @@ public class TextComponent extends JLabel implements org.kobjects.nativehtml.htm
 		}
 	}
 	
+	private final Document document;
 	private boolean dirty;
 	private HtmlCollectionImpl children = new HtmlCollectionImpl();
 	private CssStyleDeclaration computedStyle;
+	
+	public TextComponent(Document document) {
+		this.document = document;
+	}
 	
 	@Override
 	public String getLocalName() {

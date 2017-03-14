@@ -1,6 +1,7 @@
 package org.kobjects.nativehtml.swing;
 
 
+import org.kobjects.nativehtml.dom.Document;
 import org.kobjects.nativehtml.dom.Element;
 import org.kobjects.nativehtml.dom.ElementType;
 import org.kobjects.nativehtml.dom.HtmlCollection;
@@ -11,8 +12,8 @@ public class ComponentContainer extends AbstractHtmlComponent implements HtmlCol
 
 	Layout layout = new BlockLayout();
 	
-	public ComponentContainer(String elementName) {
-		super(elementName);
+	public ComponentContainer(Document document, String elementName) {
+		super(document, elementName);
 		setLayout(new LayoutAdapter(layout));
 	}
 

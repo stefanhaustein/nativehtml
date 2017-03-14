@@ -7,9 +7,9 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 
 import org.kobjects.nativehtml.dom.Element;
+import org.kobjects.nativehtml.dom.ElementFactory;
 import org.kobjects.nativehtml.html.HtmlProcessor;
-import org.kobjects.nativehtml.html.HtmlSerializer;
-import org.kobjects.nativehtml.swing.SwingDocument;
+import org.kobjects.nativehtml.swing.SwingElementFactory;
 import org.kobjects.nativehtml.util.DebugDump;
 
 public class SwingDemo {
@@ -27,8 +27,8 @@ public class SwingDemo {
 	
 	
     public static void main(String[] args) {
-    	SwingDocument document = new SwingDocument();
-    	HtmlProcessor processor = new HtmlProcessor(document);
+    	ElementFactory elementFactory = new SwingElementFactory();
+    	HtmlProcessor processor = new HtmlProcessor(elementFactory);
     	
     	JComponent content = (JComponent) processor.parse(new StringReader(CONTENT));
     	
