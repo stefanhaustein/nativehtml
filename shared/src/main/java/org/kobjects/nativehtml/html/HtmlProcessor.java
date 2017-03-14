@@ -174,7 +174,7 @@ public class HtmlProcessor {
           }
 
           if (sb.length() > 0) {
-            child = document.createElement("#TEXT");
+            child = document.createElement("span");
             child.setTextContent(sb.toString());
           }
 
@@ -189,8 +189,8 @@ public class HtmlProcessor {
         continue;
       }
 
-      if ((child.getElementType() == ElementType.LEAF_TEXT || child.getElementType() == ElementType.TEXT_CONTAINER) &&
-              parent.getElementType() != ElementType.TEXT_CONTAINER && parent.getElementType() != ElementType.TEXT_COMPONENT) {
+      if (child.getElementType() == ElementType.TEXT
+    		  && parent.getElementType() != ElementType.TEXT && parent.getElementType() != ElementType.TEXT_COMPONENT) {
         if (pendingTextComponent == null) {
           pendingTextComponent = document.createElement("text-component");
           parent.insertBefore(pendingTextComponent, null);

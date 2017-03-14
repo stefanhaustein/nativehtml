@@ -19,21 +19,21 @@ public class TextComponent extends JLabel implements org.kobjects.nativehtml.htm
 
 	private static void serialize(Element element, StringBuilder sb) {
 		
-		if (element.getElementType() == ElementType.LEAF_TEXT) {
+		String name = element.getLocalName().equals("a") ? "a href=\"#\"" : "span";
+			
+		sb.append("<").append(name).append(" style=\"");
+		sb.append(element.getComputedStyle());
+		sb.append("\">");
+		
+		HtmlCollection children = element.getChildren();
+		if (children.getLength() == 0) {
 			HtmlSerializer.htmlEscape(element.getTextContent(), sb);
 		} else {
-			String name = element.getLocalName().equals("a") ? "a href=\"#\"" : "span";
-			
-			sb.append("<").append(name).append(" style=\"");
-			sb.append(element.getComputedStyle());
-			sb.append("\">");
-			
-			HtmlCollection children = element.getChildren();
 			for (int i = 0; i < children.getLength(); i++) {
 				serialize(children.item(i), sb);
 			}
-			sb.append("</").append(name).append(">");
 		}
+		sb.append("</").append(name).append(">");
 	}
 	
 	private final Document document;
