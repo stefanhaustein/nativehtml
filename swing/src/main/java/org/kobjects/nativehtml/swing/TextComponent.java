@@ -125,17 +125,19 @@ public class TextComponent extends JLabel implements org.kobjects.nativehtml.htm
 		dirty = false;
 	}
 
-	public int getIntrinsicMinimumBorderBoxWidth() {
+	public int getIntrinsicBorderBoxWidth(boolean min) {
 		check();
-		return getMinimumSize().width;
+		int result = (min ? getMinimumSize() : getPreferredSize()).width;
+		System.out.println("TexComponent width (min=" + min + "):" + result);
+		return result;
 	}
 	
 	public int getIntrinsicBorderBoxHeightForWidth(int width) {
 		check();
-		if (width == getWidth()) {
+	/*	if (width == getWidth()) {
 			return getPreferredSize().height;
 		}
-		
+		*/
 		JLabel resizer = new JLabel();
 		resizer.setText(getText());
 		 
@@ -156,6 +158,10 @@ public class TextComponent extends JLabel implements org.kobjects.nativehtml.htm
 		check();
 	}
 
+	@Override
+	public void moveRelative(int dx, int dy) {
+		setBounds(getX() + dx, getY() + dy, getWidth(), getHeight());
+	}
 
 	
 	

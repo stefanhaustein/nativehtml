@@ -102,6 +102,11 @@ public abstract class AbstractHtmlComponent extends JComponent implements org.ko
 		this.containingBoxWidth = containingBoxWidth;
 	}
 	
+	@Override
+	public void moveRelative(int dx, int dy) {
+		setBounds(getX() + dx, getY() + dy, getWidth(), getHeight());
+	}
+	
 	static private Color createColor(int argb) {
 		return new Color((argb >> 16) & 255, (argb >> 8) & 255, argb & 255);
 	}

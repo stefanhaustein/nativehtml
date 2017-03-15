@@ -39,8 +39,8 @@ public class ComponentContainer extends AbstractHtmlComponent implements HtmlCol
 	}
 
 	@Override
-	public int getIntrinsicMinimumBorderBoxWidth() {
-		return getMinimumSize().width;
+	public int getIntrinsicBorderBoxWidth(boolean min) {
+		return (min ? getMinimumSize() : getPreferredSize()).width;
 	}
 
 	@Override
