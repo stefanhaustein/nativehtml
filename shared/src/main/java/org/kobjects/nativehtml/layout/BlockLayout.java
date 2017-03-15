@@ -28,7 +28,6 @@ public class BlockLayout implements Layout {
 	@Override
 	public void layout(Element parent, int xOfs, int yOfs, int containingBoxWidth, boolean measureOnly, int[] result) {
 		HtmlCollection children = parent.getChildren();
-		int y = yOfs;
 		int marginBase = containingBoxWidth;
 		
 		if (containingBoxWidth == -1) {
@@ -44,9 +43,10 @@ public class BlockLayout implements Layout {
 			}
 		}
 		
+		int x = 0;
+		int y = 0;
 		int pendingMargin = 0;
 		int lineHeight = 0;
-		int x = xOfs;
 		int firstChildIndex = 0;
 		
 		for (int i = 0; i < parent.getChildren().getLength(); i++) {
@@ -62,10 +62,10 @@ public class BlockLayout implements Layout {
 	    	int childMarginRight = childStyle.getPx(CssProperty.MARGIN_RIGHT, marginBase);
 		    
 		    if (display == CssEnum.BLOCK) {
-		    	if (x > xOfs) {
+		    	if (x > 0) {
 		    		adjustLastLine(parent, firstChildIndex, i, x - xOfs, containingBoxWidth);
 		    		y += lineHeight;
-		    		x = xOfs;
+		    		x = 0;
 		    		lineHeight = 0;
 		    	}
 		    	y += Math.max(pendingMargin, childStyle.getPx(CssProperty.MARGIN_TOP, containingBoxWidth));
@@ -74,14 +74,14 @@ public class BlockLayout implements Layout {
 		    	int childBorderBoxHeight = ElementLayoutHelper.getBorderBoxHeight(child, childBorderBoxWidth, containingBoxWidth);
 			
 		    	if (!measureOnly) {
-		    		child.setBorderBoxBounds(xOfs + childMarginLeft, y, 
+		    		child.setBorderBoxBounds(xOfs + childMarginLeft, y + xOfs, 
 		    				childBorderBoxWidth, childBorderBoxHeight, containingBoxWidth);
 		    	}
 			
 		    	y += childBorderBoxHeight;
 		    	pendingMargin = childStyle.getPx(CssProperty.MARGIN_BOTTOM, containingBoxWidth);
 		    } else {
-		    	if (x == xOfs) {
+		    	if (x == 0) {
 		    		firstChildIndex = i;
 		    		y += pendingMargin;
 		    		pendingMargin = 0;
@@ -89,13 +89,13 @@ public class BlockLayout implements Layout {
 		    	int childBorderBoxWidth = ElementLayoutHelper.getBorderBoxWidth(child, containingBoxWidth);
 		    	int childMarginBoxWidth = childMarginLeft + childBorderBoxWidth + childMarginRight;
 		    	int childBorderBoxHeight = ElementLayoutHelper.getBorderBoxHeight(child, childBorderBoxWidth, containingBoxWidth);
-		    	if (x > xOfs && x + childMarginBoxWidth > xOfs + containingBoxWidth) {
-		    		adjustLastLine(parent, firstChildIndex, i, x - xOfs, containingBoxWidth);
+		    	if (x > 0 && x + childMarginBoxWidth > containingBoxWidth) {
+		    		adjustLastLine(parent, firstChildIndex, i, x, containingBoxWidth);
 		    		y += lineHeight;
-		    		x = xOfs;
+		    		x = 0;
 		    	}
 		    	if (!measureOnly) {
-		    		child.setBorderBoxBounds(x + childMarginLeft, y, childBorderBoxWidth, childBorderBoxHeight, containingBoxWidth);
+		    		child.setBorderBoxBounds(x + xOfs + childMarginLeft, y + yOfs, childBorderBoxWidth, childBorderBoxHeight, containingBoxWidth);
 		    	}
 		    	lineHeight = Math.max(lineHeight, childBorderBoxHeight);
 		    	x += childBorderBoxHeight;	
@@ -116,15 +116,15 @@ public class BlockLayout implements Layout {
 		    
 		}
 		
-		if (x > xOfs) {
-    		adjustLastLine(parent, firstChildIndex, parent.getChildren().getLength(), x - xOfs, containingBoxWidth);
+		if (x > 0) {
+    		adjustLastLine(parent, firstChildIndex, parent.getChildren().getLength(), x, containingBoxWidth);
 		    y += lineHeight;
 		}
 		y += pendingMargin;
 		
 		if (result != null) {
 			result[0] = containingBoxWidth;
-			result[1] = y - yOfs;
+			result[1] = y;
 		}
 	}
 
