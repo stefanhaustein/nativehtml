@@ -8,7 +8,7 @@ public interface HtmlComponent extends Element {
 	
 	public void moveRelative(int dx, int dy);
 	
-	public int getIntrinsicBorderBoxWidth(boolean minimal);
-	public int getIntrinsicBorderBoxHeightForWidth(int borderBoxWidth);
+	public int getIntrinsicContentBoxWidth(boolean minimal);
+	public int getIntrinsicContentBoxHeightForWidth(int contentBoxWidth);
 
 }

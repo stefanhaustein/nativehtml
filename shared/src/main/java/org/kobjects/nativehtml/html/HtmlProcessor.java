@@ -68,13 +68,13 @@ public class HtmlProcessor {
    * Precondition: behind the opening tag
    * Postcondition: on the closing tag
    */
-  private String parseTextContent() throws IOException, XmlPullParserException {
+  private String parseTextContentToString() throws IOException, XmlPullParserException {
     StringBuilder sb = new StringBuilder();
     while (parser.getEventType() != XmlPullParser.END_TAG) {
       switch(parser.getEventType()) {
         case XmlPullParser.START_TAG:
           parser.next();
-          sb.append(parseTextContent());
+          sb.append(parseTextContentToString());
           parser.next();
           break;
 
@@ -132,7 +132,7 @@ public class HtmlProcessor {
     
     if (elementType == ElementType.LEAF_COMPONENT || elementType == ElementType.TEXT_DATA
             || elementType == ElementType.SKIP) {
-      String textContent = parseTextContent();
+      String textContent = parseTextContentToString();
       element.setTextContent(textContent);
     } else {
       parseChildren(element);
@@ -145,77 +145,97 @@ public class HtmlProcessor {
     
     return element;
   }
+  
+  /**
+   * Re-creates the given descendant of oldRoot as a new descendant of newRoot. Used when text elements are interrupted by 
+   * components.
+   */
+  Element recreate(Element original, Element oldRoot, Element newRoot) {
+	  Element parent = original.getParentElement() == oldRoot ? newRoot : recreate(original.getParentElement(), oldRoot, newRoot);
+	  Element clone = document.createElement(original.getLocalName());
+	  // TODO: copy attributes;
+	  parent.insertBefore(clone, null);
+	  return clone;
+  }
+  
 
+  private void processTextContent(Element parent) throws IOException, XmlPullParserException {
+	  Element textComponent = document.createElement("text-component");
+	  boolean preserveLeadingSpace = false;
+	  parent.insertBefore(textComponent, null);
+	  Element current = textComponent;
+	  
+	  loop:
+	  while (true) {
+		  switch(parser.getEventType()) {
+		  	case XmlPullParser.END_DOCUMENT:
+		  		break loop;
+			
+		  	case XmlPullParser.END_TAG:
+		  		if (current == textComponent) {
+		  			break loop;
+		  		} 
+		  		current = current.getParentElement();
+		  		parser.next();
+		  		break;
+		  		
+		  	case XmlPullParser.START_TAG:
+		  		if (Document.getElementType(parser.getName()) == ElementType.TEXT) {
+		  			Element child = document.createElement(parser.getName());
+		  			for (int i = 0; i < parser.getAttributeCount(); i++) {
+		  				child.setAttribute(parser.getAttributeName(i), parser.getAttributeValue(i));
+		  			}
+		  			current.insertBefore(child, null);
+		  			current = child;
+		  			parser.next();
+		  		} else if (current == textComponent) {
+		  			break loop;
+		  		} else {
+		  			parent.insertBefore(parseElement(), null);
+		  			Element newTextComponent = document.createElement("text-component");
+		  			current = recreate(current, textComponent, newTextComponent);
+		  			textComponent = newTextComponent;
+		  			preserveLeadingSpace = false;
+		  			parent.insertBefore(textComponent, null);
+		  			assert current != null;
+		  			parser.next();
+		  		}
+		  		break;
+		  
+		  	case XmlPullParser.TEXT: 
+			  StringBuilder sb = new StringBuilder();
+			  do {
+				  sb.append(normalizeText(parser.getText(), preserveLeadingSpace));
+				  preserveLeadingSpace = sb.length() > 0 && sb.charAt(sb.length() - 1) > ' ';
+				  parser.next();
+			  } while (parser.getEventType() == XmlPullParser.TEXT);
+			  Element child = document.createElement("span");
+			  child.setTextContent(sb.toString());
+		  	  // AddText could auto-elevate
+			  current.insertBefore(child, null);
+			  break;
+
+		  	default:
+				parser.next();
+		  }
+	  }
+  }
+  
+  
   private void parseChildren(Element parent) throws IOException, XmlPullParserException {
-    Element pendingTextComponent = null;
-
-    while (parser.getEventType() != XmlPullParser.END_TAG) {
-      Element child = null;
-
-      switch (parser.getEventType()) {
-
-        case XmlPullParser.START_TAG:
-          child = parseElement();
-          assert parser.getEventType() == XmlPullParser.END_TAG;
-          parser.next();
-          break;
-
-        case XmlPullParser.TEXT: {
-          StringBuilder sb = new StringBuilder();
-          sb.append(normalizeText(parser.getText(), true));
-          /*
-          boolean textContainer = (container instanceof Hv2DomElement) &&
-                  ((Hv2DomElement) container).componentType == ElementType.LEAF_TEXT;
-          boolean preceedingText = container.getLastChild() != null && (container.getLastChild() instanceof Text ||
-                  (container.getLastChild() instanceof Hv2DomElement && ((Hv2DomElement) container.getLastChild()).componentType ==
-                          ElementType.LEAF_TEXT));
-          boolean preceedingBr = container.getLastChild() instanceof Hv2DomElement && ((Hv2DomElement) container.getLastChild()).getLocalName().equals("br");
-
-          String text = normalizeText(parser.getText(), !preceedingBr && (textContainer || preceedingText));
-          if (text.length() > 0) {
-            container.appendChild(document.createTextNode(text));
-          }*/
-
-          parser.next();
-       /*   while (parser.getEventType() == XmlPullParser.TEXT
-                  || (parser.getEventType() == XmlPullParser.START_TAG && parser.getName().equals("br"))) {
-            if (parser.getEventType() == XmlPullParser.TEXT) {
-              sb.append(normalizeText(parser.getText(), false));
-            } else {
-              parseTextContent();
-              sb.append("\n");
-            }
-            parser.next();
-          }*/
-
-          if (sb.length() > 0) {
-            child = document.createElement("span");
-            child.setTextContent(sb.toString());
-          }
-
-          break;
-        }
-
-        default:
-          throw new RuntimeException("Unexpected token: " + parser.getPositionDescription());
-      }
-
-      if (child == null) {
-        continue;
-      }
-
-      if (child.getElementType() == ElementType.TEXT
-    		  && parent.getElementType() != ElementType.TEXT && parent.getElementType() != ElementType.TEXT_COMPONENT) {
-        if (pendingTextComponent == null) {
-          pendingTextComponent = document.createElement("text-component");
-          parent.insertBefore(pendingTextComponent, null);
-        }
-        pendingTextComponent.insertBefore(child, null);
-      } else {
-        pendingTextComponent = null;
-        parent.insertBefore(child, null);
+    while (parser.getEventType() != XmlPullParser.END_TAG && parser.getEventType() != XmlPullParser.END_DOCUMENT) {
+    	if ((parser.getEventType() != XmlPullParser.START_TAG && parser.getEventType() != XmlPullParser.TEXT) 
+     		   || parser.getEventType() == XmlPullParser.TEXT && parser.getText().trim().isEmpty()){
+     	   parser.next();
+        } else if (parser.getEventType() == XmlPullParser.START_TAG 
+    		   && Document.getElementType(parser.getName()) != ElementType.TEXT) {
+    	   Element child = parseElement();
+    	   parent.insertBefore(child, null);
+           assert parser.getEventType() == XmlPullParser.END_TAG;
+           parser.next();
+       } else {
+    	   processTextContent(parent);
       }
     }
-    assert parser.getEventType() == XmlPullParser.END_TAG;
   }
 }

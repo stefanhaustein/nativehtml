@@ -108,6 +108,7 @@ public class TextComponent extends JLabel implements org.kobjects.nativehtml.htm
 	@Override
 	public void insertBefore(Element newChild, Element referenceChild) {
 		children.insertBefore(newChild, referenceChild);
+		newChild.setParentElement(this);
 		dirty = true;
 	}
 	
@@ -125,19 +126,21 @@ public class TextComponent extends JLabel implements org.kobjects.nativehtml.htm
 		dirty = false;
 	}
 
-	public int getIntrinsicBorderBoxWidth(boolean min) {
+	public int getIntrinsicContentBoxWidth(boolean min) {
 		check();
+		
+		// It's ok to use the outer size here because this element can't have borders or padding.
 		int result = (min ? getMinimumSize() : getPreferredSize()).width;
 		System.out.println("TexComponent width (min=" + min + "):" + result);
 		return result;
 	}
 	
-	public int getIntrinsicBorderBoxHeightForWidth(int width) {
+	public int getIntrinsicContentBoxHeightForWidth(int width) {
 		check();
-	/*	if (width == getWidth()) {
+		/*if (width == getWidth()) {
 			return getPreferredSize().height;
-		}
-		*/
+		}*/
+		
 		JLabel resizer = new JLabel();
 		resizer.setText(getText());
 		 
@@ -146,6 +149,7 @@ public class TextComponent extends JLabel implements org.kobjects.nativehtml.htm
 	 
         view.setSize(width, 0);
         float h = view.getPreferredSpan(View.Y_AXIS);
+        System.out.println("TexComponent height (w=" + width + "):" + h);
 		return Math.round(h);
 		
 	}

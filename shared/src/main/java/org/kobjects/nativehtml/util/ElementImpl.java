@@ -100,6 +100,7 @@ public class ElementImpl implements Element {
 			index = children.getLength();
 		}
 		children.add(index, newChild);
+		newChild.setParentElement(this);
 	}
 
 	@Override

@@ -43,7 +43,7 @@ public class Document {
         ELEMENT_TYPES.put("u", ElementType.TEXT);
     }
 
-    private static ElementType getElementType(String name) {
+    public static ElementType getElementType(String name) {
         ElementType result = ELEMENT_TYPES.get(name);
         return result == null ? ElementType.COMPONENT_CONTAINER : result;
     }

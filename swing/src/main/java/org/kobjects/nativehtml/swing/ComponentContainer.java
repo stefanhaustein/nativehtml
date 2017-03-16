@@ -2,6 +2,7 @@ package org.kobjects.nativehtml.swing;
 
 
 import org.kobjects.nativehtml.css.CssProperty;
+import org.kobjects.nativehtml.css.CssStyleDeclaration;
 import org.kobjects.nativehtml.dom.Document;
 import org.kobjects.nativehtml.dom.Element;
 import org.kobjects.nativehtml.dom.ElementType;
@@ -39,19 +40,35 @@ public class ComponentContainer extends AbstractHtmlComponent implements HtmlCol
 	}
 
 	@Override
-	public int getIntrinsicBorderBoxWidth(boolean min) {
-		return (min ? getMinimumSize() : getPreferredSize()).width;
+	public void setBorderBoxBounds(int x, int y, int width, int height, int containingBoxWidth) {
+		super.setBorderBoxBounds(x, y, width, height, containingBoxWidth);
+		CssStyleDeclaration style = getComputedStyle();
+
+		int bottom = style.getPx(CssProperty.BORDER_BOTTOM_WIDTH, containingBoxWidth) + 
+				style.getPx(CssProperty.PADDING_BOTTOM, containingBoxWidth);
+		int left = style.getPx(CssProperty.BORDER_LEFT_WIDTH, containingBoxWidth) + 
+				style.getPx(CssProperty.PADDING_LEFT, containingBoxWidth);
+		int top = style.getPx(CssProperty.BORDER_TOP_WIDTH, containingBoxWidth) + 
+				style.getPx(CssProperty.PADDING_TOP, containingBoxWidth);
+		int right = style.getPx(CssProperty.BORDER_RIGHT_WIDTH, containingBoxWidth) + 
+				style.getPx(CssProperty.PADDING_RIGHT, containingBoxWidth);
+		
+		layout.layout(this, left, top, width - left - right, false, null);
+	}
+
+	
+	@Override
+	public int getIntrinsicContentBoxWidth(boolean min) {
+		int[] result = new int[2];
+		layout.layout(this, 0, 0, min ? 0 : 320, true /* measureOnly */, result);
+		return result[0];
 	}
 
 	@Override
-	public int getIntrinsicBorderBoxHeightForWidth(int width) {
+	public int getIntrinsicContentBoxHeightForWidth(int width) {
 		int[] result = new int[2];
-		layout.layout(this, 0, 0, width, true, result);
-		return computedStyle.getPx(CssProperty.BORDER_TOP_WIDTH, width) 
-				+ computedStyle.getPx(CssProperty.PADDING_TOP, width)
-				+ result[1]
-				+ computedStyle.getPx(CssProperty.PADDING_BOTTOM, width)
-				+ computedStyle.getPx(CssProperty.BORDER_BOTTOM_WIDTH, width);
+		layout.layout(this, 0, 0, width, true /* measureOnly */, result);
+		return result[1];
 	}
 
 }
