@@ -6,6 +6,7 @@ import java.util.EnumSet;
 
 import org.kobjects.nativehtml.css.CssProperty;
 import org.kobjects.nativehtml.css.CssStyleDeclaration;
+import org.kobjects.nativehtml.dom.ContentType;
 import org.kobjects.nativehtml.dom.Document;
 import org.kobjects.nativehtml.dom.Element;
 import org.kobjects.nativehtml.dom.ElementType;
@@ -87,8 +88,8 @@ public class ComponentContainer extends AbstractHtmlComponent implements HtmlCol
 	}
 
 	@Override
-	public EnumSet<ElementType> getContentType() {
-		return CONTENT_TYPE;
+	public ContentType getContentType() {
+		return ContentType.COMPONENTS;
 	}
 
 }

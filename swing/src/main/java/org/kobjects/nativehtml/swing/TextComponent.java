@@ -1,12 +1,10 @@
 package org.kobjects.nativehtml.swing;
 
-import java.util.EnumSet;
-
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.text.View;
 
 import org.kobjects.nativehtml.css.CssStyleDeclaration;
+import org.kobjects.nativehtml.dom.ContentType;
 import org.kobjects.nativehtml.dom.Document;
 import org.kobjects.nativehtml.dom.Element;
 import org.kobjects.nativehtml.dom.ElementType;
@@ -18,13 +16,20 @@ import org.kobjects.nativehtml.util.HtmlCollectionImpl;
  * Artificially inserted element -- can't have any box styling.
  */
 public class TextComponent extends JLabel implements org.kobjects.nativehtml.html.HtmlComponent {
-	private static final EnumSet<ElementType> CONTENT_TYPE = EnumSet.of(ElementType.FORMATTED_TEXT);
 	private static final CssStyleDeclaration EMTPY_STYLE = new CssStyleDeclaration();
 
 	private static void serialize(Element element, StringBuilder sb) {
 		
-		String name = element.getLocalName().equals("a") ? "a href=\"#\"" : "span";
-			
+		String name = element.getLocalName();
+		if (name.equals("br")) {
+			sb.append("<br>");
+			return;
+		}
+		if (name.equals("a") && element.getAttribute("href") != null) {
+			name = "a href=\"" + HtmlSerializer.htmlEscape(element.getAttribute("href")) + "\"";
+		} else {
+			name = "span";
+		}
 		sb.append("<").append(name).append(" style=\"");
 		sb.append(element.getComputedStyle());
 		sb.append("\">");
@@ -172,8 +177,8 @@ public class TextComponent extends JLabel implements org.kobjects.nativehtml.htm
 	}
 
 	@Override
-	public EnumSet<ElementType> getContentType() {
-		return CONTENT_TYPE;
+	public ContentType getContentType() {
+		return ContentType.FORMATTED_TEXT;
 	}
 
 	

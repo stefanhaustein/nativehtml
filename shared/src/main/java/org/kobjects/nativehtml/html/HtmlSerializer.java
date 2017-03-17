@@ -51,6 +51,13 @@ public class HtmlSerializer {
 		}
 		return sb.toString();
 	}
+
+
+	public static String htmlEscape(String value) {
+		StringBuilder sb = new StringBuilder();
+		htmlEscape(value, sb);
+		return sb.toString();
+	}
 	
 	
 }

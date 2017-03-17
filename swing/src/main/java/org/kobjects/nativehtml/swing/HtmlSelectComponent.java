@@ -8,6 +8,7 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.event.ListDataListener;
 
+import org.kobjects.nativehtml.dom.ContentType;
 import org.kobjects.nativehtml.dom.Document;
 import org.kobjects.nativehtml.dom.Element;
 import org.kobjects.nativehtml.dom.ElementType;
@@ -15,9 +16,7 @@ import org.kobjects.nativehtml.dom.HtmlCollection;
 import org.kobjects.nativehtml.util.HtmlCollectionImpl;
 
 public class HtmlSelectComponent extends ComponentWrapper<JComboBox<String>> {
-	private static final EnumSet<ElementType> CONTENT_TYPE = EnumSet.of(ElementType.DATA);
 	private HtmlCollectionImpl children = new HtmlCollectionImpl();
-
 	
 	HtmlSelectComponent(Document document, String name) {
 		super(document, name, new JComboBox<String>());
@@ -58,8 +57,8 @@ public class HtmlSelectComponent extends ComponentWrapper<JComboBox<String>> {
 	}
 
 	@Override
-	public EnumSet<ElementType> getContentType() {
-		return CONTENT_TYPE;
+	public ContentType getContentType() {
+		return ContentType.DATA_ELEMENTS;
 	}
 
 	@Override

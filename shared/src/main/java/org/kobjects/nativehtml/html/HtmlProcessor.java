@@ -1,6 +1,7 @@
 package org.kobjects.nativehtml.html;
 
 import org.kobjects.nativehtml.css.CssStyleSheet;
+import org.kobjects.nativehtml.dom.ContentType;
 import org.kobjects.nativehtml.dom.Document;
 import org.kobjects.nativehtml.dom.Element;
 import org.kobjects.nativehtml.dom.ElementFactory;
@@ -130,9 +131,9 @@ public class HtmlProcessor {
 
     parser.next();
     
-    if (element.getContentType().contains(ElementType.TEXT_ONLY) || element.getContentType().isEmpty()) {
+    if (element.getContentType() == ContentType.TEXT_ONLY || element.getContentType() == ContentType.EMPTY) {
       String textContent = parseTextContentToString();
-      if (!element.getContentType().isEmpty()) {
+      if (element.getContentType() == ContentType.TEXT_ONLY) {
     	  element.setTextContent(textContent);
       }
     } else {
@@ -182,6 +183,9 @@ public class HtmlProcessor {
 		  		
 		  	case XmlPullParser.START_TAG:
 		  		if (Document.getElementType(parser.getName()) == ElementType.FORMATTED_TEXT) {
+		  			if (parser.getName().equals("br")) {
+		  				preserveLeadingSpace = false;
+		  			}
 		  			Element child = document.createElement(parser.getName());
 		  			for (int i = 0; i < parser.getAttributeCount(); i++) {
 		  				child.setAttribute(parser.getAttributeName(i), parser.getAttributeValue(i));

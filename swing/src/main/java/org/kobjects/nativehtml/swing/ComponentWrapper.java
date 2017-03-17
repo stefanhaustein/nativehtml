@@ -15,8 +15,18 @@ public abstract class ComponentWrapper<T extends JComponent> extends AbstractHtm
 	ComponentWrapper(Document document, String name, T component) {
 		super(document, name);
 		setLayout(new BorderLayout());
+		setComponent(component);
+	}
+	
+	
+	public void setComponent(T component) {
+		if (this.component != null) {
+			remove(this.component);
+		}
 		this.component = component;
-		add(component, BorderLayout.CENTER);
+		if (component != null) {
+			add(component, BorderLayout.CENTER);
+		}
 	}
 	
 	

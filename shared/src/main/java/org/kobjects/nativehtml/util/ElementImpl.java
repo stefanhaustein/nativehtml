@@ -6,6 +6,7 @@ import java.util.HashMap;
 import org.kobjects.nativehtml.css.Css;
 import org.kobjects.nativehtml.css.CssStyleDeclaration;
 import org.kobjects.nativehtml.css.CssStyleSheet;
+import org.kobjects.nativehtml.dom.ContentType;
 import org.kobjects.nativehtml.dom.Document;
 import org.kobjects.nativehtml.dom.Element;
 import org.kobjects.nativehtml.dom.ElementType;
@@ -21,9 +22,9 @@ public class ElementImpl implements Element {
     protected CssStyleDeclaration computedStyle;
     protected String textContent;
     protected HtmlCollectionImpl children;
-    protected EnumSet<ElementType> contentType;
+    protected ContentType contentType;
     
-    public ElementImpl(Document document, String name, ElementType elementType, EnumSet<ElementType> contentType) {
+    public ElementImpl(Document document, String name, ElementType elementType, ContentType contentType) {
     	this.document = document;
         this.elementType = elementType;
         this.name = name;
@@ -127,7 +128,7 @@ public class ElementImpl implements Element {
 	}
 
 	@Override
-	public EnumSet<ElementType> getContentType() {
+	public ContentType getContentType() {
 		return contentType;
 	}
 }
