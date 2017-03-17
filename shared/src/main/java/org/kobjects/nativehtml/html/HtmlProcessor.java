@@ -121,7 +121,6 @@ public class HtmlProcessor {
     indent += "  ";
     
     Element element = document.createElement(elementName);
-    ElementType elementType = element.getElementType();
 
     for (int i = 0; i < parser.getAttributeCount(); i++) {
     	String attributeName = parser.getAttributeName(i);
