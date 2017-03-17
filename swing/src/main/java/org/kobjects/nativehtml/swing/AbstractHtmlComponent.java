@@ -87,14 +87,6 @@ public abstract class AbstractHtmlComponent extends JComponent implements org.ko
 		System.err.println("setTextContent ignored for " + getElementType() + ": " + name + " text: " + textContent);
 	}
 
-	@Override
-	public void insertBefore(Element newChild, Element referenceChild) {
-		if (!(newChild instanceof HtmlComponent)) {
-			System.out.println("Ignoring child " + newChild + " for " + this);
-		} else {
-			add((Component) newChild);
-		}
-	}
 	
 	@Override
 	public void setBorderBoxBounds(int x, int y, int width, int height, int containingBoxWidth) {

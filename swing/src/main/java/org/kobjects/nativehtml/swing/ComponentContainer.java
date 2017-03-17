@@ -1,17 +1,22 @@
 package org.kobjects.nativehtml.swing;
 
 
+import java.awt.Component;
+import java.util.EnumSet;
+
 import org.kobjects.nativehtml.css.CssProperty;
 import org.kobjects.nativehtml.css.CssStyleDeclaration;
 import org.kobjects.nativehtml.dom.Document;
 import org.kobjects.nativehtml.dom.Element;
 import org.kobjects.nativehtml.dom.ElementType;
 import org.kobjects.nativehtml.dom.HtmlCollection;
+import org.kobjects.nativehtml.html.HtmlComponent;
 import org.kobjects.nativehtml.layout.BlockLayout;
 import org.kobjects.nativehtml.layout.Layout;
 
 public class ComponentContainer extends AbstractHtmlComponent implements HtmlCollection {
-
+	private static final EnumSet<ElementType> CONTENT_TYPE = EnumSet.of(ElementType.COMPONENT);
+	
 	Layout layout = new BlockLayout();
 	
 	public ComponentContainer(Document document, String elementName) {
@@ -21,7 +26,7 @@ public class ComponentContainer extends AbstractHtmlComponent implements HtmlCol
 
 	@Override
 	public ElementType getElementType() {
-		return ElementType.COMPONENT_CONTAINER;
+		return ElementType.COMPONENT;
 	}
 
 	@Override
@@ -39,6 +44,16 @@ public class ComponentContainer extends AbstractHtmlComponent implements HtmlCol
 		return (Element) getComponent(index);
 	}
 
+
+	@Override
+	public void insertBefore(Element newChild, Element referenceChild) {
+		if (!(newChild instanceof HtmlComponent)) {
+			System.out.println("Ignoring child " + newChild + " for " + this);
+		} else {
+			add((Component) newChild);
+		}
+	}
+	
 	@Override
 	public void setBorderBoxBounds(int x, int y, int width, int height, int containingBoxWidth) {
 		super.setBorderBoxBounds(x, y, width, height, containingBoxWidth);
@@ -69,6 +84,11 @@ public class ComponentContainer extends AbstractHtmlComponent implements HtmlCol
 		int[] result = new int[2];
 		layout.layout(this, 0, 0, width, true /* measureOnly */, result);
 		return result[1];
+	}
+
+	@Override
+	public EnumSet<ElementType> getContentType() {
+		return CONTENT_TYPE;
 	}
 
 }

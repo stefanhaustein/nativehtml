@@ -1,5 +1,7 @@
 package org.kobjects.nativehtml.dom;
 
+import java.util.EnumSet;
+
 import org.kobjects.nativehtml.css.CssStyleDeclaration;
 
 public interface Element {
@@ -14,6 +16,7 @@ public interface Element {
    * Used internally
    */
   ElementType getElementType();
+  EnumSet<ElementType> getContentType();
 
   /**
    * Used internally in insertBefore.

@@ -1,5 +1,8 @@
 package org.kobjects.nativehtml.swing;
 
+import java.util.EnumSet;
+
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.text.View;
 
@@ -15,6 +18,7 @@ import org.kobjects.nativehtml.util.HtmlCollectionImpl;
  * Artificially inserted element -- can't have any box styling.
  */
 public class TextComponent extends JLabel implements org.kobjects.nativehtml.html.HtmlComponent {
+	private static final EnumSet<ElementType> CONTENT_TYPE = EnumSet.of(ElementType.FORMATTED_TEXT);
 	private static final CssStyleDeclaration EMTPY_STYLE = new CssStyleDeclaration();
 
 	private static void serialize(Element element, StringBuilder sb) {
@@ -68,7 +72,7 @@ public class TextComponent extends JLabel implements org.kobjects.nativehtml.htm
 
 	@Override
 	public ElementType getElementType() {
-		return ElementType.TEXT_COMPONENT;
+		return ElementType.COMPONENT;
 	}
 
 	@Override
@@ -165,6 +169,11 @@ public class TextComponent extends JLabel implements org.kobjects.nativehtml.htm
 	@Override
 	public void moveRelative(int dx, int dy) {
 		setBounds(getX() + dx, getY() + dy, getWidth(), getHeight());
+	}
+
+	@Override
+	public EnumSet<ElementType> getContentType() {
+		return CONTENT_TYPE;
 	}
 
 	

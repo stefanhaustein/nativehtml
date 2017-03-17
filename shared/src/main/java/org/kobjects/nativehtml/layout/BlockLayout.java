@@ -100,7 +100,7 @@ public class BlockLayout implements Layout {
 		    		child.setBorderBoxBounds(x + xOfs + childMarginLeft, y + yOfs, childBorderBoxWidth, childBorderBoxHeight, containingBoxWidth);
 		    	}
 		    	lineHeight = Math.max(lineHeight, childBorderBoxHeight);
-		    	x += childBorderBoxHeight;	
+		    	x += childMarginBoxWidth;	
 		    }
 		    
 		    // Common child processing code

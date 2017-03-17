@@ -1,5 +1,6 @@
 package org.kobjects.nativehtml.util;
 
+import java.util.EnumSet;
 import java.util.HashMap;
 
 import org.kobjects.nativehtml.css.Css;
@@ -20,11 +21,13 @@ public class ElementImpl implements Element {
     protected CssStyleDeclaration computedStyle;
     protected String textContent;
     protected HtmlCollectionImpl children;
+    protected EnumSet<ElementType> contentType;
     
-    public ElementImpl(Document document, ElementType elementType, String name) {
+    public ElementImpl(Document document, String name, ElementType elementType, EnumSet<ElementType> contentType) {
     	this.document = document;
         this.elementType = elementType;
         this.name = name;
+        this.contentType = contentType;
     }
 
     @Override
@@ -121,5 +124,10 @@ public class ElementImpl implements Element {
 			sb.append(children.get(i).getTextContent());
 		}
 		return sb.toString();
+	}
+
+	@Override
+	public EnumSet<ElementType> getContentType() {
+		return contentType;
 	}
 }

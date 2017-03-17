@@ -130,10 +130,11 @@ public class HtmlProcessor {
 
     parser.next();
     
-    if (elementType == ElementType.LEAF_COMPONENT || elementType == ElementType.TEXT_DATA
-            || elementType == ElementType.SKIP) {
+    if (element.getContentType().contains(ElementType.TEXT_ONLY) || element.getContentType().isEmpty()) {
       String textContent = parseTextContentToString();
-      element.setTextContent(textContent);
+      if (!element.getContentType().isEmpty()) {
+    	  element.setTextContent(textContent);
+      }
     } else {
       parseChildren(element);
     }
@@ -180,7 +181,7 @@ public class HtmlProcessor {
 		  		break;
 		  		
 		  	case XmlPullParser.START_TAG:
-		  		if (Document.getElementType(parser.getName()) == ElementType.TEXT) {
+		  		if (Document.getElementType(parser.getName()) == ElementType.FORMATTED_TEXT) {
 		  			Element child = document.createElement(parser.getName());
 		  			for (int i = 0; i < parser.getAttributeCount(); i++) {
 		  				child.setAttribute(parser.getAttributeName(i), parser.getAttributeValue(i));
@@ -225,10 +226,12 @@ public class HtmlProcessor {
   private void parseChildren(Element parent) throws IOException, XmlPullParserException {
     while (parser.getEventType() != XmlPullParser.END_TAG && parser.getEventType() != XmlPullParser.END_DOCUMENT) {
     	if ((parser.getEventType() != XmlPullParser.START_TAG && parser.getEventType() != XmlPullParser.TEXT) 
-     		   || parser.getEventType() == XmlPullParser.TEXT && parser.getText().trim().isEmpty()){
-     	   parser.next();
+     		   || parser.getEventType() == XmlPullParser.TEXT && parser.getText().trim().isEmpty()) {
+    		// Skippable stuff
+     	   	parser.next();
         } else if (parser.getEventType() == XmlPullParser.START_TAG 
-    		   && Document.getElementType(parser.getName()) != ElementType.TEXT) {
+    		   && Document.getElementType(parser.getName()) != ElementType.FORMATTED_TEXT) {
+        	// Children
     	   Element child = parseElement();
     	   parent.insertBefore(child, null);
            assert parser.getEventType() == XmlPullParser.END_TAG;

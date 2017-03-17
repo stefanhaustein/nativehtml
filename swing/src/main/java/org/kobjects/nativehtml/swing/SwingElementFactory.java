@@ -11,21 +11,17 @@ public class SwingElementFactory implements ElementFactory {
 	public Element createElement(Document document, ElementType elementType, String elementName) {
 		switch (elementType) {
 			
-		case COMPONENT_CONTAINER:
-			return new ComponentContainer(document, elementName);
-			
-		case TEXT_COMPONENT:
-			return new TextComponent(document);
-			
-		case LEAF_COMPONENT:
+		case COMPONENT:
 			if (elementName.equals("select")) {
 				return new HtmlSelectComponent(document, elementName);
 			} 
 			if (elementName.equals("input")) {
 				return new HtmlInputComponent(document, elementName);
 			}
-			System.err.println("Unrecognized leaf component <" + elementName + ">");
-			return null;
+			if (elementName.equals("text-component")) {
+				return new TextComponent(document);
+			}
+			return new ComponentContainer(document, elementName);
 			
 		default:
 			return null;
