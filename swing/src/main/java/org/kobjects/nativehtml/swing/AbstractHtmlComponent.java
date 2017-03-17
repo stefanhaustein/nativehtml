@@ -84,7 +84,7 @@ public abstract class AbstractHtmlComponent extends JComponent implements org.ko
 
 	@Override
 	public void setTextContent(String textContent) {
-		throw new RuntimeException("not permitted for " + getElementType());
+		System.err.println("setTextContent ignored for " + getElementType() + ": " + name + " text: " + textContent);
 	}
 
 	@Override
