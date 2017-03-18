@@ -151,7 +151,7 @@ public class TextComponent extends JTextPane implements org.kobjects.nativehtml.
 		
 		// It's ok to use the outer size here because this element can't have borders or padding.
 		int result = (min ? getMinimumSize() : getPreferredSize()).width;
-		System.out.println("TexComponent width (min=" + min + "):" + result);
+		// System.out.println("TexComponent width (min=" + min + "):" + result);
 		return result;
 	}
 	

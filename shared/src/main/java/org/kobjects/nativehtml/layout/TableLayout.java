@@ -48,6 +48,7 @@ public class TableLayout implements Layout {
       Element row = rowCollection.item(rowIndex);
       int columnIndex = 0;
       HtmlCollection columnCollection = row.getChildren();
+      System.out.println("row " + rowIndex + " column count: " + columnCollection.getLength());
       for (int rawColumnIndex = 0; rawColumnIndex < columnCollection.getLength(); rawColumnIndex++) {
         ColumnData columnData;
         HtmlComponent cell = (HtmlComponent) columnCollection.item(rawColumnIndex);
@@ -65,31 +66,38 @@ public class TableLayout implements Layout {
           columnIndex++;
         }
 
-        int cellWidth = ElementLayoutHelper.getBorderBoxWidth(cell, contentWidth);
+        System.out.println("columnIndex after first loop: " + columnIndex);
+        
+        int cellBorderBoxWidth = ElementLayoutHelper.getBorderBoxWidth(cell, contentWidth);
         int colSpan = getColSpan(cell);
         int rowSpan = getRowSpan(cell);
         
         if (colSpan == 1) {
-          columnData.maxMeasuredWidth = Math.max(columnData.maxMeasuredWidth, cellWidth);
+          columnData.maxMeasuredWidth = Math.max(columnData.maxMeasuredWidth, cellBorderBoxWidth);
         } else {
           if (columnData.maxWidthForColspan == null) {
             columnData.maxWidthForColspan = new HashMap<>();
           }
           Integer old = columnData.maxWidthForColspan.get(colSpan);
-          columnData.maxWidthForColspan.put(colSpan, old == null ? cellWidth : Math.max(old, cellWidth));
+          columnData.maxWidthForColspan.put(colSpan, old == null ? cellBorderBoxWidth : Math.max(old, cellBorderBoxWidth));
           while (columnDataList.size() < columnIndex + colSpan) {
             columnDataList.add(new ColumnData());
           }
         }
         if (rowSpan > 0) {
           for (int i = 0; i < colSpan; i++) {
-            columnDataList.get(columnIndex + i).remainingRowSpan = rowSpan;
+            columnDataList.get(columnIndex + i).remainingRowSpan = rowSpan-1;
           }
         }
         columnIndex += colSpan;
       }
       columnCount = Math.max(columnCount, columnIndex);
+      
+      System.out.println("ColumnCount: " + columnCount + " columnIndex: " + columnIndex);
     }
+    
+    
+    
     while (columnDataList.size() <= columnCount) {
       columnDataList.add(new ColumnData());
     }
@@ -98,7 +106,7 @@ public class TableLayout implements Layout {
     
     // Phase two: Resolve
 
-    int availableWidth = contentWidth - columnCount * borderSpacing;
+    int availableWidth = contentWidth - (columnCount - 1) * borderSpacing;
     int totalWidth = 0;
     
     for (int i = 0; i < columnDataList.size(); i++) {
@@ -124,7 +132,7 @@ public class TableLayout implements Layout {
       totalWidth += columnData.maxMeasuredWidth;
     }
 
-    System.out.println("Table desired total width: " + totalWidth + " max avail: " + availableWidth);
+    System.out.println("Table desired total width: " + totalWidth + " max avail: " + availableWidth + " columnData length: " + columnDataList.size());
 
     if (totalWidth > availableWidth /* || widthMeasureSpec == View.MeasureSpec.EXACTLY */) {
       for (ColumnData columnData : columnDataList) {
