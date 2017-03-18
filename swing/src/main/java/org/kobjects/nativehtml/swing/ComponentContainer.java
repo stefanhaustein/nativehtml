@@ -2,7 +2,10 @@ package org.kobjects.nativehtml.swing;
 
 
 import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.util.EnumSet;
+import java.util.jar.Attributes.Name;
 
 import org.kobjects.nativehtml.css.CssProperty;
 import org.kobjects.nativehtml.css.CssStyleDeclaration;
@@ -14,15 +17,20 @@ import org.kobjects.nativehtml.dom.HtmlCollection;
 import org.kobjects.nativehtml.html.HtmlComponent;
 import org.kobjects.nativehtml.layout.BlockLayout;
 import org.kobjects.nativehtml.layout.Layout;
+import org.kobjects.nativehtml.layout.TableLayout;
 
 public class ComponentContainer extends AbstractHtmlComponent implements HtmlCollection {
 	private static final EnumSet<ElementType> CONTENT_TYPE = EnumSet.of(ElementType.COMPONENT);
 	
-	Layout layout = new BlockLayout();
+	Layout layout;
 	
 	public ComponentContainer(Document document, String elementName) {
 		super(document, elementName);
-		setLayout(new LayoutAdapter(layout));
+		layout =  elementName.equals("table") ? new TableLayout() : elementName.equals("tr") ? null : new BlockLayout();
+		
+		if (layout != null) {
+		  setLayout(new LayoutAdapter(layout));
+		}
 	}
 
 	@Override
@@ -58,6 +66,11 @@ public class ComponentContainer extends AbstractHtmlComponent implements HtmlCol
 	@Override
 	public void setBorderBoxBounds(int x, int y, int width, int height, int containingBoxWidth) {
 		super.setBorderBoxBounds(x, y, width, height, containingBoxWidth);
+		
+		if (layout == null) {
+		  return;
+		}
+		
 		CssStyleDeclaration style = getComputedStyle();
 
 		int bottom = style.getPx(CssProperty.BORDER_BOTTOM_WIDTH, containingBoxWidth) + 
@@ -80,6 +93,21 @@ public class ComponentContainer extends AbstractHtmlComponent implements HtmlCol
 		return result[0];
 	}
 
+	@Override
+	public void paint(Graphics g) {
+	  if (elementName.equals("table")) {
+	    for (int i = 0; i < getComponentCount(); i++) {
+	      Component component = getComponent(i);
+	      g.translate(component.getX(), component.getY());
+	      component.paint(g);
+	      g.translate(-component.getX(), -component.getY());
+	    }
+	  } else {
+	    super.paint(g);
+	  }
+	  
+	}
+	
 	@Override
 	public int getIntrinsicContentBoxHeightForWidth(int width) {
 		int[] result = new int[2];

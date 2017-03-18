@@ -40,4 +40,44 @@
 
 <p>This is a <a href="http://heise.de">clickable link</a>.</p>
 
+<h2>Tables</h2>
+
+<table>
+    <tr>
+        <th>Col 1 Title</th>
+        <th>Col 2 Title</th>
+        <th>Col 3 Title</th>
+    </tr>
+    <tr>
+        <td rowspan="2">1,2/1</td>
+        <td colspan="2">1/2,3</td>
+    </tr>
+    <tr>
+        <td>2/2<br>2/2</td>
+        <td>2/3</td>
+    </tr>
+</table>
+
+<h2>Text Align</h2>
+
+<p> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+    labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+    laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
+    voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
+    non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+
+<center>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+    labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+    laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
+    voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
+    non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+</center>
+
+<p style="text-align:right">
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+    labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+    laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
+    voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
+    non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+
 </body>

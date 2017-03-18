@@ -8,6 +8,8 @@ import javax.swing.JLabel;
 import javax.swing.JTextPane;
 import javax.swing.text.View;
 
+import org.kobjects.nativehtml.css.CssEnum;
+import org.kobjects.nativehtml.css.CssProperty;
 import org.kobjects.nativehtml.css.CssStyleDeclaration;
 import org.kobjects.nativehtml.dom.ContentType;
 import org.kobjects.nativehtml.dom.Document;
@@ -22,9 +24,9 @@ import org.kobjects.nativehtml.util.HtmlCollectionImpl;
  */
 public class TextComponent extends JTextPane implements org.kobjects.nativehtml.html.HtmlComponent {
 	private static final CssStyleDeclaration EMTPY_STYLE = new CssStyleDeclaration();
-
-	private static void serialize(Element element, StringBuilder sb) {
-		
+	private static int HEIGHT_CORRECTION = -3;
+	
+	private static void serializeInner(Element element, StringBuilder sb) {
 		String name = element.getLocalName();
 		if (name.equals("br")) {
 			sb.append("<br>");
@@ -44,7 +46,7 @@ public class TextComponent extends JTextPane implements org.kobjects.nativehtml.
 			HtmlSerializer.htmlEscape(element.getTextContent(), sb);
 		} else {
 			for (int i = 0; i < children.getLength(); i++) {
-				serialize(children.item(i), sb);
+				serializeInner(children.item(i), sb);
 			}
 		}
 		sb.append("</").append(name).append(">");
@@ -55,6 +57,7 @@ public class TextComponent extends JTextPane implements org.kobjects.nativehtml.
 	private HtmlCollectionImpl children = new HtmlCollectionImpl();
 	private CssStyleDeclaration computedStyle;
 	private int containingBoxWidth;
+	private JEditorPane resizer;
 	
 	public TextComponent(Document document)  {
 		//super("text/html");
@@ -137,10 +140,7 @@ public class TextComponent extends JTextPane implements org.kobjects.nativehtml.
 		if (!dirty) {
 			return;
 		}
-		StringBuilder sb = new StringBuilder();
-		serialize(this, sb);
-		
-		String htmlContent = sb.toString();
+		String htmlContent = serialize();
 		System.out.println("Update: "+ htmlContent);
 		setText(htmlContent); 
 		dirty = false;
@@ -157,17 +157,19 @@ public class TextComponent extends JTextPane implements org.kobjects.nativehtml.
 	
 	public int getIntrinsicContentBoxHeightForWidth(int width) {
 		check();
-		/*if (width == getWidth()) {
+		if (width == getWidth()) {
 			return getPreferredSize().height;
-		}*/
+		}
 		
-		StringBuilder sb = new StringBuilder();
-		serialize(this, sb);
-		
-		JEditorPane resizer = new JEditorPane("text/html",sb.toString());
-		resizer.setMargin(new Insets(0,0,0,0));
-		resizer.setOpaque(false);
-		resizer.setEditable(false);
+		String html = serialize();
+		if (resizer == null) {
+			resizer = new JEditorPane("text/html", html);
+			resizer.setMargin(new Insets(0,0,0,0));
+			resizer.setOpaque(false);
+			resizer.setEditable(false);
+		} else {
+			resizer.setText(html);
+		}
 		//resizer.set
 
 		//resizer.setText(getText());
@@ -182,8 +184,7 @@ public class TextComponent extends JTextPane implements org.kobjects.nativehtml.
 		
 		resizer.setSize(width, Short.MAX_VALUE);
 		float h= resizer.getPreferredSize().height;
-		return Math.round(h);
-		
+		return Math.round(h) - 3;	
 	}
 	
 	
@@ -203,7 +204,21 @@ public class TextComponent extends JTextPane implements org.kobjects.nativehtml.
 	public ContentType getElemnetContentType() {
 		return ContentType.FORMATTED_TEXT;
 	}
+	
+	private String serialize() {
+		StringBuilder sb = new StringBuilder("<div");
+		CssEnum align = getComputedStyle().getEnum(CssProperty.TEXT_ALIGN);
+		if (align == CssEnum.RIGHT) {
+			sb.append(" align='right'>");
+		} else if (align == CssEnum.CENTER) {
+			sb.append(" align='center'>");
+		} else {
+			sb.append('>');
+		}
+		serializeInner(this, sb);
+		sb.append("</div>");
+		return sb.toString();
+	}
+	
 
-	
-	
 }

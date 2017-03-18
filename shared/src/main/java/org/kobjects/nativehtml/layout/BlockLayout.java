@@ -10,8 +10,8 @@ import org.kobjects.nativehtml.html.HtmlComponent;
 
 public class BlockLayout implements Layout {
 
-	private static void adjustLastLine(Element parent, StringBuilder indices, int usedSpace, int availableSpace, int lineHeight, StringBuilder heights) {
-		if (indices == null) {
+	private static void adjustLastLine(Element parent, StringBuilder indicesAndHeights, int usedSpace, int availableSpace, int lineHeight) {
+		if (indicesAndHeights == null) {
 			return;
 		}
 		CssEnum align = parent.getComputedStyle().getEnum(CssProperty.TEXT_ALIGN);
@@ -22,9 +22,9 @@ public class BlockLayout implements Layout {
 	    } else if (align == CssEnum.CENTER) {
 	      addXOffset = (availableSpace - usedSpace) / 2;
 	    }
-    	for (int i = 0; i < indices.length(); i++) {
-    		int index = indices.charAt(i);
-    		int h = heights.charAt(i);
+    	for (int i = 0; i < indicesAndHeights.length(); i += 2) {
+    		int index = indicesAndHeights.charAt(i);
+    		int h = indicesAndHeights.charAt(i + 1);
     		int addYOffset;
     		switch(vAlign) {
     		case TOP:
@@ -37,8 +37,7 @@ public class BlockLayout implements Layout {
     		}
     		((HtmlComponent) parent.getChildren().item(index)).moveRelative(addXOffset, addYOffset);
     	}
-    	heights.setLength(0);
-    	indices.setLength(0);
+    	indicesAndHeights.setLength(0);
 	}
 	
 	@Override
@@ -63,9 +62,7 @@ public class BlockLayout implements Layout {
 		int y = 0;
 		int pendingMargin = 0;
 		int lineHeight = 0;
-		int firstChildIndex = 0;
-		StringBuilder heights = measureOnly ? null : new StringBuilder();
-		StringBuilder indices = measureOnly ? null : new StringBuilder();
+		StringBuilder indicesAndHeights = measureOnly ? null : new StringBuilder();
 		
 		for (int i = 0; i < parent.getChildren().getLength(); i++) {
 			HtmlComponent child = (HtmlComponent) parent.getChildren().item(i);
@@ -81,7 +78,7 @@ public class BlockLayout implements Layout {
 		    
 		    if (display == CssEnum.BLOCK) {
 		    	if (x > 0) {
-	    			adjustLastLine(parent, indices, x - xOfs, containingBoxWidth, lineHeight, heights);
+	    			adjustLastLine(parent, indicesAndHeights, x - xOfs, containingBoxWidth, lineHeight);
 		    		y += lineHeight;
 		    		x = 0;
 		    		lineHeight = 0;
@@ -101,7 +98,6 @@ public class BlockLayout implements Layout {
 		    	pendingMargin = childStyle.getPx(CssProperty.MARGIN_BOTTOM, containingBoxWidth);
 		    } else {
 		    	if (x == 0) {
-		    		firstChildIndex = i;
 		    		y += pendingMargin;
 		    		pendingMargin = 0;
 		    	}
@@ -110,14 +106,14 @@ public class BlockLayout implements Layout {
 		    	int childMarginBoxWidth = childMarginLeft + childBorderBoxWidth + childMarginRight;
 		    	int childBorderBoxHeight = ElementLayoutHelper.getBorderBoxHeight(child, childContentBoxWidth, containingBoxWidth);
 		    	if (x > 0 && x + childMarginBoxWidth > containingBoxWidth) {
-	    			adjustLastLine(parent, indices, x, containingBoxWidth, lineHeight, heights);
+	    			adjustLastLine(parent, indicesAndHeights, x, containingBoxWidth, lineHeight);
 		    		y += lineHeight;
 		    		x = 0;
 		    	}
 		    	if (!measureOnly) {
 		    		child.setBorderBoxBounds(x + xOfs + childMarginLeft, y + yOfs, childBorderBoxWidth, childBorderBoxHeight, containingBoxWidth);
-		    		heights.append((char) childBorderBoxHeight);
-		    		indices.append((char) i);
+		    		indicesAndHeights.append((char) i);
+		    		indicesAndHeights.append((char) childBorderBoxHeight);
 		    	}
 		    	lineHeight = Math.max(lineHeight, childBorderBoxHeight);
 		    	x += childMarginBoxWidth;	
@@ -139,7 +135,7 @@ public class BlockLayout implements Layout {
 		}
 		
 		if (x > 0) {
-  			adjustLastLine(parent, indices, x, containingBoxWidth, lineHeight, heights);
+  			adjustLastLine(parent, indicesAndHeights, x, containingBoxWidth, lineHeight);
 		    y += lineHeight;
 		}
 		y += pendingMargin;

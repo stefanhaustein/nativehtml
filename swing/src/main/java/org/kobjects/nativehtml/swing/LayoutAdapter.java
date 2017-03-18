@@ -67,6 +67,7 @@ public class LayoutAdapter implements LayoutManager {
 
 	@Override
 	public void layoutContainer(Container parent) {
+	  
 		CssStyleDeclaration style = ((HtmlComponent) parent).getComputedStyle();
 
 		int containingBoxWidth = parent.getWidth();

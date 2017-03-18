@@ -17,7 +17,7 @@ import org.kobjects.nativehtml.html.HtmlComponent;
 
 public abstract class AbstractHtmlComponent extends JComponent implements org.kobjects.nativehtml.html.HtmlComponent {
 	private final Document document;
-	private final String name;
+	protected final String elementName;
 	private HashMap<String, String> attributes;
 	private CssStyleDeclaration style;
 	protected CssStyleDeclaration computedStyle;
@@ -25,12 +25,12 @@ public abstract class AbstractHtmlComponent extends JComponent implements org.ko
 	
 	protected AbstractHtmlComponent(Document document, String name) {
 		this.document = document;
-		this.name = name;
+		this.elementName = name;
 	}
 	
 	@Override
 	public String getLocalName() {
-		return name;
+		return elementName;
 	}
 
 	@Override
@@ -84,7 +84,7 @@ public abstract class AbstractHtmlComponent extends JComponent implements org.ko
 
 	@Override
 	public void setTextContent(String textContent) {
-		System.err.println("setTextContent ignored for " + getElementType() + ": " + name + " text: " + textContent);
+		System.err.println("setTextContent ignored for " + getElementType() + ": " + elementName + " text: " + textContent);
 	}
 
 	
