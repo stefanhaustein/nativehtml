@@ -49,7 +49,7 @@ public class HtmlInputComponent extends ComponentWrapper<JComponent> implements 
 	}
 
 	@Override
-	public ContentType getContentType() {
+	public ContentType getElemnetContentType() {
 		return ContentType.EMPTY;
 	}
 

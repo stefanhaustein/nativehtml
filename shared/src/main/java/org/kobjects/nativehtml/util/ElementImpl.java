@@ -128,7 +128,7 @@ public class ElementImpl implements Element {
 	}
 
 	@Override
-	public ContentType getContentType() {
+	public ContentType getElemnetContentType() {
 		return contentType;
 	}
 }

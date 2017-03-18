@@ -16,7 +16,7 @@ public interface Element {
    * Used internally
    */
   ElementType getElementType();
-  ContentType getContentType();
+  ContentType getElemnetContentType();
 
   /**
    * Used internally in insertBefore.

@@ -1,5 +1,8 @@
 package org.kobjects.nativehtml.swing;
 
+import java.awt.Insets;
+
+import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.text.View;
 
@@ -15,7 +18,7 @@ import org.kobjects.nativehtml.util.HtmlCollectionImpl;
 /**
  * Artificially inserted element -- can't have any box styling.
  */
-public class TextComponent extends JLabel implements org.kobjects.nativehtml.html.HtmlComponent {
+public class TextComponent extends JEditorPane implements org.kobjects.nativehtml.html.HtmlComponent {
 	private static final CssStyleDeclaration EMTPY_STYLE = new CssStyleDeclaration();
 
 	private static void serialize(Element element, StringBuilder sb) {
@@ -53,6 +56,10 @@ public class TextComponent extends JLabel implements org.kobjects.nativehtml.htm
 	
 	public TextComponent(Document document) {
 		this.document = document;
+		setContentType("text/html");
+		setEditable(false);
+		setOpaque(false);
+		setMargin(new Insets(0,0,0,0));
 	}
 	
 	@Override
@@ -126,9 +133,9 @@ public class TextComponent extends JLabel implements org.kobjects.nativehtml.htm
 		if (!dirty) {
 			return;
 		}
-		StringBuilder sb = new StringBuilder("<HTML>");
+		StringBuilder sb = new StringBuilder();
 		serialize(this, sb);
-		sb.append("</HTML>");
+		
 		String htmlContent = sb.toString();
 		System.out.println("Update: "+ htmlContent);
 		setText(htmlContent); 
@@ -150,15 +157,22 @@ public class TextComponent extends JLabel implements org.kobjects.nativehtml.htm
 			return getPreferredSize().height;
 		}*/
 		
-		JLabel resizer = new JLabel();
-		resizer.setText(getText());
+		JEditorPane resizer = new JEditorPane("text/html", getText());
+		resizer.setMargin(new Insets(0,0,0,0));
+		resizer.setEditable(false);
+
+		//resizer.setText(getText());
 		 
-	    View view = (View) resizer.getClientProperty(
+	 /*   View view = (View) resizer.getClientProperty(
 	                javax.swing.plaf.basic.BasicHTML.propertyKey);
 	 
         view.setSize(width, 0);
         float h = view.getPreferredSpan(View.Y_AXIS);
         System.out.println("TexComponent height (w=" + width + "):" + h);
+        */
+		
+		resizer.setSize(width, Short.MAX_VALUE);
+		float h= resizer.getPreferredSize().height;
 		return Math.round(h);
 		
 	}
@@ -177,7 +191,7 @@ public class TextComponent extends JLabel implements org.kobjects.nativehtml.htm
 	}
 
 	@Override
-	public ContentType getContentType() {
+	public ContentType getElemnetContentType() {
 		return ContentType.FORMATTED_TEXT;
 	}
 

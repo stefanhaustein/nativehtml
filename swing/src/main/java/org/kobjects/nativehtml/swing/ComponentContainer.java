@@ -88,7 +88,7 @@ public class ComponentContainer extends AbstractHtmlComponent implements HtmlCol
 	}
 
 	@Override
-	public ContentType getContentType() {
+	public ContentType getElemnetContentType() {
 		return ContentType.COMPONENTS;
 	}
 

@@ -57,7 +57,7 @@ public class HtmlSelectComponent extends ComponentWrapper<JComboBox<String>> {
 	}
 
 	@Override
-	public ContentType getContentType() {
+	public ContentType getElemnetContentType() {
 		return ContentType.DATA_ELEMENTS;
 	}
 
