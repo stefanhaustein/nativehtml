@@ -13,73 +13,73 @@ import org.kobjects.nativehtml.layout.Layout;
 
 public class LayoutAdapter implements LayoutManager {
 
-	Layout layout;
-	
-	LayoutAdapter(Layout layout) {
-		this.layout = layout;
-	}
-	
-	@Override
-	public void addLayoutComponent(String name, Component comp) {
-	}
-
-	@Override
-	public void removeLayoutComponent(Component comp) {
-	}
-
-	@Override
-	public Dimension preferredLayoutSize(Container parent) {
-		int containingBoxWidth = 320;
-		CssStyleDeclaration style = ((HtmlComponent) parent).getComputedStyle();
-		
-		int bottom = style.getPx(CssProperty.BORDER_BOTTOM_WIDTH, containingBoxWidth) + 
-				style.getPx(CssProperty.PADDING_BOTTOM, containingBoxWidth);
-		int left = style.getPx(CssProperty.BORDER_LEFT_WIDTH, containingBoxWidth) + 
-				style.getPx(CssProperty.PADDING_LEFT, containingBoxWidth);
-		int top = style.getPx(CssProperty.BORDER_TOP_WIDTH, containingBoxWidth) + 
-				style.getPx(CssProperty.PADDING_TOP, containingBoxWidth);
-		int right = style.getPx(CssProperty.BORDER_RIGHT_WIDTH, containingBoxWidth) + 
-				style.getPx(CssProperty.PADDING_RIGHT, containingBoxWidth);
-		
-		int[] result = new int[2];
-		layout.layout((Element) parent, left, top, containingBoxWidth - left - right, true, result);
-		return new Dimension(left + result[0] + right, top + result[1] + bottom);
-	}
-
-	@Override
-	public Dimension minimumLayoutSize(Container parent) {
-		int containingBoxWidth = 0;
-		CssStyleDeclaration style = ((HtmlComponent) parent).getComputedStyle();
-
-		int bottom = style.getPx(CssProperty.BORDER_BOTTOM_WIDTH, containingBoxWidth) + 
-				style.getPx(CssProperty.PADDING_BOTTOM, containingBoxWidth);
-		int left = style.getPx(CssProperty.BORDER_LEFT_WIDTH, containingBoxWidth) + 
-				style.getPx(CssProperty.PADDING_LEFT, containingBoxWidth);
-		int top = style.getPx(CssProperty.BORDER_TOP_WIDTH, containingBoxWidth) + 
-				style.getPx(CssProperty.PADDING_TOP, containingBoxWidth);
-		int right = style.getPx(CssProperty.BORDER_RIGHT_WIDTH, containingBoxWidth) + 
-				style.getPx(CssProperty.PADDING_RIGHT, containingBoxWidth);
-
-		int[] result = new int[2];
-		layout.layout((Element) parent, left, top, -1, true, result);
-		return new Dimension(left + result[0] + right, top + result[1] + bottom);
-	}
-
-	@Override
-	public void layoutContainer(Container parent) {
+  Layout layout;
 	  
-		CssStyleDeclaration style = ((HtmlComponent) parent).getComputedStyle();
+  LayoutAdapter(Layout layout) {
+    this.layout = layout;   
+  }
+	
+  @Override
+  public void addLayoutComponent(String name, Component comp) {
+  }
 
-		int containingBoxWidth = parent.getWidth();
+  @Override
+  public void removeLayoutComponent(Component comp) {
+  }
+
+  @Override
+  public Dimension preferredLayoutSize(Container container) {
+    HtmlComponent parent = (HtmlComponent) container;
+    CssStyleDeclaration style = ((HtmlComponent) parent).getComputedStyle();
+    int containingBoxWidth = 300;
 		
-		int left = style.getPx(CssProperty.BORDER_LEFT_WIDTH, containingBoxWidth) + 
-				style.getPx(CssProperty.PADDING_LEFT, containingBoxWidth);
-		int top = style.getPx(CssProperty.BORDER_TOP_WIDTH, containingBoxWidth) + 
-				style.getPx(CssProperty.PADDING_TOP, containingBoxWidth);
-		int right = style.getPx(CssProperty.BORDER_RIGHT_WIDTH, containingBoxWidth) + 
-				style.getPx(CssProperty.PADDING_RIGHT, containingBoxWidth);
+    int bottom = style.getPx(CssProperty.BORDER_BOTTOM_WIDTH, containingBoxWidth) + 
+        style.getPx(CssProperty.PADDING_BOTTOM, containingBoxWidth);
+    int left = style.getPx(CssProperty.BORDER_LEFT_WIDTH, containingBoxWidth) + 
+        style.getPx(CssProperty.PADDING_LEFT, containingBoxWidth);
+    int top = style.getPx(CssProperty.BORDER_TOP_WIDTH, containingBoxWidth) + 
+        style.getPx(CssProperty.PADDING_TOP, containingBoxWidth);
+    int right = style.getPx(CssProperty.BORDER_RIGHT_WIDTH, containingBoxWidth) + 
+        style.getPx(CssProperty.PADDING_RIGHT, containingBoxWidth);
+		
+    int contentHeight = layout.layout(parent, left, top, containingBoxWidth - left - right, true);
+    return new Dimension(left + containingBoxWidth + right, top + contentHeight + bottom);
+  }
 
-		layout.layout((Element) parent, left, top, parent.getWidth() - left - right, false, null);
-	}
+  @Override
+  public Dimension minimumLayoutSize(Container container) {
+    HtmlComponent parent = (HtmlComponent) container;
+    CssStyleDeclaration style = parent.getComputedStyle();
+    int containingBoxWidth = 300;
 
+    int bottom = style.getPx(CssProperty.BORDER_BOTTOM_WIDTH, containingBoxWidth) + 
+        style.getPx(CssProperty.PADDING_BOTTOM, containingBoxWidth);
+    int left = style.getPx(CssProperty.BORDER_LEFT_WIDTH, containingBoxWidth) + 
+        style.getPx(CssProperty.PADDING_LEFT, containingBoxWidth);    
+    int top = style.getPx(CssProperty.BORDER_TOP_WIDTH, containingBoxWidth) + 
+        style.getPx(CssProperty.PADDING_TOP, containingBoxWidth);
+    int right = style.getPx(CssProperty.BORDER_RIGHT_WIDTH, containingBoxWidth) + 
+        style.getPx(CssProperty.PADDING_RIGHT, containingBoxWidth);
+
+    int width = layout.measureWidth(parent, Layout.Directive.MINIMUM, containingBoxWidth);
+      int contentHeight = layout.layout(parent, left, top, width, true);
+      return new Dimension(left + width + right, top + contentHeight + bottom); 
+  }
+
+  @Override
+  public void layoutContainer(Container container) {
+    HtmlComponent parent = (HtmlComponent) container;
+    CssStyleDeclaration style = ((HtmlComponent) parent).getComputedStyle();
+
+    int containingBoxWidth = container.getWidth();
+		
+    int left = style.getPx(CssProperty.BORDER_LEFT_WIDTH, containingBoxWidth) + 
+        style.getPx(CssProperty.PADDING_LEFT, containingBoxWidth);
+    int top = style.getPx(CssProperty.BORDER_TOP_WIDTH, containingBoxWidth) + 
+        style.getPx(CssProperty.PADDING_TOP, containingBoxWidth);
+    int right = style.getPx(CssProperty.BORDER_RIGHT_WIDTH, containingBoxWidth) + 
+        style.getPx(CssProperty.PADDING_RIGHT, containingBoxWidth);
+    
+    layout.layout(parent, left, top, container.getWidth() - left - right, false);
+  }
 }

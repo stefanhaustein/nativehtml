@@ -35,13 +35,9 @@ public class TableLayout implements Layout {
     return 1;
   }
 
-  @Override
-  public void layout(Element parent, int xOfs, int yOfs, int contentWidth, boolean measureOnly, int[] result) {
-     
+  
+  static ArrayList<ColumnData> determineColumnData(HtmlComponent parent, Directive directive, int contentBoxWidth) {
     HtmlCollection rowCollection = parent.getChildren();
-		  
-    // Phase one: Measure
-    
     int columnCount = 0;
     ArrayList<ColumnData> columnDataList = new ArrayList<>();
     for (int rowIndex = 0; rowIndex < rowCollection.getLength(); rowIndex++) {
@@ -68,7 +64,7 @@ public class TableLayout implements Layout {
 
         System.out.println("columnIndex after first loop: " + columnIndex);
         
-        int cellBorderBoxWidth = ElementLayoutHelper.getBorderBoxWidth(cell, contentWidth);
+        int cellBorderBoxWidth = ElementLayoutHelper.getBorderBoxMinWidth(cell, contentBoxWidth);
         int colSpan = getColSpan(cell);
         int rowSpan = getRowSpan(cell);
         
@@ -101,12 +97,24 @@ public class TableLayout implements Layout {
     while (columnDataList.size() <= columnCount) {
       columnDataList.add(new ColumnData());
     }
+    
+    return columnDataList;
+  }
+  
+  @Override
+  public int layout(HtmlComponent parent, int xOfs, int yOfs, int contentWidth, boolean measureOnly) {
+     
+    HtmlCollection rowCollection = parent.getChildren();
+		  
+    // Phase one: Measure
+    
+    ArrayList<ColumnData> columnDataList = determineColumnData(parent, Directive.STRETCH, contentWidth);
 
     int borderSpacing = parent.getComputedStyle().getPx(CssProperty.BORDER_SPACING, contentWidth);
     
     // Phase two: Resolve
 
-    int availableWidth = contentWidth - (columnCount - 1) * borderSpacing;
+    int availableWidth = contentWidth - (columnDataList.size() - 1) * borderSpacing;
     int totalWidth = 0;
     
     for (int i = 0; i < columnDataList.size(); i++) {
@@ -234,10 +242,7 @@ public class TableLayout implements Layout {
       currentY += rowHeight + borderSpacing;
     }
     
-    if (result != null) {
-      result[0] = totalWidth;
-      result[1] = currentY - borderSpacing;
-    }
+    return currentY - borderSpacing;
   }
 
 
@@ -252,6 +257,15 @@ public class TableLayout implements Layout {
     int remainingHeight;
     HtmlComponent startCell;
     int yOffset;
+  }
+
+
+
+
+  @Override
+  public int measureWidth(HtmlComponent parent, Directive directive, int parentContentBoxWidth) {
+    // TODO Auto-generated method stub
+    return 300;
   }
 
 

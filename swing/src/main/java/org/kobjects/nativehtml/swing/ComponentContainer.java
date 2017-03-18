@@ -82,15 +82,13 @@ public class ComponentContainer extends AbstractHtmlComponent implements HtmlCol
 		int right = style.getPx(CssProperty.BORDER_RIGHT_WIDTH, containingBoxWidth) + 
 				style.getPx(CssProperty.PADDING_RIGHT, containingBoxWidth);
 		
-		layout.layout(this, left, top, width - left - right, false, null);
+		layout.layout(this, left, top, width - left - right, false);
 	}
 
 	
 	@Override
-	public int getIntrinsicContentBoxWidth(boolean min) {
-		int[] result = new int[2];
-		layout.layout(this, 0, 0, min ? 0 : 320, true /* measureOnly */, result);
-		return result[0];
+	public int getIntrinsicContentBoxWidth(Layout.Directive directive, int contentBoxWidth) {
+	  return layout.measureWidth(this, directive, contentBoxWidth);
 	}
 
 	@Override
@@ -109,10 +107,8 @@ public class ComponentContainer extends AbstractHtmlComponent implements HtmlCol
 	}
 	
 	@Override
-	public int getIntrinsicContentBoxHeightForWidth(int width) {
-		int[] result = new int[2];
-		layout.layout(this, 0, 0, width, true /* measureOnly */, result);
-		return result[1];
+	public int getIntrinsicContentBoxHeightForWidth(int contentBoxWidth, int parentContentBoxWidth) {
+		return layout.layout(this, 0, 0, contentBoxWidth, true /* measureOnly */);
 	}
 
 	@Override

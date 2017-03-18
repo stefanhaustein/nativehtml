@@ -8,6 +8,7 @@ import javax.swing.JComponent;
 import org.kobjects.nativehtml.dom.Document;
 import org.kobjects.nativehtml.dom.ElementType;
 import org.kobjects.nativehtml.dom.HtmlCollection;
+import org.kobjects.nativehtml.layout.Layout;
 
 public abstract class ComponentWrapper<T extends JComponent> extends AbstractHtmlComponent {
 	protected T component;
@@ -31,12 +32,12 @@ public abstract class ComponentWrapper<T extends JComponent> extends AbstractHtm
 	
 	
 	@Override
-	public int getIntrinsicContentBoxWidth(boolean minimal) {
-		return component.getPreferredSize().width;
+	public int getIntrinsicContentBoxWidth(Layout.Directive directive, int parentContentBoxWidth) {
+		return (directive == Layout.Directive.MINIMUM ? component.getMinimumSize() : component.getPreferredSize()).width;
 	}
 
 	@Override
-	public int getIntrinsicContentBoxHeightForWidth(int contentBoxWidth) {
+	public int getIntrinsicContentBoxHeightForWidth(int contentBoxWidth, int parentContentBoxWidth) {
 		return component.getPreferredSize().height;
 	}
 

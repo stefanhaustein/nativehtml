@@ -1,13 +1,16 @@
 package org.kobjects.nativehtml.layout;
 
-import org.kobjects.nativehtml.dom.Element;
+import org.kobjects.nativehtml.html.HtmlComponent;
 
 public interface Layout {
 
-	/**
-	 * If the result is not null, elements will get measured only. 
-	 * If width is -1, 
-	 */
-	void layout(Element parent, int xOfs, int yOfs, int contentWidth, boolean measureOnly, int[] result);
+  enum Directive {
+    MINIMUM, FIT_CONTENT, STRETCH
+  }
+  
+  int measureWidth(HtmlComponent parent, Directive directive, int contentBoxWidth);
+  
+  
+  int layout(HtmlComponent parent, int xOfs, int yOfs, int contentWidth, boolean measureOnly);
 	
 }

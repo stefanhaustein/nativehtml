@@ -17,6 +17,8 @@ import org.kobjects.nativehtml.dom.Element;
 import org.kobjects.nativehtml.dom.ElementType;
 import org.kobjects.nativehtml.dom.HtmlCollection;
 import org.kobjects.nativehtml.html.HtmlSerializer;
+import org.kobjects.nativehtml.layout.Layout;
+import org.kobjects.nativehtml.layout.Layout.Directive;
 import org.kobjects.nativehtml.util.HtmlCollectionImpl;
 
 /**
@@ -146,18 +148,21 @@ public class TextComponent extends JTextPane implements org.kobjects.nativehtml.
 		dirty = false;
 	}
 
-	public int getIntrinsicContentBoxWidth(boolean min) {
+
+	  @Override
+	  public int getIntrinsicContentBoxWidth(Directive directive, int parentContentBoxWidth) {
+        check();
+        
+        // It's ok to use the outer size here because this element can't have borders or padding.
+        int result = (directive == Directive.MINIMUM ? getMinimumSize() : getPreferredSize()).width;
+        // System.out.println("TexComponent width (min=" + min + "):" + result);
+        return result;
+	  }
+
+	  @Override
+	  public int getIntrinsicContentBoxHeightForWidth(int contentBoxWidth, int parentContentBoxWidth) {
 		check();
-		
-		// It's ok to use the outer size here because this element can't have borders or padding.
-		int result = (min ? getMinimumSize() : getPreferredSize()).width;
-		// System.out.println("TexComponent width (min=" + min + "):" + result);
-		return result;
-	}
-	
-	public int getIntrinsicContentBoxHeightForWidth(int width) {
-		check();
-		if (width == getWidth()) {
+		if (contentBoxWidth == getWidth()) {
 			return getPreferredSize().height;
 		}
 		
@@ -182,7 +187,7 @@ public class TextComponent extends JTextPane implements org.kobjects.nativehtml.
         System.out.println("TexComponent height (w=" + width + "):" + h);
         */
 		
-		resizer.setSize(width, Short.MAX_VALUE);
+		resizer.setSize(contentBoxWidth, Short.MAX_VALUE);
 		float h= resizer.getPreferredSize().height;
 		return Math.round(h) - 3;	
 	}
@@ -219,6 +224,7 @@ public class TextComponent extends JTextPane implements org.kobjects.nativehtml.
 		sb.append("</div>");
 		return sb.toString();
 	}
+
 	
 
 }
