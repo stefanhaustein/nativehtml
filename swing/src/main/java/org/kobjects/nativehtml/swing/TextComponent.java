@@ -1,9 +1,11 @@
 package org.kobjects.nativehtml.swing;
 
 import java.awt.Insets;
+import java.io.IOException;
 
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
+import javax.swing.JTextPane;
 import javax.swing.text.View;
 
 import org.kobjects.nativehtml.css.CssStyleDeclaration;
@@ -18,7 +20,7 @@ import org.kobjects.nativehtml.util.HtmlCollectionImpl;
 /**
  * Artificially inserted element -- can't have any box styling.
  */
-public class TextComponent extends JEditorPane implements org.kobjects.nativehtml.html.HtmlComponent {
+public class TextComponent extends JTextPane implements org.kobjects.nativehtml.html.HtmlComponent {
 	private static final CssStyleDeclaration EMTPY_STYLE = new CssStyleDeclaration();
 
 	private static void serialize(Element element, StringBuilder sb) {
@@ -54,10 +56,12 @@ public class TextComponent extends JEditorPane implements org.kobjects.nativehtm
 	private CssStyleDeclaration computedStyle;
 	private int containingBoxWidth;
 	
-	public TextComponent(Document document) {
+	public TextComponent(Document document)  {
+		//super("text/html");
 		this.document = document;
 		setContentType("text/html");
 		setEditable(false);
+	//	setFont(new JLabel().getFont());
 		setOpaque(false);
 		setMargin(new Insets(0,0,0,0));
 	}
@@ -157,9 +161,14 @@ public class TextComponent extends JEditorPane implements org.kobjects.nativehtm
 			return getPreferredSize().height;
 		}*/
 		
-		JEditorPane resizer = new JEditorPane("text/html", getText());
+		StringBuilder sb = new StringBuilder();
+		serialize(this, sb);
+		
+		JEditorPane resizer = new JEditorPane("text/html",sb.toString());
 		resizer.setMargin(new Insets(0,0,0,0));
+		resizer.setOpaque(false);
 		resizer.setEditable(false);
+		//resizer.set
 
 		//resizer.setText(getText());
 		 
