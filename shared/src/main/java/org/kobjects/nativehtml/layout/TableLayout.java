@@ -41,15 +41,18 @@ public class TableLayout implements Layout {
     HtmlCollection rowCollection = parent.getChildren();
 		  
     // Phase one: Measure
+    
     int columnCount = 0;
     ArrayList<ColumnData> columnDataList = new ArrayList<>();
     for (int rowIndex = 0; rowIndex < rowCollection.getLength(); rowIndex++) {
       Element row = rowCollection.item(rowIndex);
       int columnIndex = 0;
-      HtmlCollection columns = row.getChildren();
-      for (int rawColumnIndex = 0; rawColumnIndex < columns.getLength(); rawColumnIndex++) {
+      HtmlCollection columnCollection = row.getChildren();
+      for (int rawColumnIndex = 0; rawColumnIndex < columnCollection.getLength(); rawColumnIndex++) {
         ColumnData columnData;
-        HtmlComponent cell = (HtmlComponent) columns.item(rawColumnIndex);
+        HtmlComponent cell = (HtmlComponent) columnCollection.item(rawColumnIndex);
+        
+        // Find the columnData matching the logical column index, taking row- and colSpans into account.
         while (true) {
           while (columnDataList.size() <= columnIndex) {
             columnDataList.add(new ColumnData());
@@ -61,6 +64,7 @@ public class TableLayout implements Layout {
           columnData.remainingRowSpan--;
           columnIndex++;
         }
+
         int cellWidth = ElementLayoutHelper.getBorderBoxWidth(cell, contentWidth);
         int colSpan = getColSpan(cell);
         int rowSpan = getRowSpan(cell);
@@ -91,6 +95,7 @@ public class TableLayout implements Layout {
     }
 
     int borderSpacing = parent.getComputedStyle().getPx(CssProperty.BORDER_SPACING, contentWidth);
+    
     // Phase two: Resolve
 
     int availableWidth = contentWidth - columnCount * borderSpacing;
@@ -136,6 +141,7 @@ public class TableLayout implements Layout {
       HtmlComponent row = (HtmlComponent) rowCollection.item(rowIndex);
       int columnIndex = 0;
       int rowHeight = 0;
+      
       HtmlCollection cellCollection = row.getChildren();
       for (int physicalCellIndex = 0; physicalCellIndex < cellCollection.getLength(); physicalCellIndex++) {
         HtmlComponent cell = (HtmlComponent) cellCollection.item(physicalCellIndex);
@@ -182,10 +188,11 @@ public class TableLayout implements Layout {
         columnData.startCell = cell;
 
         columnData.spanWidth = spanWidth;
-        columnData.yOffset = currentY + topOffset + bottomOffset;
+        columnData.yOffset = currentY;
         
         columnIndex += colSpan;
       }
+      
       for (ColumnData columnData : columnDataList) {
         if (columnData.remainingRowSpan == 1) {
           rowHeight = Math.max(rowHeight, columnData.remainingHeight);
@@ -229,9 +236,10 @@ public class TableLayout implements Layout {
 
 
   static class ColumnData {
-    int spanWidth;
     int maxMeasuredWidth;
     Map<Integer,Integer> maxWidthForColspan;
+
+    int spanWidth;
     int remainingRowSpan;
     int remainingHeight;
     HtmlComponent startCell;
