@@ -53,12 +53,7 @@ public class HtmlEditorKitExt extends HTMLEditorKit {
         }
       }
     }
-    
 
-    private Image loadImage(URL src) {
-      return newImage;
-    }
-    
 
     @Override
     public URL getImageURL() {
