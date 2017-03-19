@@ -34,6 +34,14 @@ public class TextComponent extends JTextPane implements org.kobjects.nativehtml.
 			sb.append("<br>");
 			return;
 		}
+		
+		if (name.equals("img")) {
+		  sb.append("<img src=\"");
+		  HtmlSerializer.htmlEscape(element.getAttribute("src"), sb);
+		  sb.append("\">");
+		  return;
+		}
+		
 		if (name.equals("a") && element.getAttribute("href") != null) {
 			name = "a href=\"" + HtmlSerializer.htmlEscape(element.getAttribute("href")) + "\"";
 		} else {
@@ -62,9 +70,9 @@ public class TextComponent extends JTextPane implements org.kobjects.nativehtml.
 	private JEditorPane resizer;
 	
 	public TextComponent(Document document)  {
-		//super("text/html");
+	  //super("text/html");
 		this.document = document;
-		setContentType("text/html");
+		setEditorKit(new HtmlEditorKitExt());
 		setEditable(false);
 	//	setFont(new JLabel().getFont());
 		setOpaque(false);
@@ -168,7 +176,8 @@ public class TextComponent extends JTextPane implements org.kobjects.nativehtml.
 		
 		String html = serialize();
 		if (resizer == null) {
-			resizer = new JEditorPane("text/html", html);
+			resizer = new JEditorPane();
+			resizer.setEditorKit(new HtmlEditorKitExt());
 			resizer.setMargin(new Insets(0,0,0,0));
 			resizer.setOpaque(false);
 			resizer.setEditable(false);

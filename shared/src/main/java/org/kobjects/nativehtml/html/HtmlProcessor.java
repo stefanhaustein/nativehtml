@@ -181,7 +181,9 @@ public class HtmlProcessor {
 		  		break;
 		  		
 		  	case XmlPullParser.START_TAG:
-		  		if (Document.getElementType(parser.getName()) == ElementType.FORMATTED_TEXT) {
+		  	    ElementType elementType = Document.getElementType(parser.getName());
+		  		if (elementType == ElementType.FORMATTED_TEXT ||
+		  		    elementType == ElementType.INLINE_IMAGE) {
 		  			if (parser.getName().equals("br")) {
 		  				preserveLeadingSpace = false;
 		  			}
