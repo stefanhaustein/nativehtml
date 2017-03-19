@@ -11,6 +11,7 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Base64;
 import java.util.Dictionary;
@@ -42,21 +43,19 @@ public class HtmlEditorKitExt extends HTMLEditorKit {
       }
 
       URL src = getImageURL();
-      Image image = loadImage(src);
-      if (image != null) {
-        cache.put(src, loadImage(src)); 
+      
+      if (base64 != null) {
+        try {
+          ByteArrayInputStream bais = new ByteArrayInputStream(Base64.getDecoder().decode(base64));
+          BufferedImage newImage = ImageIO.read(bais);
+          cache.put(src, newImage); 
+        } catch (Throwable ex) {
+        }
       }
     }
     
 
     private Image loadImage(URL src) {
-      BufferedImage newImage = null;
-      ByteArrayInputStream bais = null;
-      try {
-        bais = new ByteArrayInputStream(Base64.getDecoder().decode(base64));
-        newImage = ImageIO.read(bais);
-      } catch (Throwable ex) {
-      }
       return newImage;
     }
     
@@ -67,8 +66,14 @@ public class HtmlEditorKitExt extends HTMLEditorKit {
             .getAttribute(HTML.Attribute.SRC);
       if (src.startsWith(BASE64_PREFIX)) {
         base64 = src.substring(BASE64_PREFIX.length());
-        return HtmlEditorKitExt.class.getProtectionDomain()
-                .getCodeSource().getLocation();
+        try {
+          return new URL("file:///dev/nul/" + base64);
+        } catch (MalformedURLException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+       // return HtmlEditorKitExt.class.getProtectionDomain()
+         //       .getCodeSource().getLocation();
 
       }
       return super.getImageURL();
