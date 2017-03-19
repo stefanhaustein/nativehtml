@@ -8,24 +8,8 @@ import org.kobjects.nativehtml.layout.Layout.Directive;
 
 public class ElementLayoutHelper {
 	
-	static int getContentBoxMinWidth(HtmlComponent component, int parentContentBoxWidth) {
-		CssStyleDeclaration style = component.getComputedStyle();
-		// TODO: Take box model into account.
-		return style.isSet(CssProperty.WIDTH) && style.isLenghtFixed(CssProperty.WIDTH) 
-				? style.getPx(CssProperty.WIDTH, 0) 
-				: component.getIntrinsicContentBoxWidth(Directive.MINIMUM, parentContentBoxWidth); 
-	}
-	
-	static int getBorderBoxMinWidth(HtmlComponent component, int parentContentBoxWidth) {
-		CssStyleDeclaration style = component.getComputedStyle();
-		return style.getPx(CssProperty.BORDER_LEFT_WIDTH, 0) 
-				+ style.getPx(CssProperty.PADDING_LEFT, 0)
-				+ getContentBoxMinWidth(component, parentContentBoxWidth)
-				+ style.getPx(CssProperty.PADDING_RIGHT, 0)
-				+ style.getPx(CssProperty.BORDER_LEFT_WIDTH, 0);
-	}
 
-	static int getContentBoxWidth(HtmlComponent element, int parentContentBoxWidth) {
+	static int getContentBoxWidth(HtmlComponent element, Layout.Directive directive, int parentContentBoxWidth) {
 		CssStyleDeclaration style = element.getComputedStyle();
 		if (style.isSet(CssProperty.WIDTH)) {
 			return style.getPx(CssProperty.WIDTH, parentContentBoxWidth);
@@ -42,14 +26,14 @@ public class ElementLayoutHelper {
 		if (style.getEnum(CssProperty.DISPLAY) == CssEnum.BLOCK) {
 			return available;
 		}
-		return Math.min(available, element.getIntrinsicContentBoxWidth(Directive.FIT_CONTENT, available));
+		return Math.min(available, element.getIntrinsicContentBoxWidth(directive, available));
 	}
 	
-	static int getBorderBoxWidth(HtmlComponent element, int parentContentBoxWidth) {
+	static int getBorderBoxWidth(HtmlComponent element, Layout.Directive directive, int parentContentBoxWidth) {
 		CssStyleDeclaration style = element.getComputedStyle();
 		return style.getPx(CssProperty.BORDER_LEFT_WIDTH, parentContentBoxWidth)
 				+ style.getPx(CssProperty.PADDING_LEFT, parentContentBoxWidth)
-				+ getContentBoxWidth(element, parentContentBoxWidth)
+				+ getContentBoxWidth(element, directive, parentContentBoxWidth)
 				+ style.getPx(CssProperty.PADDING_RIGHT, parentContentBoxWidth)
 				+ style.getPx(CssProperty.BORDER_RIGHT_WIDTH, parentContentBoxWidth);
 	}

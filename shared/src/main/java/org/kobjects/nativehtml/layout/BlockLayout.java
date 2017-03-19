@@ -14,16 +14,38 @@ public class BlockLayout implements Layout {
 	public int measureWidth(HtmlComponent parent, Directive directive, int parentContentBoxWidth) {
 	  HtmlCollection children = parent.getChildren();
       int width = 0;
+      int lineWidth = 0;
+      
       for (int i = 0; i < children.getLength(); i++) {
         HtmlComponent child = (HtmlComponent) parent.getChildren().item(i);
         CssStyleDeclaration childStyle = child.getComputedStyle();
-        int childMinWidth = childStyle.getPx(CssProperty.MARGIN_LEFT, parentContentBoxWidth) 
-            + ElementLayoutHelper.getBorderBoxMinWidth(child, parentContentBoxWidth)
-            + childStyle.getPx(CssProperty.MARGIN_RIGHT, parentContentBoxWidth);
+
+        CssEnum display = childStyle.getEnum(CssProperty.DISPLAY);
+        if (display == CssEnum.NONE || childStyle.getEnum(CssProperty.POSITION) == CssEnum.ABSOLUTE) {
+          continue;
+        }
+
+        int childMarginLeft = childStyle.getPx(CssProperty.MARGIN_LEFT, parentContentBoxWidth);
+        int childMarginRight = childStyle.getPx(CssProperty.MARGIN_RIGHT, parentContentBoxWidth);
+            
+        if (display == CssEnum.BLOCK || display == CssEnum.TABLE || directive == Directive.MINIMUM)  {
+          if (lineWidth > 0) {
+            width = Math.max(lineWidth, width);
+          }
+          
+          int childMinWidth = childMarginLeft 
+              + ElementLayoutHelper.getBorderBoxWidth(child, directive, parentContentBoxWidth)
+              + childMarginRight;
                
-        width = Math.max(width, childMinWidth);
+          width = Math.max(width, childMinWidth);
+        } else {
+          // MIN is handled above...
+          lineWidth += childMarginLeft 
+              + ElementLayoutHelper.getBorderBoxWidth(child, Directive.FIT_CONTENT, parentContentBoxWidth)
+              + childMarginRight;
+        }
       }
-      return width;
+      return Math.max(lineWidth, width);
 	}
 	
 	@Override
@@ -56,8 +78,8 @@ public class BlockLayout implements Layout {
 	      }
 	      y += Math.max(pendingMargin, childStyle.getPx(CssProperty.MARGIN_TOP, containingBoxWidth));
 	      
-	      int childContentBoxWidth = ElementLayoutHelper.getContentBoxWidth(child, containingBoxWidth);
-	      int childBorderBoxWidth = ElementLayoutHelper.getBorderBoxWidth(child, containingBoxWidth);
+	      int childContentBoxWidth = ElementLayoutHelper.getContentBoxWidth(child, Layout.Directive.STRETCH, containingBoxWidth);
+	      int childBorderBoxWidth = ElementLayoutHelper.getBorderBoxWidth(child, Layout.Directive.STRETCH, containingBoxWidth);
 	      int childBorderBoxHeight = ElementLayoutHelper.getBorderBoxHeight(child, childContentBoxWidth, containingBoxWidth);
 			
 	      if (!measureOnly) {
@@ -72,8 +94,8 @@ public class BlockLayout implements Layout {
 	        y += pendingMargin;
 	        pendingMargin = 0;
 	      }
-	      int childContentBoxWidth = ElementLayoutHelper.getContentBoxWidth(child, containingBoxWidth);
-	      int childBorderBoxWidth = ElementLayoutHelper.getBorderBoxWidth(child, containingBoxWidth);
+	      int childContentBoxWidth = ElementLayoutHelper.getContentBoxWidth(child, Layout.Directive.FIT_CONTENT, containingBoxWidth);
+	      int childBorderBoxWidth = ElementLayoutHelper.getBorderBoxWidth(child, Layout.Directive.FIT_CONTENT, containingBoxWidth);
 	      int childMarginBoxWidth = childMarginLeft + childBorderBoxWidth + childMarginRight;
 	      int childBorderBoxHeight = ElementLayoutHelper.getBorderBoxHeight(child, childContentBoxWidth, containingBoxWidth);
 	      if (x > 0 && x + childMarginBoxWidth > containingBoxWidth) {
