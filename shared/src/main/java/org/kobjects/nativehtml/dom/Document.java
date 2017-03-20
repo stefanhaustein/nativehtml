@@ -88,5 +88,9 @@ public class Document {
 		return baseUri;
 	}
 
+  public RequestHandler getRequestHandler() {
+    return requestHandler;
+  }
+
 
 }

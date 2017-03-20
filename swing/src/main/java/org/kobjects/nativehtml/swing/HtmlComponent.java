@@ -14,7 +14,7 @@ import org.kobjects.nativehtml.io.HtmlProcessor;
  * Convenience Swing HTML component 
  */
 public class HtmlComponent extends JComponent {
-  HtmlProcessor htmlProcessor = new HtmlProcessor(new SwingElementFactory(), null, null);
+  HtmlProcessor htmlProcessor = new HtmlProcessor(new SwingElementFactory(), new SwingDefaultRequestHandler(), null);
   
   
   public HtmlComponent() {

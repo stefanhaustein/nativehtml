@@ -2,10 +2,13 @@ package org.kobjects.nativehtml.swing;
 
 import java.awt.Insets;
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JTextPane;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import javax.swing.text.View;
 
 import org.kobjects.nativehtml.css.CssEnum;
@@ -17,6 +20,7 @@ import org.kobjects.nativehtml.dom.Element;
 import org.kobjects.nativehtml.dom.ElementType;
 import org.kobjects.nativehtml.dom.HtmlCollection;
 import org.kobjects.nativehtml.io.HtmlSerializer;
+import org.kobjects.nativehtml.io.RequestHandler;
 import org.kobjects.nativehtml.layout.Layout;
 import org.kobjects.nativehtml.layout.Layout.Directive;
 import org.kobjects.nativehtml.swing.text.HtmlEditorKitExt;
@@ -78,6 +82,22 @@ public class SwingTextComponent extends JTextPane implements org.kobjects.native
 	//	setFont(new JLabel().getFont());
 		setOpaque(false);
 		setMargin(new Insets(0,0,0,0));
+		addHyperlinkListener(new HyperlinkListener() {
+          
+          @Override
+          public void hyperlinkUpdate(HyperlinkEvent event) {
+            if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+              RequestHandler requestHandler = document.getRequestHandler();
+              if (requestHandler != null) {
+                try {
+                  requestHandler.openLink(event.getURL().toURI());
+                } catch (URISyntaxException e) {
+                  e.printStackTrace();
+                }
+              }
+            }
+          }
+        });
 	}
 	
 	@Override

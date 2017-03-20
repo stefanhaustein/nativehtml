@@ -1,6 +1,7 @@
 package org.kobjects.nativehtml.io;
 
+import java.net.URI;
 
 public interface RequestHandler {
-  void loadUrl(String url);
+  void openLink(URI uri);
 }
