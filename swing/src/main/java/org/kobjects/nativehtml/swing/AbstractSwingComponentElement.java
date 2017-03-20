@@ -11,19 +11,19 @@ import javax.swing.JComponent;
 import org.kobjects.nativehtml.css.CssEnum;
 import org.kobjects.nativehtml.css.CssProperty;
 import org.kobjects.nativehtml.css.CssStyleDeclaration;
-import org.kobjects.nativehtml.dom.HtmlDocument;
-import org.kobjects.nativehtml.dom.HtmlElement;
-import org.kobjects.nativehtml.html.HtmlComponentElement;
+import org.kobjects.nativehtml.dom.Document;
+import org.kobjects.nativehtml.dom.Element;
+import org.kobjects.nativehtml.html.ComponentElement;
 
-public abstract class AbstractSwingHtmlComponentElement extends JComponent implements org.kobjects.nativehtml.html.HtmlComponentElement {
-	private final HtmlDocument document;
+public abstract class AbstractSwingComponentElement extends JComponent implements org.kobjects.nativehtml.html.ComponentElement {
+	private final Document document;
 	protected final String elementName;
 	private HashMap<String, String> attributes;
 	private CssStyleDeclaration style;
 	protected CssStyleDeclaration computedStyle;
 	private int containingBoxWidth;
 	
-	protected AbstractSwingHtmlComponentElement(HtmlDocument document, String name) {
+	protected AbstractSwingComponentElement(Document document, String name) {
 		this.document = document;
 		this.elementName = name;
 	}
@@ -50,12 +50,12 @@ public abstract class AbstractSwingHtmlComponentElement extends JComponent imple
 	}
 
 	@Override
-	public HtmlElement getParentElement() {
-		return getParent() instanceof HtmlElement ? ((HtmlElement) getParent()) : null;
+	public Element getParentElement() {
+		return getParent() instanceof Element ? ((Element) getParent()) : null;
 	}
 
 	@Override
-	public void setParentElement(HtmlElement parent) {
+	public void setParentElement(Element parent) {
 	}
 
 

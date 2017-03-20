@@ -1,11 +1,11 @@
 package org.kobjects.nativehtml.html;
 
 import org.kobjects.nativehtml.css.CssStyleSheet;
-import org.kobjects.nativehtml.dom.HtmlContentType;
-import org.kobjects.nativehtml.dom.HtmlDocument;
-import org.kobjects.nativehtml.dom.HtmlElement;
-import org.kobjects.nativehtml.dom.HtmlElementFactory;
-import org.kobjects.nativehtml.dom.HtmlElementType;
+import org.kobjects.nativehtml.dom.ContentType;
+import org.kobjects.nativehtml.dom.Document;
+import org.kobjects.nativehtml.dom.Element;
+import org.kobjects.nativehtml.dom.ElementFactory;
+import org.kobjects.nativehtml.dom.ElementType;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -20,11 +20,11 @@ import java.io.Reader;
  */
 public class HtmlProcessor {
   private final HtmlParser parser;
-  private final HtmlElementFactory elementFactory;
+  private final ElementFactory elementFactory;
   private CssStyleSheet styleSheet;
-  private HtmlDocument document;
+  private Document document;
 
-  public HtmlProcessor(HtmlElementFactory elementFactory) {
+  public HtmlProcessor(ElementFactory elementFactory) {
     this.elementFactory = elementFactory;
     try {
       this.parser = new HtmlParser();
@@ -33,12 +33,12 @@ public class HtmlProcessor {
     }
   }
 
-  public HtmlElement parse(Reader reader) {
+  public Element parse(Reader reader) {
     try {
       parser.setInput(reader);
       parser.next();
 
-      document = new HtmlDocument(elementFactory);
+      document = new Document(elementFactory);
       styleSheet = CssStyleSheet.createDefault(16);
       
       // Skip insignificant
@@ -46,7 +46,7 @@ public class HtmlProcessor {
         parser.next();
       }
 
-      HtmlElement result = parseElement();
+      Element result = parseElement();
 
       // Skip insignificant
       while (parser.getEventType() != XmlPullParser.END_DOCUMENT) {
@@ -112,7 +112,7 @@ public class HtmlProcessor {
 
   String indent = "";
   
-  private HtmlElement parseElement() throws IOException, XmlPullParserException {
+  private Element parseElement() throws IOException, XmlPullParserException {
     assert parser.getEventType() == XmlPullParser.START_TAG;
 
     String elementName = parser.getName();
@@ -120,7 +120,7 @@ public class HtmlProcessor {
     System.out.println(indent + "Entering " + elementName);
     indent += "  ";
     
-    HtmlElement element = document.createElement(elementName);
+    Element element = document.createElement(elementName);
 
     for (int i = 0; i < parser.getAttributeCount(); i++) {
     	String attributeName = parser.getAttributeName(i);
@@ -130,9 +130,9 @@ public class HtmlProcessor {
 
     parser.next();
     
-    if (element.getElemnetContentType() == HtmlContentType.TEXT_ONLY || element.getElemnetContentType() == HtmlContentType.EMPTY) {
+    if (element.getElemnetContentType() == ContentType.TEXT_ONLY || element.getElemnetContentType() == ContentType.EMPTY) {
       String textContent = parseTextContentToString();
-      if (element.getElemnetContentType() == HtmlContentType.TEXT_ONLY) {
+      if (element.getElemnetContentType() == ContentType.TEXT_ONLY) {
     	  element.setTextContent(textContent);
       }
     } else {
@@ -151,20 +151,20 @@ public class HtmlProcessor {
    * Re-creates the given descendant of oldRoot as a new descendant of newRoot. Used when text elements are interrupted by 
    * components.
    */
-  HtmlElement recreate(HtmlElement original, HtmlElement oldRoot, HtmlElement newRoot) {
-	  HtmlElement parent = original.getParentElement() == oldRoot ? newRoot : recreate(original.getParentElement(), oldRoot, newRoot);
-	  HtmlElement clone = document.createElement(original.getLocalName());
+  Element recreate(Element original, Element oldRoot, Element newRoot) {
+	  Element parent = original.getParentElement() == oldRoot ? newRoot : recreate(original.getParentElement(), oldRoot, newRoot);
+	  Element clone = document.createElement(original.getLocalName());
 	  // TODO: copy attributes;
 	  parent.insertBefore(clone, null);
 	  return clone;
   }
   
 
-  private void processTextContent(HtmlElement parent) throws IOException, XmlPullParserException {
-	  HtmlElement textComponent = document.createElement("text-component");
+  private void processTextContent(Element parent) throws IOException, XmlPullParserException {
+	  Element textComponent = document.createElement("text-component");
 	  boolean preserveLeadingSpace = false;
 	  parent.insertBefore(textComponent, null);
-	  HtmlElement current = textComponent;
+	  Element current = textComponent;
 	  
 	  loop:
 	  while (true) {
@@ -181,13 +181,13 @@ public class HtmlProcessor {
 		  		break;
 		  		
 		  	case XmlPullParser.START_TAG:
-		  	    HtmlElementType elementType = HtmlDocument.getElementType(parser.getName());
-		  		if (elementType == HtmlElementType.FORMATTED_TEXT ||
-		  		    elementType == HtmlElementType.INLINE_IMAGE) {
+		  	    ElementType elementType = Document.getElementType(parser.getName());
+		  		if (elementType == ElementType.FORMATTED_TEXT ||
+		  		    elementType == ElementType.INLINE_IMAGE) {
 		  			if (parser.getName().equals("br")) {
 		  				preserveLeadingSpace = false;
 		  			}
-		  			HtmlElement child = document.createElement(parser.getName());
+		  			Element child = document.createElement(parser.getName());
 		  			for (int i = 0; i < parser.getAttributeCount(); i++) {
 		  				child.setAttribute(parser.getAttributeName(i), parser.getAttributeValue(i));
 		  			}
@@ -198,7 +198,7 @@ public class HtmlProcessor {
 		  			break loop;
 		  		} else {
 		  			parent.insertBefore(parseElement(), null);
-		  			HtmlElement newTextComponent = document.createElement("text-component");
+		  			Element newTextComponent = document.createElement("text-component");
 		  			current = recreate(current, textComponent, newTextComponent);
 		  			textComponent = newTextComponent;
 		  			preserveLeadingSpace = false;
@@ -215,7 +215,7 @@ public class HtmlProcessor {
 				  preserveLeadingSpace = sb.length() > 0 && sb.charAt(sb.length() - 1) > ' ';
 				  parser.next();
 			  } while (parser.getEventType() == XmlPullParser.TEXT);
-			  HtmlElement child = document.createElement("span");
+			  Element child = document.createElement("span");
 			  child.setTextContent(sb.toString());
 		  	  // AddText could auto-elevate
 			  current.insertBefore(child, null);
@@ -228,16 +228,16 @@ public class HtmlProcessor {
   }
   
   
-  private void parseChildren(HtmlElement parent) throws IOException, XmlPullParserException {
+  private void parseChildren(Element parent) throws IOException, XmlPullParserException {
     while (parser.getEventType() != XmlPullParser.END_TAG && parser.getEventType() != XmlPullParser.END_DOCUMENT) {
     	if ((parser.getEventType() != XmlPullParser.START_TAG && parser.getEventType() != XmlPullParser.TEXT) 
      		   || parser.getEventType() == XmlPullParser.TEXT && parser.getText().trim().isEmpty()) {
     		// Skippable stuff
      	   	parser.next();
         } else if (parser.getEventType() == XmlPullParser.START_TAG 
-    		   && HtmlDocument.getElementType(parser.getName()) != HtmlElementType.FORMATTED_TEXT) {
+    		   && Document.getElementType(parser.getName()) != ElementType.FORMATTED_TEXT) {
         	// Children
-    	   HtmlElement child = parseElement();
+    	   Element child = parseElement();
     	   parent.insertBefore(child, null);
            assert parser.getEventType() == XmlPullParser.END_TAG;
            parser.next();

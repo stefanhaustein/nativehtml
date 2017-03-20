@@ -1,27 +1,25 @@
 package org.kobjects.nativehtml.dom;
 
-import java.util.EnumSet;
-
 import org.kobjects.nativehtml.css.CssStyleDeclaration;
 
-public interface HtmlElement {
+public interface Element {
   String getLocalName();
   void setAttribute(String name, String value);
   String getAttribute(String name);
 
-  HtmlElement getParentElement();
+  Element getParentElement();
   void setComputedStyle(CssStyleDeclaration style);
   
   /**
    * Used internally
    */
-  HtmlElementType getElementType();
-  HtmlContentType getElemnetContentType();
+  ElementType getElementType();
+  ContentType getElemnetContentType();
 
   /**
    * Used internally in insertBefore.
    */
-  void setParentElement(HtmlElement parent);
+  void setParentElement(Element parent);
 
   HtmlCollection getChildren();
 
@@ -32,6 +30,6 @@ public interface HtmlElement {
 
   void setTextContent(String textContent);
 
-  void insertBefore(HtmlElement newChild, HtmlElement referenceChild);
+  void insertBefore(Element newChild, Element referenceChild);
   
 }

@@ -9,17 +9,17 @@ import java.io.UnsupportedEncodingException;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
-import org.kobjects.nativehtml.dom.HtmlElement;
-import org.kobjects.nativehtml.dom.HtmlElementFactory;
+import org.kobjects.nativehtml.dom.Element;
+import org.kobjects.nativehtml.dom.ElementFactory;
 import org.kobjects.nativehtml.html.HtmlProcessor;
 import org.kobjects.nativehtml.swing.SwingElementFactory;
-import org.kobjects.nativehtml.util.HtmlDebugDump;
+import org.kobjects.nativehtml.util.DebugDump;
 
 public class SwingDemo {
 
 	
     public static void main(String[] args) throws UnsupportedEncodingException {
-    	HtmlElementFactory elementFactory = new SwingElementFactory();
+    	ElementFactory elementFactory = new SwingElementFactory();
     	HtmlProcessor processor = new HtmlProcessor(elementFactory);
     	
     	InputStream is = SwingDemo.class.getResourceAsStream("snippet.xml");
@@ -27,7 +27,7 @@ public class SwingDemo {
     	
     	JComponent content = (JComponent) processor.parse(reader);
     	
-    	HtmlDebugDump.dump((HtmlElement) content, "");
+    	DebugDump.dump((Element) content, "");
     	
     	JFrame frame = new JFrame("NativeHtml");
     	frame.setLayout(new BorderLayout());

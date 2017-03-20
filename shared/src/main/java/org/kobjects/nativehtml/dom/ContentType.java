@@ -1,6 +1,6 @@
 package org.kobjects.nativehtml.dom;
 
-public enum HtmlContentType {
+public enum ContentType {
 	COMPONENTS,
 	DATA_ELEMENTS,
 	FORMATTED_TEXT,

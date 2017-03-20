@@ -1,6 +1,6 @@
 package org.kobjects.nativehtml.layout;
 
-import org.kobjects.nativehtml.html.HtmlComponentElement;
+import org.kobjects.nativehtml.html.ComponentElement;
 
 public interface Layout {
 
@@ -8,9 +8,9 @@ public interface Layout {
     MINIMUM, FIT_CONTENT, STRETCH
   }
   
-  int measureWidth(HtmlComponentElement parent, Directive directive, int contentBoxWidth);
+  int measureWidth(ComponentElement parent, Directive directive, int contentBoxWidth);
   
   
-  int layout(HtmlComponentElement parent, int xOfs, int yOfs, int contentWidth, boolean measureOnly);
+  int layout(ComponentElement parent, int xOfs, int yOfs, int contentWidth, boolean measureOnly);
 	
 }

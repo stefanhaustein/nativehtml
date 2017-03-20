@@ -11,10 +11,10 @@ import javax.swing.text.View;
 import org.kobjects.nativehtml.css.CssEnum;
 import org.kobjects.nativehtml.css.CssProperty;
 import org.kobjects.nativehtml.css.CssStyleDeclaration;
-import org.kobjects.nativehtml.dom.HtmlContentType;
-import org.kobjects.nativehtml.dom.HtmlDocument;
-import org.kobjects.nativehtml.dom.HtmlElement;
-import org.kobjects.nativehtml.dom.HtmlElementType;
+import org.kobjects.nativehtml.dom.ContentType;
+import org.kobjects.nativehtml.dom.Document;
+import org.kobjects.nativehtml.dom.Element;
+import org.kobjects.nativehtml.dom.ElementType;
 import org.kobjects.nativehtml.dom.HtmlCollection;
 import org.kobjects.nativehtml.html.HtmlSerializer;
 import org.kobjects.nativehtml.layout.Layout;
@@ -25,11 +25,11 @@ import org.kobjects.nativehtml.util.HtmlCollectionImpl;
 /**
  * Artificially inserted element -- can't have any box styling.
  */
-public class SwingHtmlTextComponent extends JTextPane implements org.kobjects.nativehtml.html.HtmlComponentElement {
+public class SwingTextComponent extends JTextPane implements org.kobjects.nativehtml.html.ComponentElement {
 	private static final CssStyleDeclaration EMTPY_STYLE = new CssStyleDeclaration();
 	private static int HEIGHT_CORRECTION = -3;
 	
-	private static void serializeInner(HtmlElement element, StringBuilder sb) {
+	private static void serializeInner(Element element, StringBuilder sb) {
 		String name = element.getLocalName();
 		if (name.equals("br")) {
 			sb.append("<br>");
@@ -63,14 +63,14 @@ public class SwingHtmlTextComponent extends JTextPane implements org.kobjects.na
 		sb.append("</").append(name).append(">");
 	}
 	
-	private final HtmlDocument document;
+	private final Document document;
 	private boolean dirty;
 	private HtmlCollectionImpl children = new HtmlCollectionImpl();
 	private CssStyleDeclaration computedStyle;
 	private int containingBoxWidth;
 	private JEditorPane resizer;
 	
-	public SwingHtmlTextComponent(HtmlDocument document)  {
+	public SwingTextComponent(Document document)  {
 	  //super("text/html");
 		this.document = document;
 		setEditorKit(new HtmlEditorKitExt());
@@ -96,17 +96,17 @@ public class SwingHtmlTextComponent extends JTextPane implements org.kobjects.na
 	}
 
 	@Override
-	public HtmlElement getParentElement() {
-		return (HtmlElement) getParent();
+	public Element getParentElement() {
+		return (Element) getParent();
 	}
 
 	@Override
-	public HtmlElementType getElementType() {
-		return HtmlElementType.COMPONENT;
+	public ElementType getElementType() {
+		return ElementType.COMPONENT;
 	}
 
 	@Override
-	public void setParentElement(HtmlElement parent) {
+	public void setParentElement(Element parent) {
 	}
 
 	@Override
@@ -140,7 +140,7 @@ public class SwingHtmlTextComponent extends JTextPane implements org.kobjects.na
 	}
 
 	@Override
-	public void insertBefore(HtmlElement newChild, HtmlElement referenceChild) {
+	public void insertBefore(Element newChild, Element referenceChild) {
 		children.insertBefore(newChild, referenceChild);
 		newChild.setParentElement(this);
 		dirty = true;
@@ -216,8 +216,8 @@ public class SwingHtmlTextComponent extends JTextPane implements org.kobjects.na
 	}
 
 	@Override
-	public HtmlContentType getElemnetContentType() {
-		return HtmlContentType.FORMATTED_TEXT;
+	public ContentType getElemnetContentType() {
+		return ContentType.FORMATTED_TEXT;
 	}
 	
 	private String serialize() {

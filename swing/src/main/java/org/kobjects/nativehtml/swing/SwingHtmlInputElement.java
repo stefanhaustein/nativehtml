@@ -9,15 +9,15 @@ import javax.swing.JComponent;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
-import org.kobjects.nativehtml.dom.HtmlContentType;
-import org.kobjects.nativehtml.dom.HtmlDocument;
-import org.kobjects.nativehtml.dom.HtmlElement;
+import org.kobjects.nativehtml.dom.ContentType;
+import org.kobjects.nativehtml.dom.Document;
+import org.kobjects.nativehtml.dom.Element;
 import org.kobjects.nativehtml.dom.HtmlCollection;
 import org.kobjects.nativehtml.dom.HtmlInputElement;
 
-public class SwingHtmlInputElement extends SwingComponentWrapper<JComponent> implements HtmlInputElement {
+public class SwingHtmlInputElement extends SwingComponentWrapperElement<JComponent> implements HtmlInputElement {
 	
-	SwingHtmlInputElement(HtmlDocument document, String name) {
+	SwingHtmlInputElement(Document document, String name) {
 		super(document, name, new JTextField("", 20));
 	}
 	
@@ -49,12 +49,12 @@ public class SwingHtmlInputElement extends SwingComponentWrapper<JComponent> imp
 	}
 
 	@Override
-	public HtmlContentType getElemnetContentType() {
-		return HtmlContentType.EMPTY;
+	public ContentType getElemnetContentType() {
+		return ContentType.EMPTY;
 	}
 
 	@Override
-	public void insertBefore(HtmlElement newChild, HtmlElement referenceChild) {
+	public void insertBefore(Element newChild, Element referenceChild) {
 		// Unsupported... throw??
 		
 	}

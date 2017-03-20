@@ -7,8 +7,8 @@ import java.awt.LayoutManager;
 
 import org.kobjects.nativehtml.css.CssProperty;
 import org.kobjects.nativehtml.css.CssStyleDeclaration;
-import org.kobjects.nativehtml.dom.HtmlElement;
-import org.kobjects.nativehtml.html.HtmlComponentElement;
+import org.kobjects.nativehtml.dom.Element;
+import org.kobjects.nativehtml.html.ComponentElement;
 import org.kobjects.nativehtml.layout.Layout;
 
 public class SwingLayoutAdapter implements LayoutManager {
@@ -29,8 +29,8 @@ public class SwingLayoutAdapter implements LayoutManager {
 
   @Override
   public Dimension preferredLayoutSize(Container container) {
-    HtmlComponentElement parent = (HtmlComponentElement) container;
-    CssStyleDeclaration style = ((HtmlComponentElement) parent).getComputedStyle();
+    ComponentElement parent = (ComponentElement) container;
+    CssStyleDeclaration style = ((ComponentElement) parent).getComputedStyle();
     int containingBoxWidth = 300;
 		
     int bottom = style.getPx(CssProperty.BORDER_BOTTOM_WIDTH, containingBoxWidth) + 
@@ -48,7 +48,7 @@ public class SwingLayoutAdapter implements LayoutManager {
 
   @Override
   public Dimension minimumLayoutSize(Container container) {
-    HtmlComponentElement parent = (HtmlComponentElement) container;
+    ComponentElement parent = (ComponentElement) container;
     CssStyleDeclaration style = parent.getComputedStyle();
     int containingBoxWidth = 300;
 
@@ -68,8 +68,8 @@ public class SwingLayoutAdapter implements LayoutManager {
 
   @Override
   public void layoutContainer(Container container) {
-    HtmlComponentElement parent = (HtmlComponentElement) container;
-    CssStyleDeclaration style = ((HtmlComponentElement) parent).getComputedStyle();
+    ComponentElement parent = (ComponentElement) container;
+    CssStyleDeclaration style = ((ComponentElement) parent).getComputedStyle();
 
     int containingBoxWidth = container.getWidth();
 		

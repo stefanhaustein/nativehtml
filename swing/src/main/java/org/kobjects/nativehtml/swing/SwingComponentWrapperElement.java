@@ -5,15 +5,15 @@ import java.util.EnumSet;
 
 import javax.swing.JComponent;
 
-import org.kobjects.nativehtml.dom.HtmlDocument;
-import org.kobjects.nativehtml.dom.HtmlElementType;
+import org.kobjects.nativehtml.dom.Document;
+import org.kobjects.nativehtml.dom.ElementType;
 import org.kobjects.nativehtml.dom.HtmlCollection;
 import org.kobjects.nativehtml.layout.Layout;
 
-public abstract class SwingComponentWrapper<T extends JComponent> extends AbstractSwingHtmlComponentElement {
+public abstract class SwingComponentWrapperElement<T extends JComponent> extends AbstractSwingComponentElement {
 	protected T component;
 	
-	SwingComponentWrapper(HtmlDocument document, String name, T component) {
+	SwingComponentWrapperElement(Document document, String name, T component) {
 		super(document, name);
 		setLayout(new BorderLayout());
 		setComponent(component);
@@ -42,8 +42,8 @@ public abstract class SwingComponentWrapper<T extends JComponent> extends Abstra
 	}
 
 	@Override
-	public HtmlElementType getElementType() {
-		return HtmlElementType.COMPONENT;
+	public ElementType getElementType() {
+		return ElementType.COMPONENT;
 	}
 
 }
