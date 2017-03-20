@@ -8,17 +8,17 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.event.ListDataListener;
 
-import org.kobjects.nativehtml.dom.ContentType;
-import org.kobjects.nativehtml.dom.Document;
-import org.kobjects.nativehtml.dom.Element;
-import org.kobjects.nativehtml.dom.ElementType;
+import org.kobjects.nativehtml.dom.HtmlContentType;
+import org.kobjects.nativehtml.dom.HtmlDocument;
+import org.kobjects.nativehtml.dom.HtmlElement;
+import org.kobjects.nativehtml.dom.HtmlElementType;
 import org.kobjects.nativehtml.dom.HtmlCollection;
 import org.kobjects.nativehtml.util.HtmlCollectionImpl;
 
-public class HtmlSelectComponent extends ComponentWrapper<JComboBox<String>> {
+public class SwingHtmlSelectComponent extends SwingComponentWrapper<JComboBox<String>> {
 	private HtmlCollectionImpl children = new HtmlCollectionImpl();
 	
-	HtmlSelectComponent(Document document, String name) {
+	SwingHtmlSelectComponent(HtmlDocument document, String name) {
 		super(document, name, new JComboBox<String>());
 		component.setModel(new ComboBoxModel<String>() {
 			ArrayList<ListDataListener> listeners = new ArrayList<>(); 
@@ -57,8 +57,8 @@ public class HtmlSelectComponent extends ComponentWrapper<JComboBox<String>> {
 	}
 
 	@Override
-	public ContentType getElemnetContentType() {
-		return ContentType.DATA_ELEMENTS;
+	public HtmlContentType getElemnetContentType() {
+		return HtmlContentType.DATA_ELEMENTS;
 	}
 
 	@Override
@@ -67,7 +67,7 @@ public class HtmlSelectComponent extends ComponentWrapper<JComboBox<String>> {
 	}
 
 	@Override
-	public void insertBefore(Element newChild, Element referenceChild) {
+	public void insertBefore(HtmlElement newChild, HtmlElement referenceChild) {
 		children.insertBefore(newChild, referenceChild);
 	}
 }

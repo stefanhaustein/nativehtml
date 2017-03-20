@@ -4,24 +4,24 @@ import java.util.EnumSet;
 
 import org.kobjects.nativehtml.css.CssStyleDeclaration;
 
-public interface Element {
+public interface HtmlElement {
   String getLocalName();
   void setAttribute(String name, String value);
   String getAttribute(String name);
 
-  Element getParentElement();
+  HtmlElement getParentElement();
   void setComputedStyle(CssStyleDeclaration style);
   
   /**
    * Used internally
    */
-  ElementType getElementType();
-  ContentType getElemnetContentType();
+  HtmlElementType getElementType();
+  HtmlContentType getElemnetContentType();
 
   /**
    * Used internally in insertBefore.
    */
-  void setParentElement(Element parent);
+  void setParentElement(HtmlElement parent);
 
   HtmlCollection getChildren();
 
@@ -32,6 +32,6 @@ public interface Element {
 
   void setTextContent(String textContent);
 
-  void insertBefore(Element newChild, Element referenceChild);
+  void insertBefore(HtmlElement newChild, HtmlElement referenceChild);
   
 }

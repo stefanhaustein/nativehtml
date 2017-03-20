@@ -4,20 +4,20 @@ package org.kobjects.nativehtml.layout;
 import org.kobjects.nativehtml.css.CssEnum;
 import org.kobjects.nativehtml.css.CssProperty;
 import org.kobjects.nativehtml.css.CssStyleDeclaration;
-import org.kobjects.nativehtml.dom.Element;
+import org.kobjects.nativehtml.dom.HtmlElement;
 import org.kobjects.nativehtml.dom.HtmlCollection;
-import org.kobjects.nativehtml.html.HtmlComponent;
+import org.kobjects.nativehtml.html.HtmlComponentElement;
 
 public class BlockLayout implements Layout {
 
 	@Override 
-	public int measureWidth(HtmlComponent parent, Directive directive, int parentContentBoxWidth) {
+	public int measureWidth(HtmlComponentElement parent, Directive directive, int parentContentBoxWidth) {
 	  HtmlCollection children = parent.getChildren();
       int width = 0;
       int lineWidth = 0;
       
       for (int i = 0; i < children.getLength(); i++) {
-        HtmlComponent child = (HtmlComponent) parent.getChildren().item(i);
+        HtmlComponentElement child = (HtmlComponentElement) parent.getChildren().item(i);
         CssStyleDeclaration childStyle = child.getComputedStyle();
 
         CssEnum display = childStyle.getEnum(CssProperty.DISPLAY);
@@ -49,7 +49,7 @@ public class BlockLayout implements Layout {
 	}
 	
 	@Override
-	public int layout(HtmlComponent parent, int xOfs, int yOfs, int containingBoxWidth, boolean measureOnly) {
+	public int layout(HtmlComponentElement parent, int xOfs, int yOfs, int containingBoxWidth, boolean measureOnly) {
 	  HtmlCollection children = parent.getChildren();
 	  int x = 0;
 	  int y = 0;
@@ -58,7 +58,7 @@ public class BlockLayout implements Layout {
 	  StringBuilder indicesAndHeights = measureOnly ? null : new StringBuilder();
 		
 	  for (int i = 0; i < parent.getChildren().getLength(); i++) {
-	    HtmlComponent child = (HtmlComponent) children.item(i);
+	    HtmlComponentElement child = (HtmlComponentElement) children.item(i);
 	    CssStyleDeclaration childStyle = child.getComputedStyle();
 		    
 	    CssEnum display = childStyle.getEnum(CssProperty.DISPLAY);
@@ -134,7 +134,7 @@ public class BlockLayout implements Layout {
 	}
 	
 
-    private static void adjustLastLine(Element parent, StringBuilder indicesAndHeights, int usedSpace, int availableSpace, int lineHeight) {
+    private static void adjustLastLine(HtmlElement parent, StringBuilder indicesAndHeights, int usedSpace, int availableSpace, int lineHeight) {
         if (indicesAndHeights == null) {
             return;
         }
@@ -159,7 +159,7 @@ public class BlockLayout implements Layout {
             default:
                 addYOffset = (lineHeight - h) / 2;
             }
-            ((HtmlComponent) parent.getChildren().item(index)).moveRelative(addXOffset, addYOffset);
+            ((HtmlComponentElement) parent.getChildren().item(index)).moveRelative(addXOffset, addYOffset);
         }
         indicesAndHeights.setLength(0);
     }

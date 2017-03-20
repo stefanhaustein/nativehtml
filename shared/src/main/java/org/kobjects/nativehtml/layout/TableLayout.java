@@ -6,14 +6,14 @@ import java.util.Map;
 
 import org.kobjects.nativehtml.css.CssProperty;
 import org.kobjects.nativehtml.css.CssStyleDeclaration;
-import org.kobjects.nativehtml.dom.Element;
+import org.kobjects.nativehtml.dom.HtmlElement;
 import org.kobjects.nativehtml.dom.HtmlCollection;
-import org.kobjects.nativehtml.html.HtmlComponent;
+import org.kobjects.nativehtml.html.HtmlComponentElement;
 
 
 public class TableLayout implements Layout {
 
-  static int getColSpan(Element cell) {
+  static int getColSpan(HtmlElement cell) {
     String colSpanStr = cell.getAttribute("colspan");
     if (colSpanStr != null && !colSpanStr.isEmpty()) {
       try {
@@ -24,7 +24,7 @@ public class TableLayout implements Layout {
     return 1;
   }
 
-  static int getRowSpan(Element cell) {
+  static int getRowSpan(HtmlElement cell) {
     String colSpanStr = cell.getAttribute("rowspan");
     if (colSpanStr != null && !colSpanStr.isEmpty()) {
       try {
@@ -36,7 +36,7 @@ public class TableLayout implements Layout {
   }
 
 
-  static int determineColumnData(HtmlComponent parent, Directive directive, int contentBoxWidth, ArrayList<ColumnData> columnDataList) {
+  static int determineColumnData(HtmlComponentElement parent, Directive directive, int contentBoxWidth, ArrayList<ColumnData> columnDataList) {
     HtmlCollection rowCollection = parent.getChildren();
     int columnCount = 0;
     columnDataList.clear();
@@ -46,13 +46,13 @@ public class TableLayout implements Layout {
     Directive cellDirective = directive == Directive.MINIMUM ? directive : Directive.FIT_CONTENT;
     
     for (int rowIndex = 0; rowIndex < rowCollection.getLength(); rowIndex++) {
-      Element row = rowCollection.item(rowIndex);
+      HtmlElement row = rowCollection.item(rowIndex);
       int columnIndex = 0;
       HtmlCollection columnCollection = row.getChildren();
       System.out.println("row " + rowIndex + " column count: " + columnCollection.getLength());
       for (int rawColumnIndex = 0; rawColumnIndex < columnCollection.getLength(); rawColumnIndex++) {
         ColumnData columnData;
-        HtmlComponent cell = (HtmlComponent) columnCollection.item(rawColumnIndex);
+        HtmlComponentElement cell = (HtmlComponentElement) columnCollection.item(rawColumnIndex);
         
         // Find the columnData matching the logical column index, taking row- and colSpans into account.
         while (true) {
@@ -134,14 +134,14 @@ public class TableLayout implements Layout {
   }
 
   @Override
-  public int measureWidth(HtmlComponent parent, Directive directive, int parentContentBoxWidth) {
+  public int measureWidth(HtmlComponentElement parent, Directive directive, int parentContentBoxWidth) {
     return determineColumnData(parent, directive, parentContentBoxWidth, new ArrayList<ColumnData>());
   }
   
 
   
   @Override
-  public int layout(HtmlComponent parent, int xOfs, int yOfs, int contentWidth, boolean measureOnly) {
+  public int layout(HtmlComponentElement parent, int xOfs, int yOfs, int contentWidth, boolean measureOnly) {
      
     HtmlCollection rowCollection = parent.getChildren();
 		  
@@ -168,13 +168,13 @@ public class TableLayout implements Layout {
 
     int currentY = 0;
     for (int rowIndex = 0; rowIndex < rowCollection.getLength(); rowIndex++) {
-      HtmlComponent row = (HtmlComponent) rowCollection.item(rowIndex);
+      HtmlComponentElement row = (HtmlComponentElement) rowCollection.item(rowIndex);
       int columnIndex = 0;
       int rowHeight = 0;
       
       HtmlCollection cellCollection = row.getChildren();
       for (int physicalCellIndex = 0; physicalCellIndex < cellCollection.getLength(); physicalCellIndex++) {
-        HtmlComponent cell = (HtmlComponent) cellCollection.item(physicalCellIndex);
+        HtmlComponentElement cell = (HtmlComponentElement) cellCollection.item(physicalCellIndex);
         ColumnData columnData;
         while (true) {
           // Skip columns with remaining rowspan
@@ -267,7 +267,7 @@ public class TableLayout implements Layout {
     int spanWidth;
     int remainingRowSpan;
     int remainingHeight;
-    HtmlComponent startCell;
+    HtmlComponentElement startCell;
     int yOffset;
   }
 

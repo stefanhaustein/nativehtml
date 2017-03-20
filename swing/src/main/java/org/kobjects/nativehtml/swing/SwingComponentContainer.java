@@ -9,33 +9,33 @@ import java.util.jar.Attributes.Name;
 
 import org.kobjects.nativehtml.css.CssProperty;
 import org.kobjects.nativehtml.css.CssStyleDeclaration;
-import org.kobjects.nativehtml.dom.ContentType;
-import org.kobjects.nativehtml.dom.Document;
-import org.kobjects.nativehtml.dom.Element;
-import org.kobjects.nativehtml.dom.ElementType;
+import org.kobjects.nativehtml.dom.HtmlContentType;
+import org.kobjects.nativehtml.dom.HtmlDocument;
+import org.kobjects.nativehtml.dom.HtmlElement;
+import org.kobjects.nativehtml.dom.HtmlElementType;
 import org.kobjects.nativehtml.dom.HtmlCollection;
-import org.kobjects.nativehtml.html.HtmlComponent;
+import org.kobjects.nativehtml.html.HtmlComponentElement;
 import org.kobjects.nativehtml.layout.BlockLayout;
 import org.kobjects.nativehtml.layout.Layout;
 import org.kobjects.nativehtml.layout.TableLayout;
 
-public class ComponentContainer extends AbstractHtmlComponent implements HtmlCollection {
-	private static final EnumSet<ElementType> CONTENT_TYPE = EnumSet.of(ElementType.COMPONENT);
+public class SwingComponentContainer extends AbstractSwingHtmlComponentElement implements HtmlCollection {
+	private static final EnumSet<HtmlElementType> CONTENT_TYPE = EnumSet.of(HtmlElementType.COMPONENT);
 	
 	Layout layout;
 	
-	public ComponentContainer(Document document, String elementName) {
+	public SwingComponentContainer(HtmlDocument document, String elementName) {
 		super(document, elementName);
 		layout =  elementName.equals("table") ? new TableLayout() : elementName.equals("tr") ? null : new BlockLayout();
 		
 		if (layout != null) {
-		  setLayout(new LayoutAdapter(layout));
+		  setLayout(new SwingLayoutAdapter(layout));
 		}
 	}
 
 	@Override
-	public ElementType getElementType() {
-		return ElementType.COMPONENT;
+	public HtmlElementType getElementType() {
+		return HtmlElementType.COMPONENT;
 	}
 
 	@Override
@@ -49,14 +49,14 @@ public class ComponentContainer extends AbstractHtmlComponent implements HtmlCol
 	}
 
 	@Override
-	public Element item(int index) {
-		return (Element) getComponent(index);
+	public HtmlElement item(int index) {
+		return (HtmlElement) getComponent(index);
 	}
 
 
 	@Override
-	public void insertBefore(Element newChild, Element referenceChild) {
-		if (!(newChild instanceof HtmlComponent)) {
+	public void insertBefore(HtmlElement newChild, HtmlElement referenceChild) {
+		if (!(newChild instanceof HtmlComponentElement)) {
 			System.out.println("Ignoring child " + newChild + " for " + this);
 		} else {
 			add((Component) newChild);
@@ -112,8 +112,8 @@ public class ComponentContainer extends AbstractHtmlComponent implements HtmlCol
 	}
 
 	@Override
-	public ContentType getElemnetContentType() {
-		return ContentType.COMPONENTS;
+	public HtmlContentType getElemnetContentType() {
+		return HtmlContentType.COMPONENTS;
 	}
 
 }

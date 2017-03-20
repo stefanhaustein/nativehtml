@@ -7,15 +7,15 @@ import java.awt.LayoutManager;
 
 import org.kobjects.nativehtml.css.CssProperty;
 import org.kobjects.nativehtml.css.CssStyleDeclaration;
-import org.kobjects.nativehtml.dom.Element;
-import org.kobjects.nativehtml.html.HtmlComponent;
+import org.kobjects.nativehtml.dom.HtmlElement;
+import org.kobjects.nativehtml.html.HtmlComponentElement;
 import org.kobjects.nativehtml.layout.Layout;
 
-public class LayoutAdapter implements LayoutManager {
+public class SwingLayoutAdapter implements LayoutManager {
 
   Layout layout;
 	  
-  LayoutAdapter(Layout layout) {
+  SwingLayoutAdapter(Layout layout) {
     this.layout = layout;   
   }
 	
@@ -29,8 +29,8 @@ public class LayoutAdapter implements LayoutManager {
 
   @Override
   public Dimension preferredLayoutSize(Container container) {
-    HtmlComponent parent = (HtmlComponent) container;
-    CssStyleDeclaration style = ((HtmlComponent) parent).getComputedStyle();
+    HtmlComponentElement parent = (HtmlComponentElement) container;
+    CssStyleDeclaration style = ((HtmlComponentElement) parent).getComputedStyle();
     int containingBoxWidth = 300;
 		
     int bottom = style.getPx(CssProperty.BORDER_BOTTOM_WIDTH, containingBoxWidth) + 
@@ -48,7 +48,7 @@ public class LayoutAdapter implements LayoutManager {
 
   @Override
   public Dimension minimumLayoutSize(Container container) {
-    HtmlComponent parent = (HtmlComponent) container;
+    HtmlComponentElement parent = (HtmlComponentElement) container;
     CssStyleDeclaration style = parent.getComputedStyle();
     int containingBoxWidth = 300;
 
@@ -68,8 +68,8 @@ public class LayoutAdapter implements LayoutManager {
 
   @Override
   public void layoutContainer(Container container) {
-    HtmlComponent parent = (HtmlComponent) container;
-    CssStyleDeclaration style = ((HtmlComponent) parent).getComputedStyle();
+    HtmlComponentElement parent = (HtmlComponentElement) container;
+    CssStyleDeclaration style = ((HtmlComponentElement) parent).getComputedStyle();
 
     int containingBoxWidth = container.getWidth();
 		

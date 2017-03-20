@@ -9,11 +9,11 @@ public interface HtmlCollection {
         }
 
         @Override
-        public Element item(int index) {
+        public HtmlElement item(int index) {
             return null;
         }
     };
 
     int getLength();
-    Element item(int index);
+    HtmlElement item(int index);
 }

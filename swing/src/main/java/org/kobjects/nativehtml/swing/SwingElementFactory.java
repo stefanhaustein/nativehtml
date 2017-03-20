@@ -1,27 +1,27 @@
 package org.kobjects.nativehtml.swing;
 
-import org.kobjects.nativehtml.dom.ElementFactory;
-import org.kobjects.nativehtml.dom.Document;
-import org.kobjects.nativehtml.dom.Element;
-import org.kobjects.nativehtml.dom.ElementType;
+import org.kobjects.nativehtml.dom.HtmlElementFactory;
+import org.kobjects.nativehtml.dom.HtmlDocument;
+import org.kobjects.nativehtml.dom.HtmlElement;
+import org.kobjects.nativehtml.dom.HtmlElementType;
 
-public class SwingElementFactory implements ElementFactory {
+public class SwingElementFactory implements HtmlElementFactory {
 
 	@Override
-	public Element createElement(Document document, ElementType elementType, String elementName) {
+	public HtmlElement createElement(HtmlDocument document, HtmlElementType elementType, String elementName) {
 		switch (elementType) {
 			
 		case COMPONENT:
 			if (elementName.equals("select")) {
-				return new HtmlSelectComponent(document, elementName);
+				return new SwingHtmlSelectComponent(document, elementName);
 			} 
 			if (elementName.equals("input")) {
-				return new HtmlInputComponent(document, elementName);
+				return new SwingHtmlInputElement(document, elementName);
 			}
 			if (elementName.equals("text-component")) {
-				return new TextComponent(document);
+				return new SwingHtmlTextComponent(document);
 			}
-			return new ComponentContainer(document, elementName);
+			return new SwingComponentContainer(document, elementName);
 			
 		default:
 			return null;

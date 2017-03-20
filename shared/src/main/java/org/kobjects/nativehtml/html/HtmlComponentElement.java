@@ -1,9 +1,9 @@
 package org.kobjects.nativehtml.html;
 
-import org.kobjects.nativehtml.dom.Element;
+import org.kobjects.nativehtml.dom.HtmlElement;
 import org.kobjects.nativehtml.layout.Layout;
 
-public interface HtmlComponent extends Element {
+public interface HtmlComponentElement extends HtmlElement {
 	
 	public void setBorderBoxBounds(int x, int y, int width, int height, int parentContentBoxWidth);
 	

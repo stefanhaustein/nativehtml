@@ -3,13 +3,13 @@ package org.kobjects.nativehtml.layout;
 import org.kobjects.nativehtml.css.CssEnum;
 import org.kobjects.nativehtml.css.CssProperty;
 import org.kobjects.nativehtml.css.CssStyleDeclaration;
-import org.kobjects.nativehtml.html.HtmlComponent;
+import org.kobjects.nativehtml.html.HtmlComponentElement;
 import org.kobjects.nativehtml.layout.Layout.Directive;
 
 public class ElementLayoutHelper {
 	
 
-	static int getContentBoxWidth(HtmlComponent element, Layout.Directive directive, int parentContentBoxWidth) {
+	static int getContentBoxWidth(HtmlComponentElement element, Layout.Directive directive, int parentContentBoxWidth) {
 		CssStyleDeclaration style = element.getComputedStyle();
 		if (style.isSet(CssProperty.WIDTH)) {
 			return style.getPx(CssProperty.WIDTH, parentContentBoxWidth);
@@ -29,7 +29,7 @@ public class ElementLayoutHelper {
 		return Math.min(available, element.getIntrinsicContentBoxWidth(directive, available));
 	}
 	
-	static int getBorderBoxWidth(HtmlComponent element, Layout.Directive directive, int parentContentBoxWidth) {
+	static int getBorderBoxWidth(HtmlComponentElement element, Layout.Directive directive, int parentContentBoxWidth) {
 		CssStyleDeclaration style = element.getComputedStyle();
 		return style.getPx(CssProperty.BORDER_LEFT_WIDTH, parentContentBoxWidth)
 				+ style.getPx(CssProperty.PADDING_LEFT, parentContentBoxWidth)
@@ -39,7 +39,7 @@ public class ElementLayoutHelper {
 	}
 
 
-	static int getContentBoxHeight(HtmlComponent component, int contentBoxWidth, int parentContentBoxWidth) {
+	static int getContentBoxHeight(HtmlComponentElement component, int contentBoxWidth, int parentContentBoxWidth) {
 		CssStyleDeclaration style = component.getComputedStyle();
 		if (style.isSet(CssProperty.HEIGHT)) {
 			return style.getPx(CssProperty.WIDTH, parentContentBoxWidth);
@@ -47,7 +47,7 @@ public class ElementLayoutHelper {
 		return component.getIntrinsicContentBoxHeightForWidth(contentBoxWidth, parentContentBoxWidth);
 	}
 
-	static int getBorderBoxHeight(HtmlComponent component, int contentBoxWidth, int parentContentBoxWidth) {
+	static int getBorderBoxHeight(HtmlComponentElement component, int contentBoxWidth, int parentContentBoxWidth) {
 		CssStyleDeclaration style = component.getComputedStyle();
 		return style.getPx(CssProperty.BORDER_TOP_WIDTH, parentContentBoxWidth)
 				+ style.getPx(CssProperty.PADDING_TOP, parentContentBoxWidth)

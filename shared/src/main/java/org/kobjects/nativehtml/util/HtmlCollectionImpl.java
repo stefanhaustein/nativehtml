@@ -2,21 +2,21 @@ package org.kobjects.nativehtml.util;
 
 import java.util.ArrayList;
 
-import org.kobjects.nativehtml.dom.Element;
+import org.kobjects.nativehtml.dom.HtmlElement;
 import org.kobjects.nativehtml.dom.HtmlCollection;
 
-public class HtmlCollectionImpl extends ArrayList<Element> implements HtmlCollection {
+public class HtmlCollectionImpl extends ArrayList<HtmlElement> implements HtmlCollection {
     @Override
     public int getLength() {
         return this.size();
     }
 
     @Override
-    public Element item(int index) {
+    public HtmlElement item(int index) {
         return get(index);
     }
 
-	public void insertBefore(Element newChild, Element referenceChild) {
+	public void insertBefore(HtmlElement newChild, HtmlElement referenceChild) {
 		add(newChild);
 	}
 }

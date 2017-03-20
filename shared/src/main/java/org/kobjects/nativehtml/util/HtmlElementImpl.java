@@ -1,30 +1,27 @@
 package org.kobjects.nativehtml.util;
 
-import java.util.EnumSet;
 import java.util.HashMap;
 
-import org.kobjects.nativehtml.css.Css;
 import org.kobjects.nativehtml.css.CssStyleDeclaration;
-import org.kobjects.nativehtml.css.CssStyleSheet;
-import org.kobjects.nativehtml.dom.ContentType;
-import org.kobjects.nativehtml.dom.Document;
-import org.kobjects.nativehtml.dom.Element;
-import org.kobjects.nativehtml.dom.ElementType;
+import org.kobjects.nativehtml.dom.HtmlContentType;
+import org.kobjects.nativehtml.dom.HtmlDocument;
+import org.kobjects.nativehtml.dom.HtmlElement;
+import org.kobjects.nativehtml.dom.HtmlElementType;
 import org.kobjects.nativehtml.dom.HtmlCollection;
 
-public class ElementImpl implements Element {
-	protected ElementType elementType;
-    protected Element parent;
+public class HtmlElementImpl implements HtmlElement {
+	protected HtmlElementType elementType;
+    protected HtmlElement parent;
     protected String name;
-    protected Document document;
+    protected HtmlDocument document;
     protected HashMap<String, String> attributes;
     protected CssStyleDeclaration style;
     protected CssStyleDeclaration computedStyle;
     protected String textContent;
     protected HtmlCollectionImpl children;
-    protected ContentType contentType;
+    protected HtmlContentType contentType;
     
-    public ElementImpl(Document document, String name, ElementType elementType, ContentType contentType) {
+    public HtmlElementImpl(HtmlDocument document, String name, HtmlElementType elementType, HtmlContentType contentType) {
     	this.document = document;
         this.elementType = elementType;
         this.name = name;
@@ -42,12 +39,12 @@ public class ElementImpl implements Element {
     }
     
     @Override
-    public Element getParentElement() {
+    public HtmlElement getParentElement() {
         return parent;
     }
 
     @Override
-    public void setParentElement(Element parent) {
+    public void setParentElement(HtmlElement parent) {
         this.parent = parent;
     }
 
@@ -90,7 +87,7 @@ public class ElementImpl implements Element {
 	}
 
 	@Override
-	public void insertBefore(Element newChild, Element referenceChild) {
+	public void insertBefore(HtmlElement newChild, HtmlElement referenceChild) {
 		int index;
 		if (children == null) {
 			children = new HtmlCollectionImpl();
@@ -108,7 +105,7 @@ public class ElementImpl implements Element {
 	}
 
 	@Override
-	public ElementType getElementType() {
+	public HtmlElementType getElementType() {
 		return elementType;
 	}
 
@@ -128,7 +125,7 @@ public class ElementImpl implements Element {
 	}
 
 	@Override
-	public ContentType getElemnetContentType() {
+	public HtmlContentType getElemnetContentType() {
 		return contentType;
 	}
 }

@@ -1,4 +1,4 @@
-package org.kobjects.nativehtml.swing;
+package org.kobjects.nativehtml.swing.text;
 
 import javax.swing.text.StyleConstants;
 import javax.swing.text.View;

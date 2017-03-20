@@ -1,6 +1,6 @@
 package org.kobjects.nativehtml.html;
 
-import org.kobjects.nativehtml.dom.Element;
+import org.kobjects.nativehtml.dom.HtmlElement;
 import org.kobjects.nativehtml.dom.HtmlCollection;
 
 public class HtmlSerializer {
@@ -25,7 +25,7 @@ public class HtmlSerializer {
 	}
 	
 	
-	public static String toString(Element element) {
+	public static String toString(HtmlElement element) {
 		String name = element.getLocalName();
 		StringBuilder sb = new StringBuilder();
 		if (name.equals("#TEXT")) {

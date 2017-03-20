@@ -1,12 +1,12 @@
 package org.kobjects.nativehtml.util;
 
-import org.kobjects.nativehtml.dom.Element;
+import org.kobjects.nativehtml.dom.HtmlElement;
 import org.kobjects.nativehtml.dom.HtmlCollection;
 
-public class DebugDump {
+public class HtmlDebugDump {
 	
 	
-	public static final void dump(Element element, String indent) {
+	public static final void dump(HtmlElement element, String indent) {
 		
 		System.out.println(indent + "<" + element.getLocalName() + ">");
 		

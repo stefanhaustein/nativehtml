@@ -1,5 +1,5 @@
 package org.kobjects.nativehtml.dom;
 
-public interface HtmlInputElement extends Element {
+public interface HtmlInputElement extends HtmlElement {
 
 }
