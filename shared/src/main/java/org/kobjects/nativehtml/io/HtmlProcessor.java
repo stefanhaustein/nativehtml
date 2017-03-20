@@ -1,4 +1,4 @@
-package org.kobjects.nativehtml.html;
+package org.kobjects.nativehtml.io;
 
 import org.kobjects.nativehtml.css.CssStyleSheet;
 import org.kobjects.nativehtml.dom.ContentType;
@@ -6,11 +6,13 @@ import org.kobjects.nativehtml.dom.Document;
 import org.kobjects.nativehtml.dom.Element;
 import org.kobjects.nativehtml.dom.ElementFactory;
 import org.kobjects.nativehtml.dom.ElementType;
+import org.kobjects.nativehtml.layout.WebSettings;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.net.URI;
 
 
 /**
@@ -23,9 +25,13 @@ public class HtmlProcessor {
   private final ElementFactory elementFactory;
   private CssStyleSheet styleSheet;
   private Document document;
+  private WebSettings webSettings;
+  private RequestHandler requestHandler;
 
-  public HtmlProcessor(ElementFactory elementFactory) {
+  public HtmlProcessor(ElementFactory elementFactory, RequestHandler requestHandler, WebSettings webSettins) {
     this.elementFactory = elementFactory;
+    this.requestHandler = requestHandler;
+    this.webSettings = webSettings == null ? new WebSettings() : webSettings;
     try {
       this.parser = new HtmlParser();
     } catch (XmlPullParserException e) {
@@ -33,12 +39,12 @@ public class HtmlProcessor {
     }
   }
 
-  public Element parse(Reader reader) {
+  public Element parse(Reader reader, URI baseUri) {
     try {
       parser.setInput(reader);
       parser.next();
 
-      document = new Document(elementFactory);
+      document = new Document(elementFactory, requestHandler, webSettings, baseUri);
       styleSheet = CssStyleSheet.createDefault(16);
       
       // Skip insignificant

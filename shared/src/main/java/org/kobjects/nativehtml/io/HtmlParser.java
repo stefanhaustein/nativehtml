@@ -1,4 +1,4 @@
-package org.kobjects.nativehtml.html;
+package org.kobjects.nativehtml.io;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;

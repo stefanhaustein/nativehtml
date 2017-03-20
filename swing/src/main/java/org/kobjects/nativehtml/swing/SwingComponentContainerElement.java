@@ -14,8 +14,8 @@ import org.kobjects.nativehtml.dom.Document;
 import org.kobjects.nativehtml.dom.Element;
 import org.kobjects.nativehtml.dom.ElementType;
 import org.kobjects.nativehtml.dom.HtmlCollection;
-import org.kobjects.nativehtml.html.ComponentElement;
 import org.kobjects.nativehtml.layout.BlockLayout;
+import org.kobjects.nativehtml.layout.ComponentElement;
 import org.kobjects.nativehtml.layout.Layout;
 import org.kobjects.nativehtml.layout.TableLayout;
 

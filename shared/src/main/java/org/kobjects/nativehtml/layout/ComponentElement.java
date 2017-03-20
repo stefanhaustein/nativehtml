@@ -1,7 +1,6 @@
-package org.kobjects.nativehtml.html;
+package org.kobjects.nativehtml.layout;
 
 import org.kobjects.nativehtml.dom.Element;
-import org.kobjects.nativehtml.layout.Layout;
 
 public interface ComponentElement extends Element {
 	

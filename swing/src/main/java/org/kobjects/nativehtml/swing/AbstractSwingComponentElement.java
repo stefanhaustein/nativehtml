@@ -13,9 +13,9 @@ import org.kobjects.nativehtml.css.CssProperty;
 import org.kobjects.nativehtml.css.CssStyleDeclaration;
 import org.kobjects.nativehtml.dom.Document;
 import org.kobjects.nativehtml.dom.Element;
-import org.kobjects.nativehtml.html.ComponentElement;
+import org.kobjects.nativehtml.layout.ComponentElement;
 
-public abstract class AbstractSwingComponentElement extends JComponent implements org.kobjects.nativehtml.html.ComponentElement {
+public abstract class AbstractSwingComponentElement extends JComponent implements org.kobjects.nativehtml.layout.ComponentElement {
 	private final Document document;
 	protected final String elementName;
 	private HashMap<String, String> attributes;

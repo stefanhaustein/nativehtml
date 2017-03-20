@@ -3,12 +3,9 @@ package org.kobjects.nativehtml.layout;
 import org.kobjects.nativehtml.css.CssEnum;
 import org.kobjects.nativehtml.css.CssProperty;
 import org.kobjects.nativehtml.css.CssStyleDeclaration;
-import org.kobjects.nativehtml.html.ComponentElement;
 import org.kobjects.nativehtml.layout.Layout.Directive;
 
 public class ElementLayoutHelper {
-	
-
 	static int getContentBoxWidth(ComponentElement element, Layout.Directive directive, int parentContentBoxWidth) {
 		CssStyleDeclaration style = element.getComputedStyle();
 		if (style.isSet(CssProperty.WIDTH)) {

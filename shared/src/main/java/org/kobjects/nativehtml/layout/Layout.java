@@ -1,7 +1,5 @@
 package org.kobjects.nativehtml.layout;
 
-import org.kobjects.nativehtml.html.ComponentElement;
-
 public interface Layout {
 
   enum Directive {

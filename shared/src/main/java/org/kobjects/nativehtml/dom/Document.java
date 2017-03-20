@@ -1,10 +1,10 @@
 package org.kobjects.nativehtml.dom;
 
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.EnumSet;
 import java.util.LinkedHashMap;
 
+import org.kobjects.nativehtml.io.RequestHandler;
+import org.kobjects.nativehtml.layout.WebSettings;
 import org.kobjects.nativehtml.util.ElementImpl;
 
 public class Document {
@@ -61,16 +61,16 @@ public class Document {
         return result == null ? ContentType.COMPONENTS : result;
     }
 
-	private URI baseURI;
 	private final ElementFactory elementFactory;
+    private final WebSettings webSettings;
+    private RequestHandler requestHandler;
+    private URI baseUri;
 
-	public Document(ElementFactory elementFactory) {
+	public Document(ElementFactory elementFactory, RequestHandler requestHandler, WebSettings webSettings, URI baseUri) {
 		this.elementFactory = elementFactory;
-		try {
-			baseURI = new URI("file:///");
-		} catch (URISyntaxException e) {
-			throw new RuntimeException();
-		}
+		this.requestHandler = requestHandler;
+		this.webSettings = webSettings == null ? new WebSettings() : webSettings;
+		this.baseUri = baseUri;
 	}
     
     public Element createElement(String name) {
@@ -81,11 +81,11 @@ public class Document {
     }
 
     public void setBaseURI(URI baseURI) {
-    	this.baseURI = baseURI;
+    	this.baseUri = baseURI;
     }
 
 	public URI getBaseURI() {
-		return baseURI;
+		return baseUri;
 	}
 
 

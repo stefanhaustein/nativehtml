@@ -16,7 +16,7 @@ import org.kobjects.nativehtml.dom.Document;
 import org.kobjects.nativehtml.dom.Element;
 import org.kobjects.nativehtml.dom.ElementType;
 import org.kobjects.nativehtml.dom.HtmlCollection;
-import org.kobjects.nativehtml.html.HtmlSerializer;
+import org.kobjects.nativehtml.io.HtmlSerializer;
 import org.kobjects.nativehtml.layout.Layout;
 import org.kobjects.nativehtml.layout.Layout.Directive;
 import org.kobjects.nativehtml.swing.text.HtmlEditorKitExt;
@@ -25,7 +25,7 @@ import org.kobjects.nativehtml.util.HtmlCollectionImpl;
 /**
  * Artificially inserted element -- can't have any box styling.
  */
-public class SwingTextComponent extends JTextPane implements org.kobjects.nativehtml.html.ComponentElement {
+public class SwingTextComponent extends JTextPane implements org.kobjects.nativehtml.layout.ComponentElement {
 	private static final CssStyleDeclaration EMTPY_STYLE = new CssStyleDeclaration();
 	private static int HEIGHT_CORRECTION = -3;
 	

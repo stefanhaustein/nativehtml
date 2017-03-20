@@ -1,4 +1,4 @@
-package org.kobjects.nativehtml.html;
+package org.kobjects.nativehtml.io;
 
 import org.kobjects.nativehtml.dom.Element;
 import org.kobjects.nativehtml.dom.HtmlCollection;

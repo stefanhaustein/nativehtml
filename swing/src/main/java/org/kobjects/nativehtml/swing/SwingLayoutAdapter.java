@@ -8,7 +8,7 @@ import java.awt.LayoutManager;
 import org.kobjects.nativehtml.css.CssProperty;
 import org.kobjects.nativehtml.css.CssStyleDeclaration;
 import org.kobjects.nativehtml.dom.Element;
-import org.kobjects.nativehtml.html.ComponentElement;
+import org.kobjects.nativehtml.layout.ComponentElement;
 import org.kobjects.nativehtml.layout.Layout;
 
 public class SwingLayoutAdapter implements LayoutManager {
