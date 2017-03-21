@@ -2,6 +2,7 @@ package org.kobjects.nativehtml.swing;
 
 import java.awt.Insets;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 
 import javax.swing.JEditorPane;
@@ -10,6 +11,7 @@ import javax.swing.JTextPane;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.View;
+import javax.swing.text.html.HTMLDocument;
 
 import org.kobjects.nativehtml.css.CssEnum;
 import org.kobjects.nativehtml.css.CssProperty;
@@ -77,7 +79,8 @@ public class SwingTextComponent extends JTextPane implements org.kobjects.native
 	public SwingTextComponent(Document document)  {
 	  //super("text/html");
 		this.document = document;
-		setEditorKit(new HtmlEditorKitExt());
+		setEditorKit(new HtmlEditorKitExt(document.getBaseURI()));
+		
 		setEditable(false);
 	//	setFont(new JLabel().getFont());
 		setOpaque(false);
@@ -198,7 +201,7 @@ public class SwingTextComponent extends JTextPane implements org.kobjects.native
 		String html = serialize();
 		if (resizer == null) {
 			resizer = new JEditorPane();
-			resizer.setEditorKit(new HtmlEditorKitExt());
+			resizer.setEditorKit(new HtmlEditorKitExt(document.getBaseURI()));
 			resizer.setMargin(new Insets(0,0,0,0));
 			resizer.setOpaque(false);
 			resizer.setEditable(false);

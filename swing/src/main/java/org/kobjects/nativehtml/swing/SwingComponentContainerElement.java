@@ -1,12 +1,16 @@
 package org.kobjects.nativehtml.swing;
 
 
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.EnumSet;
 import java.util.jar.Attributes.Name;
 
+import org.kobjects.nativehtml.css.CssEnum;
 import org.kobjects.nativehtml.css.CssProperty;
 import org.kobjects.nativehtml.css.CssStyleDeclaration;
 import org.kobjects.nativehtml.dom.ContentType;
@@ -18,6 +22,7 @@ import org.kobjects.nativehtml.layout.BlockLayout;
 import org.kobjects.nativehtml.layout.ComponentElement;
 import org.kobjects.nativehtml.layout.Layout;
 import org.kobjects.nativehtml.layout.TableLayout;
+import org.kobjects.nativehtml.util.Strings;
 
 public class SwingComponentContainerElement extends AbstractSwingComponentElement implements HtmlCollection {
 	private static final EnumSet<ElementType> CONTENT_TYPE = EnumSet.of(ElementType.COMPONENT);
@@ -93,9 +98,31 @@ public class SwingComponentContainerElement extends AbstractSwingComponentElemen
 
 	@Override
 	public void paint(Graphics g) {
-	  if (elementName.equals("table")) {
+	  if (true) {
+	    paintComponent(g);
+	    int listIndex = 1;
+	    CssEnum listStyleType = getComputedStyle().getEnum(CssProperty.LIST_STYLE_TYPE);
 	    for (int i = 0; i < getComponentCount(); i++) {
 	      Component component = getComponent(i);
+	      Element element = (Element) component;
+          CssStyleDeclaration childStyle = element.getComputedStyle();
+	      
+	      if (childStyle.getEnum(CssProperty.DISPLAY) == CssEnum.LIST_ITEM 
+	          && listStyleType != CssEnum.NONE) {
+	        String bullet = Strings.getBullet(listStyleType, listIndex++);
+
+	        // TODO: Add util to translate colors, fonts etc. -- and use them properly!
+	        g.setFont(new Font(element.getComputedStyle().getString(CssProperty.FONT_FAMILY), 0, 
+	            element.getComputedStyle().getPx(CssProperty.FONT_SIZE, 0)));
+	        
+	        FontMetrics fontMetrics = g.getFontMetrics();
+	        int dx = -fontMetrics.stringWidth(bullet);
+	        int dy = fontMetrics.getAscent() + fontMetrics.getLeading() 
+	          + childStyle.getPx(CssProperty.PADDING_TOP, 0) + childStyle.getPx(CssProperty.BORDER_TOP_WIDTH, 0);
+	        g.setColor(Color.BLACK);
+	        g.drawString(bullet, component.getX() + dx, component.getY() + dy);
+	      }
+	      
 	      g.translate(component.getX(), component.getY());
 	      component.paint(g);
 	      g.translate(-component.getX(), -component.getY());

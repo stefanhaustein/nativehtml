@@ -27,7 +27,8 @@ public class BlockLayout implements Layout {
         int childMarginLeft = childStyle.getPx(CssProperty.MARGIN_LEFT, parentContentBoxWidth);
         int childMarginRight = childStyle.getPx(CssProperty.MARGIN_RIGHT, parentContentBoxWidth);
             
-        if (display == CssEnum.BLOCK || display == CssEnum.TABLE || directive == Directive.MINIMUM)  {
+        if (display == CssEnum.BLOCK || display == CssEnum.TABLE || display == CssEnum.LIST_ITEM 
+            || directive == Directive.MINIMUM)  {
           if (lineWidth > 0) {
             width = Math.max(lineWidth, width);
           }
@@ -68,7 +69,7 @@ public class BlockLayout implements Layout {
 	    int childMarginLeft = childStyle.getPx(CssProperty.MARGIN_LEFT, containingBoxWidth);
 	    int childMarginRight = childStyle.getPx(CssProperty.MARGIN_RIGHT, containingBoxWidth);
 		    
-	    if (display == CssEnum.BLOCK || display == CssEnum.TABLE) {
+	    if (display == CssEnum.BLOCK || display == CssEnum.TABLE || display == CssEnum.LIST_ITEM) {
 	      if (x > 0) {
 	        adjustLastLine(parent, indicesAndHeights, x - xOfs, containingBoxWidth, lineHeight);
 	        y += lineHeight;
