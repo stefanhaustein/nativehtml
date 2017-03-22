@@ -49,7 +49,7 @@ public class SwingHtmlInputElement extends SwingComponentWrapperElement<JCompone
 	}
 
 	@Override
-	public ContentType getElemnetContentType() {
+	public ContentType getElementContentType() {
 		return ContentType.EMPTY;
 	}
 

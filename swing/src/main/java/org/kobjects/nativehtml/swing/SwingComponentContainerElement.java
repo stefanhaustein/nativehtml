@@ -139,7 +139,7 @@ public class SwingComponentContainerElement extends AbstractSwingComponentElemen
 	}
 
 	@Override
-	public ContentType getElemnetContentType() {
+	public ContentType getElementContentType() {
 		return ContentType.COMPONENTS;
 	}
 

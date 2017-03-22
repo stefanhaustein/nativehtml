@@ -167,7 +167,12 @@ public abstract class AbstractSwingComponentElement extends JComponent implement
 		            i, h - ((i * dBottom) >> 8) + 1);
 	      }
 	    }
-		
+	}
+	
+	
+	@Override
+	public Document getOwnerDocument() {
+	  return document;
 	}
 
 }

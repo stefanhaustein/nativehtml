@@ -136,9 +136,9 @@ public class HtmlProcessor {
 
     parser.next();
     
-    if (element.getElemnetContentType() == ContentType.TEXT_ONLY || element.getElemnetContentType() == ContentType.EMPTY) {
+    if (element.getElementContentType() == ContentType.TEXT_ONLY || element.getElementContentType() == ContentType.EMPTY) {
       String textContent = parseTextContentToString();
-      if (element.getElemnetContentType() == ContentType.TEXT_ONLY) {
+      if (element.getElementContentType() == ContentType.TEXT_ONLY) {
     	  element.setTextContent(textContent);
       }
     } else {

@@ -125,7 +125,12 @@ public class ElementImpl implements Element {
 	}
 
 	@Override
-	public ContentType getElemnetContentType() {
+	public ContentType getElementContentType() {
 		return contentType;
 	}
+
+  @Override
+  public Document getOwnerDocument() {
+    return document;
+  }
 }

@@ -14,7 +14,7 @@ public interface Element {
    * Used internally
    */
   ElementType getElementType();
-  ContentType getElemnetContentType();
+  ContentType getElementContentType();
 
   /**
    * Used internally in insertBefore.
@@ -31,5 +31,6 @@ public interface Element {
   void setTextContent(String textContent);
 
   void insertBefore(Element newChild, Element referenceChild);
+  Document getOwnerDocument();
   
 }
