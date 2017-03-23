@@ -8,7 +8,6 @@ import org.kobjects.nativehtml.layout.WebSettings;
 import org.kobjects.nativehtml.util.ElementImpl;
 
 public class Document {
-	
     private static final LinkedHashMap<String, ElementType> ELEMENT_TYPES = new LinkedHashMap<>();
     private static final LinkedHashMap<String, ContentType> CONTENT_TYPES = new LinkedHashMap<>();
     
@@ -26,7 +25,7 @@ public class Document {
         add("em", ElementType.FORMATTED_TEXT, ContentType.FORMATTED_TEXT);
         add("font", ElementType.FORMATTED_TEXT, ContentType.FORMATTED_TEXT);
         add("head", ElementType.DATA, ContentType.DATA_ELEMENTS);
-        add("html", ElementType.SKIP, ContentType.MIXED);
+        add("html", ElementType.SKIP, ContentType.COMPONENTS);  // head gets special handling
         add("i", ElementType.FORMATTED_TEXT, ContentType.FORMATTED_TEXT);
         add("img", ElementType.INLINE_IMAGE, ContentType.EMPTY);  // Might be an image (=LEAF_COMPONENT), too; will get adjusted
         add("input", ElementType.COMPONENT, ContentType.EMPTY);
@@ -65,6 +64,8 @@ public class Document {
     private final WebSettings webSettings;
     private RequestHandler requestHandler;
     private URI baseUri;
+    private Element head;
+    private Element body;
 
 	public Document(ElementFactory elementFactory, RequestHandler requestHandler, WebSettings webSettings, URI baseUri) {
 		this.elementFactory = elementFactory;
@@ -92,5 +93,20 @@ public class Document {
     return requestHandler;
   }
 
+  public void setHead(Element head) {
+    this.head = head;
+  }
 
+  public void setBody(Element body) {
+    this.body = body;
+  }
+  
+  public Element getBody() {
+    return body;
+  }
+
+  public Element getHead() {
+    return head;
+  }
+  
 }

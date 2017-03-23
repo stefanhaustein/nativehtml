@@ -1,195 +1,283 @@
 package org.kobjects.nativehtml.io;
 
+import org.kobjects.nativehtml.css.CssStyleSheet;
+import org.kobjects.nativehtml.dom.ContentType;
+import org.kobjects.nativehtml.dom.Document;
+import org.kobjects.nativehtml.dom.Element;
+import org.kobjects.nativehtml.dom.ElementFactory;
+import org.kobjects.nativehtml.dom.ElementType;
+import org.kobjects.nativehtml.layout.WebSettings;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
+import java.net.URI;
+
 
 
 /**
- * Turns the token stream from an xml pull parser in relaxed mode into well formed XML,
- * taking implicitly closed and empty HTML elements into account.
+ * Uses a HtmlParser to generate a widget tree that corresponds to the HTML code.
+ *
+ * Can be re-used, but is not thread safe.
  */
 public class HtmlParser {
+  private final HtmlNormalizer input;
+  private final ElementFactory elementFactory;
+  private CssStyleSheet styleSheet;
+  private Document document;
+  private WebSettings webSettings;
+  private RequestHandler requestHandler;
 
-  public enum ElementProperty {
-    SELF_CLOSING,  // Automatically close this element
-    TEXT,          // Element contains text, will be parsed to HtmlTextView.
-    LOGICAL,
-  }
-
-  private static final String[] HTML_ENTITY_TABLE = {
-      "acute", "\u00B4",
-      "apos", "\u0027",
-      "Auml", "\u00C4", "auml", "\u00E4",
-      "nbsp", "\u00a0",
-      "Ouml", "\u00D6", "ouml", "\u00F6",
-      "szlig", "\u00DF",
-      "Uuml", "\u00DC", "uuml", "\u00FC",
-  };
-
-  private final static ElementData EMPTY_ELEMENT_DATA = new ElementData(false);
-  private final static LinkedHashMap<String, ElementData> DTD = new LinkedHashMap<>();
-  static {
-    DTD.put("area", new ElementData(true));
-    DTD.put("base", new ElementData(true));
-    DTD.put("br", new ElementData(true));
-    DTD.put("col", new ElementData(true));
-    DTD.put("command", new ElementData(true));
-    DTD.put("embed", new ElementData(true));
-    DTD.put("hr", new ElementData(true));
-    DTD.put("img", new ElementData(true));
-    DTD.put("input", new ElementData(true));
-    DTD.put("keygen", new ElementData(true));
-    DTD.put("li", new ElementData(false, "li"));
-    DTD.put("link", new ElementData(true));
-    DTD.put("meta", new ElementData(true));
-    DTD.put("p", new ElementData(false,
-        "address", "article", "aside", "blockquote", "dir", "div", "dl", "fieldset", "footer",
-        "form", "h1", "h2", "h3", "h4", "h5", "h6", "header", "hr", "menu", "nav", "ol", "p", "pre",
-        "section", "table", "or", "ul"));
-    DTD.put("param", new ElementData(true));
-    DTD.put("source", new ElementData(true));
-    DTD.put("td", new ElementData(false, "td", "th", "tr"));
-    DTD.put("th", new ElementData(false, "td", "th", "tr"));
-    DTD.put("tr", new ElementData(false, "tr"));
-    DTD.put("track", new ElementData(true));
-    DTD.put("wbr", new ElementData(true));
-  }
-
-  static private ElementData getElementData(String name) {
-    ElementData result = DTD.get(name);
-    return result == null ? EMPTY_ELEMENT_DATA : result;
-  }
-
-  private XmlPullParser parser;
-  private int currentEvent;
-  private String currentName;
-  private boolean insertedEvent;
-  private ArrayList<String> openTags = new ArrayList<>();
-
-  public HtmlParser() throws XmlPullParserException {
-    parser = XmlPullParserFactory.newInstance().newPullParser();
-    parser.setFeature("http://xmlpull.org/v1/doc/features.html#relaxed", true);
-  }
-
-  public int getAttributeCount() {
-    return parser.getAttributeCount();
-  }
-
-  public String getAttributeName(int index) {
-    return parser.getAttributeName(index);
-  }
-
-  public String getAttributeValue(int index) {
-    return parser.getAttributeValue(index);
-  }
-
-  public String getAttributeValue(String name) {
-    return parser.getAttributeValue(null, name);
-  }
-
-  public int getEventType() throws XmlPullParserException {
-    return currentEvent;
-  }
-
-  public String getName() {
-    return currentName;
-  }
-
-  public String getText() {
-    return parser.getText();
-  }
-
-  public String getPositionDescription() {
-    return parser.getPositionDescription();
-  }
-
-  public int next() throws IOException, XmlPullParserException {
-    // Insert close tags for self-closing elements.
-    if (currentEvent == XmlPullParser.START_TAG && getElementData(currentName).selfClosing) {
-      currentEvent = XmlPullParser.END_TAG;
-      insertedEvent = true;
-      openTags.remove(openTags.size() - 1);
-      parser.next();
-      return currentEvent;
+  public HtmlParser(ElementFactory elementFactory, RequestHandler requestHandler, WebSettings webSettins) {
+    this.elementFactory = elementFactory;
+    this.requestHandler = requestHandler;
+    this.webSettings = webSettings == null ? new WebSettings() : webSettings;
+    try {
+      this.input = new HtmlNormalizer();
+    } catch (XmlPullParserException e) {
+      throw new RuntimeException(e);
     }
+  }
 
-    if (insertedEvent) {
-      insertedEvent = false;
-      currentEvent = parser.getEventType();
-    } else {
-      currentEvent = parser.next();
-    }
+  /**
+   * Parses html from the given reader and returns the body or root element.
+   */
+  public Element parse(Reader reader, URI baseUri) {
+    try {
+      input.setInput(reader);
+      input.next();
 
-    // Skip close tags for self-closing elements.
-    while (currentEvent == XmlPullParser.END_TAG
-        && getElementData(parser.getName()).selfClosing) {
-      currentEvent = parser.next();
-    }
-
-    // Auto-close elements which are closed by the current start tag.
-    if (currentEvent == XmlPullParser.START_TAG && openTags.size() > 0
-        && Arrays.binarySearch(getElementData(openTags.get(openTags.size() - 1)).closedBy,
-                               parser.getName()) >= 0) {
-
-        System.out.println("auto-closing <" + openTags.get(openTags.size() - 1) + "> via <" + parser.getName() + ">");
-
-        
-    	currentEvent = XmlPullParser.END_TAG;
-      currentName = openTags.get(openTags.size() - 1);
-      openTags.remove(openTags.size() - 1);
-      insertedEvent = true;
+      document = new Document(elementFactory, requestHandler, webSettings, baseUri);
+      styleSheet = CssStyleSheet.createDefault(16);
       
-      	System.out.println("Open stack: " + openTags);
-      
-      return currentEvent;
-//      throw new RuntimeException();
-    }
-
-    if (currentEvent == XmlPullParser.START_TAG) {
-      currentName = parser.getName();
-      openTags.add(currentName);
-    } else if (currentEvent == XmlPullParser.END_TAG) {
-      currentName = parser.getName();
-      int i = openTags.lastIndexOf(currentName);
-      if (i == -1) {
-        System.err.println("Ignoring </" + currentName + ">: opening tag not found in " + openTags + " at " + parser.getPositionDescription());
-        return next();
+      Element result = document.createElement("body");
+      parseComponentContent(result);
+      if (result.getChildren().getLength() == 1) {
+        result = result.getChildren().item(0);
+        result.setParentElement(null);
       }
-      if (i != openTags.size() - 1) {
-        insertedEvent = true;
-        currentName = openTags.get(openTags.size() - 1);
-      }
-      openTags.remove(openTags.get(openTags.size() - 1));
-    } else if (currentEvent == XmlPullParser.END_DOCUMENT && openTags.size() > 0) {
-      currentName = openTags.get(openTags.size() - 1);
-      currentEvent = XmlPullParser.END_TAG;
-      openTags.remove(openTags.get(openTags.size() - 1));
-      insertedEvent = true;
-    }
-    return currentEvent;
-  }
+      document.setBody(result);
+      styleSheet.apply(result, document.getBaseURI());
+      return result;
 
-  public void setInput(Reader reader) throws XmlPullParserException {
-    parser.setInput(reader);
-    for (int i = 0; i < HTML_ENTITY_TABLE.length; i += 2) {
-      parser.defineEntityReplacementText(HTML_ENTITY_TABLE[i], HTML_ENTITY_TABLE[i + 1]);
+    } catch (XmlPullParserException e) {
+      throw new RuntimeException(e);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
     }
   }
 
-  private static class ElementData {
-    private final boolean selfClosing;
-    private final String[] closedBy;
+  /**
+   * Parse the text content of an element.
+   * Precondition: behind the opening tag
+   * Postcondition: on the closing tag
+   */
+  private void parseTextContentToString(StringBuilder sb) throws IOException, XmlPullParserException {
+    while (input.getEventType() != XmlPullParser.END_TAG) {
+      switch(input.getEventType()) {
+        case XmlPullParser.START_TAG:
+          input.next();
+          parseTextContentToString(sb);
+          input.next();
+          break;
 
-    private ElementData(boolean selfClosing, String... closedBy) {
-      this.selfClosing = selfClosing;
-      this.closedBy = closedBy;
+        case XmlPullParser.TEXT:
+          if (sb != null) {
+            sb.append(input.getText());
+          }
+          input.next();
+          break;
+
+        default:
+          throw new RuntimeException("Unexpected event: " + input.getPositionDescription());
+      }
+    }
+  }
+
+
+  private String normalizeText(String s, boolean preserveLeadingSpace) {
+    boolean spaceSeen = !preserveLeadingSpace;
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < s.length(); i++) {
+      char c = s.charAt(i);
+      if (c <= ' ') {
+        if (!spaceSeen) {
+          sb.append(' ');
+          spaceSeen = true;
+        }
+      } else {
+        sb.append(c);
+        spaceSeen = false;
+      }
+    }
+    return sb.toString();
+  }
+
+  String indent = "";
+  
+  private Element parseElement() throws IOException, XmlPullParserException {
+    assert input.getEventType() == XmlPullParser.START_TAG;
+
+    String elementName = input.getName();
+    
+    System.out.println(indent + "Entering " + elementName);
+    indent += "  ";
+    
+    Element element = document.createElement(elementName);
+
+    for (int i = 0; i < input.getAttributeCount(); i++) {
+    	String attributeName = input.getAttributeName(i);
+    	String attributeValue = input.getAttributeValue(i);
+        element.setAttribute(attributeName, attributeValue);
+    }
+
+    input.next();
+    
+    switch(element.getElementContentType()) {
+      case COMPONENTS:
+        parseComponentContent(element);
+        break;
+      case DATA_ELEMENTS:
+        parseDataContent(element);
+        break;
+      case TEXT_ONLY: {
+        StringBuilder sb = new StringBuilder();
+        parseTextContentToString(sb);
+        element.setTextContent(sb.toString());
+        break;
+      }
+      default:
+        parseTextContentToString(null);
+        break;
+    }
+
+    assert input.getEventType() == XmlPullParser.END_TAG;
+    indent = indent.substring(2);
+    System.out.println(indent + "Leaving " + elementName);
+
+    
+    return element;
+  }
+  
+  /**
+   * Re-creates the given descendant of oldRoot as a new descendant of newRoot. Used when text elements are interrupted by 
+   * components.
+   */
+  Element recreate(Element original, Element oldRoot, Element newRoot) {
+	  Element parent = original.getParentElement() == oldRoot ? newRoot : recreate(original.getParentElement(), oldRoot, newRoot);
+	  Element clone = document.createElement(original.getLocalName());
+	  // TODO: copy attributes;
+	  parent.insertBefore(clone, null);
+	  return clone;
+  }
+
+  
+  private void parseDataContent(Element parent) throws IOException, XmlPullParserException {
+      while (input.getEventType() != XmlPullParser.END_TAG 
+          && input.getEventType() != XmlPullParser.END_DOCUMENT) {
+        if (input.getEventType() == XmlPullParser.START_TAG) {
+          parent.insertBefore(parseElement(), null);
+        }
+        input.next();
+      }
+  }
+
+  private void processTextContent(Element parent) throws IOException, XmlPullParserException {
+	  Element textComponent = document.createElement("text-component");
+	  boolean preserveLeadingSpace = false;
+	  parent.insertBefore(textComponent, null);
+	  Element current = textComponent;
+	  
+	  loop:
+	  while (true) {
+		  switch(input.getEventType()) {
+		  	case XmlPullParser.END_DOCUMENT:
+		  		break loop;
+			
+		  	case XmlPullParser.END_TAG:
+		  		if (current == textComponent) {
+		  			break loop;
+		  		} 
+		  		current = current.getParentElement();
+		  		input.next();
+		  		break;
+		  		
+		  	case XmlPullParser.START_TAG:
+		  	    ElementType elementType = Document.getElementType(input.getName());
+		  		if (elementType == ElementType.FORMATTED_TEXT ||
+		  		    elementType == ElementType.INLINE_IMAGE) {
+		  			if (input.getName().equals("br")) {
+		  				preserveLeadingSpace = false;
+		  			}
+		  			Element child = document.createElement(input.getName());
+		  			for (int i = 0; i < input.getAttributeCount(); i++) {
+		  				child.setAttribute(input.getAttributeName(i), input.getAttributeValue(i));
+		  			}
+		  			current.insertBefore(child, null);
+		  			current = child;
+		  			input.next();
+		  		} else if (current == textComponent) {
+		  			break loop;
+		  		} else {
+		  			parent.insertBefore(parseElement(), null);
+		  			Element newTextComponent = document.createElement("text-component");
+		  			current = recreate(current, textComponent, newTextComponent);
+		  			textComponent = newTextComponent;
+		  			preserveLeadingSpace = false;
+		  			parent.insertBefore(textComponent, null);
+		  			assert current != null;
+		  			input.next();
+		  		}
+		  		break;
+		  
+		  	case XmlPullParser.TEXT: 
+			  StringBuilder sb = new StringBuilder();
+			  do {
+				  sb.append(normalizeText(input.getText(), preserveLeadingSpace));
+				  preserveLeadingSpace = sb.length() > 0 && sb.charAt(sb.length() - 1) > ' ';
+				  input.next();
+			  } while (input.getEventType() == XmlPullParser.TEXT);
+			  Element child = document.createElement("span");
+			  child.setTextContent(sb.toString());
+		  	  // AddText could auto-elevate
+			  current.insertBefore(child, null);
+			  break;
+
+		  	default:
+				input.next();
+		  }
+	  }
+  }
+  
+  
+  private void parseComponentContent(Element parent) throws IOException, XmlPullParserException {
+    while (input.getEventType() != XmlPullParser.END_TAG && input.getEventType() != XmlPullParser.END_DOCUMENT) {
+    	if ((input.getEventType() != XmlPullParser.START_TAG && input.getEventType() != XmlPullParser.TEXT) 
+     		   || input.getEventType() == XmlPullParser.TEXT && input.getText().trim().isEmpty()) {
+    		// Skippable stuff
+     	   	input.next();
+        } else if (input.getEventType() == XmlPullParser.START_TAG 
+    		   && Document.getElementType(input.getName()) != ElementType.FORMATTED_TEXT) {
+        	// Children
+          
+          if (Document.getElementType(input.getName()).equals(ElementType.SKIP)) {
+            input.next();
+            parseComponentContent(parent);
+            input.next();
+          } else {
+            Element child = parseElement();
+            if (child.getElementType() == ElementType.COMPONENT) {
+              parent.insertBefore(child, null);
+            } else if (child.getLocalName().equals("head") && document.getHead() == null) {
+              document.setHead(child);
+            }
+            assert input.getEventType() == XmlPullParser.END_TAG;
+            input.next();
+          }
+       } else {
+    	   processTextContent(parent);
+      }
     }
   }
 }

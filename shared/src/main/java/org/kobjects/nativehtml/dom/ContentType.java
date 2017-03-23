@@ -6,5 +6,4 @@ public enum ContentType {
 	FORMATTED_TEXT,
 	TEXT_ONLY,
 	EMPTY, 
-	MIXED
 }
