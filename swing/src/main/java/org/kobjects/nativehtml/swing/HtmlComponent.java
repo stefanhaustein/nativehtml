@@ -36,9 +36,9 @@ public class HtmlComponent extends JComponent {
     removeAll();
     if (element instanceof AbstractSwingComponentElement) {
       add((AbstractSwingComponentElement) element, BorderLayout.CENTER);
+      ((AbstractSwingComponentElement) element).invalidate();
     }
-    invalidate();
-    validate();
+    revalidate();
   }
 
   public void addInternalLinkPrefix(String s) {
