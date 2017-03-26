@@ -98,39 +98,55 @@ public class SwingComponentContainerElement extends AbstractSwingComponentElemen
 
 	@Override
 	public void paint(Graphics g) {
-	  if (true) {
-	    paintComponent(g);
-	    int listIndex = 1;
-	    CssEnum listStyleType = getComputedStyle().getEnum(CssProperty.LIST_STYLE_TYPE);
-	    for (int i = 0; i < getComponentCount(); i++) {
-	      Component component = getComponent(i);
-	      Element element = (Element) component;
-          CssStyleDeclaration childStyle = element.getComputedStyle();
+	  paintComponent(g);
+	  int listIndex = 1;
+	  CssEnum listStyleType = getComputedStyle().getEnum(CssProperty.LIST_STYLE_TYPE);
+	  int lastAbsoluteChild = -1;
 	      
-	      if (childStyle.getEnum(CssProperty.DISPLAY) == CssEnum.LIST_ITEM 
-	          && listStyleType != CssEnum.NONE) {
-	        String bullet = Strings.getBullet(listStyleType, listIndex++);
+	  for (int i = 0; i < getComponentCount(); i++) {
+	    Component component = getComponent(i);
+	    Element element = (Element) component;
+        CssStyleDeclaration childStyle = element.getComputedStyle();
+        
+        if (childStyle.getEnum(CssProperty.DISPLAY) == CssEnum.NONE) {
+          continue;
+        }
+        if (childStyle.getEnum(CssProperty.POSITION) == CssEnum.ABSOLUTE) {
+          lastAbsoluteChild = i;
+        }
+        
+	    if (childStyle.getEnum(CssProperty.DISPLAY) == CssEnum.LIST_ITEM 
+	        && listStyleType != CssEnum.NONE) {
+	      String bullet = Strings.getBullet(listStyleType, listIndex++);
 
-	        // TODO: Add util to translate colors, fonts etc. -- and use them properly!
-	        g.setFont(new Font(element.getComputedStyle().getString(CssProperty.FONT_FAMILY), 0, 
-	            element.getComputedStyle().getPx(CssProperty.FONT_SIZE, 0)));
+	      // TODO: Add util to translate colors, fonts etc. -- and use them properly!
+	      g.setFont(new Font(element.getComputedStyle().getString(CssProperty.FONT_FAMILY), 0, 
+	          element.getComputedStyle().getPx(CssProperty.FONT_SIZE, 0)));
 	        
-	        FontMetrics fontMetrics = g.getFontMetrics();
-	        int dx = -fontMetrics.stringWidth(bullet);
-	        int dy = fontMetrics.getAscent() + fontMetrics.getLeading() 
-	          + childStyle.getPx(CssProperty.PADDING_TOP, 0) + childStyle.getPx(CssProperty.BORDER_TOP_WIDTH, 0);
-	        g.setColor(Color.BLACK);
-	        g.drawString(bullet, component.getX() + dx, component.getY() + dy);
-	      }
-	      
-	      g.translate(component.getX(), component.getY());
-	      component.paint(g);
-	      g.translate(-component.getX(), -component.getY());
+	      FontMetrics fontMetrics = g.getFontMetrics();
+	      int dx = -fontMetrics.stringWidth(bullet);
+	      int dy = fontMetrics.getAscent() + fontMetrics.getLeading() 
+	        + childStyle.getPx(CssProperty.PADDING_TOP, 0) + childStyle.getPx(CssProperty.BORDER_TOP_WIDTH, 0);
+	      g.setColor(Color.BLACK);
+	      g.drawString(bullet, component.getX() + dx, component.getY() + dy);
 	    }
-	  } else {
-	    super.paint(g);
+	      
+        g.translate(component.getX(), component.getY());
+        component.paint(g);
+        g.translate(-component.getX(), -component.getY());
 	  }
-	  
+	  for (int i = 0; i <= lastAbsoluteChild; i++) {
+        Component component = getComponent(i);
+        Element element = (Element) component;
+        CssStyleDeclaration childStyle = element.getComputedStyle();
+        if (childStyle.getEnum(CssProperty.DISPLAY) == CssEnum.NONE || 
+            childStyle.getEnum(CssProperty.POSITION) != CssEnum.ABSOLUTE) {
+          continue;
+        }
+        g.translate(component.getX(), component.getY());
+        component.paint(g);
+        g.translate(-component.getX(), -component.getY());
+	  }
 	}
 	
 	@Override

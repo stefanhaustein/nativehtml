@@ -20,7 +20,8 @@ public class BlockLayout implements Layout {
         CssStyleDeclaration childStyle = child.getComputedStyle();
 
         CssEnum display = childStyle.getEnum(CssProperty.DISPLAY);
-        if (display == CssEnum.NONE || childStyle.getEnum(CssProperty.POSITION) == CssEnum.ABSOLUTE) {
+        
+        if (ElementLayoutHelper.needsSpecialHandling(child)) {
           continue;
         }
 
@@ -62,7 +63,8 @@ public class BlockLayout implements Layout {
 	    CssStyleDeclaration childStyle = child.getComputedStyle();
 		    
 	    CssEnum display = childStyle.getEnum(CssProperty.DISPLAY);
-	    if (display == CssEnum.NONE || childStyle.getEnum(CssProperty.POSITION) == CssEnum.ABSOLUTE) {
+	    
+	    if (ElementLayoutHelper.specialHandling(parent, xOfs, yOfs, containingBoxWidth, measureOnly, child)) {
 	      continue;
 	    }
 
