@@ -11,14 +11,17 @@ import java.util.TreeSet;
 import javax.swing.JComponent;
 
 import org.kobjects.nativehtml.dom.Element;
+import org.kobjects.nativehtml.dom.Platform;
+import org.kobjects.nativehtml.io.DefaultRequestHandler;
 import org.kobjects.nativehtml.io.HtmlParser;
 
 /**
  * Convenience Swing HTML component 
  */
 public class HtmlComponent extends JComponent {
+  private final SwingPlatform platform = new SwingPlatform();
   private final HtmlParser htmlProcessor = 
-      new HtmlParser(new SwingElementFactory(), new HtmlComponentRequestHandler(), null);
+      new HtmlParser(platform, new HtmlComponentRequestHandler(platform), null);
   
   private TreeSet<String> internalLinkPrefixSet = new TreeSet<>();
   
@@ -45,7 +48,11 @@ public class HtmlComponent extends JComponent {
     internalLinkPrefixSet.add(s);
   }
   
-  class HtmlComponentRequestHandler extends SwingDefaultRequestHandler {
+  class HtmlComponentRequestHandler extends DefaultRequestHandler {
+    HtmlComponentRequestHandler(Platform platform) {
+      super(platform);
+    }
+
     @Override 
     public void openLink(URI url) {
       String s = url.toString();

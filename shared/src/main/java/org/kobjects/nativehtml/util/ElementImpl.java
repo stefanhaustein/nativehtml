@@ -10,6 +10,17 @@ import org.kobjects.nativehtml.dom.ElementType;
 import org.kobjects.nativehtml.dom.HtmlCollection;
 
 public class ElementImpl implements Element {
+  
+  public static String getTextContent(Element element) {
+    StringBuilder sb = new StringBuilder();
+    HtmlCollection children = element.getChildren();
+    for (int i = 0; i < children.getLength(); i++) {
+        sb.append(children.item(i).getTextContent());
+    }
+    return sb.toString();
+  }
+
+  
 	protected ElementType elementType;
     protected Element parent;
     protected String name;
@@ -117,11 +128,7 @@ public class ElementImpl implements Element {
 		if (children == null || children.getLength() == 0) {
 			return "";
 		}
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < children.size(); i++) {
-			sb.append(children.get(i).getTextContent());
-		}
-		return sb.toString();
+		return getTextContent(this);
 	}
 
 	@Override
@@ -133,4 +140,5 @@ public class ElementImpl implements Element {
   public Document getOwnerDocument() {
     return document;
   }
+
 }

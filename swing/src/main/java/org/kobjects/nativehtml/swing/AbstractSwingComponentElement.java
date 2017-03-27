@@ -4,6 +4,9 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Rectangle;
+import java.awt.Shape;
 import java.util.HashMap;
 
 import javax.swing.JComponent;
@@ -14,6 +17,7 @@ import org.kobjects.nativehtml.css.CssStyleDeclaration;
 import org.kobjects.nativehtml.dom.Document;
 import org.kobjects.nativehtml.dom.Element;
 import org.kobjects.nativehtml.layout.ComponentElement;
+import org.kobjects.nativehtml.util.ElementImpl;
 
 public abstract class AbstractSwingComponentElement extends JComponent implements org.kobjects.nativehtml.layout.ComponentElement {
 	private final Document document;
@@ -79,7 +83,7 @@ public abstract class AbstractSwingComponentElement extends JComponent implement
 	
 	@Override
 	public String getTextContent() {
-		return "";
+		return ElementImpl.getTextContent(this);
 	}
 
 	@Override
@@ -90,17 +94,67 @@ public abstract class AbstractSwingComponentElement extends JComponent implement
 	
 	@Override
 	public void setBorderBoxBounds(int x, int y, int width, int height, int containingBoxWidth) {
-		setBounds(x, y, width, height);	
+	    float scale = document.getSettings().getScale();
+		setBounds(Math.round(x * scale), Math.round(y * scale), Math.round(width * scale), Math.round(height * scale));	
 		this.containingBoxWidth = containingBoxWidth;
 	}
 	
 	@Override
 	public void moveRelative(int dx, int dy) {
-		setBounds(getX() + dx, getY() + dy, getWidth(), getHeight());
+      float scale = document.getSettings().getScale();
+      setLocation(getX() + Math.round(dx * scale), getY() + Math.round(dy * scale));
 	}
 	
 	static private Color createColor(int argb) {
 		return new Color((argb >> 16) & 255, (argb >> 8) & 255, argb & 255);
+	}
+	
+	private void drawBackground(Graphics2D g2d, int x, int y, int w, int h) {
+	  CssStyleDeclaration style = getComputedStyle();
+	  if (style.isSet(CssProperty.BACKGROUND_COLOR)) {
+	    g2d.setColor(createColor(style.getColor(CssProperty.BACKGROUND_COLOR)));
+	    g2d.fillRect(x, y, w, h);
+	  }
+
+	  if (!style.isSet(CssProperty.BACKGROUND_IMAGE)) {
+	    return;
+	  }
+
+	  String bgImage = style.getString(CssProperty.BACKGROUND_IMAGE);
+	  Image image = ((SwingPlatform) getOwnerDocument().getPlatform()).getImage(this, getOwnerDocument().getBaseURI().resolve(bgImage));
+	  
+	  if (image == null) {
+	    return;
+	  }
+
+	  Shape savedClip = g2d.getClip(); 
+	  g2d.clipRect(x, y, w, h);
+	  CssEnum repeat = style.getEnum(CssProperty.BACKGROUND_REPEAT);
+      int bgY = 0;
+      int bgX = 0;
+      if (repeat == CssEnum.REPEAT_Y || repeat == CssEnum.REPEAT) {
+        do {
+          if (repeat == CssEnum.REPEAT) {
+            int currentBgX = bgX;
+            do {
+              g2d.drawImage(image, x + currentBgX, y + bgY, null);
+              currentBgX += image.getWidth(null);
+            } while (currentBgX < w);
+          } else {
+            g2d.drawImage(image, x + bgX, y + bgY, null);
+          }
+          bgY += image.getHeight(null);
+        } while (bgY < h);
+      } else if (repeat == CssEnum.REPEAT_X) {
+        do {
+          g2d.drawImage(image, x + bgX, y + bgY, null);
+          bgX += image.getWidth(null);
+        } while (bgX < w);
+      } else {
+        g2d.drawImage(image, x + bgX, y + bgY, null);
+      }
+      
+      g2d.setClip(savedClip);
 	}
 	
 	@Override
@@ -114,18 +168,9 @@ public abstract class AbstractSwingComponentElement extends JComponent implement
 		int w = getWidth() ;
 		int h = getHeight();
 
-		if (computedStyle.isSet(CssProperty.BACKGROUND_COLOR)) {
-			g2d.setColor(createColor(computedStyle.getColor(CssProperty.BACKGROUND_COLOR)));
-			g2d.fillRect(0, 0, w, h);
-		}
-		
-		/*
-        // Background paint area is specified using 'background-clip' property, and default value of it
+		// Background paint area is specified using 'background-clip' property, and default value of it
 	    // is 'border-box'
-		    drawBackgroud(canvas, childParams, x0 - borderLeft, y0 - borderTop,
-		        x1 + borderRight, y1 + borderBottom);
-        */
-
+		drawBackground(g2d, borderLeft, borderTop, getWidth() - borderRight, getHeight() - borderBottom);
 		
 		if (borderTop > 0 && computedStyle.getEnum(CssProperty.BORDER_TOP_STYLE) != CssEnum.NONE) {
 			g2d.setColor(createColor(computedStyle.getColor(CssProperty.BORDER_TOP_COLOR)));
@@ -134,7 +179,7 @@ public abstract class AbstractSwingComponentElement extends JComponent implement
 			for (int i = 0; i < borderTop; i++) {
 				g2d.drawLine(
 						((i * dLeft) >> 8), i,
-						w - ((i * dRight) >> 8), i);
+						w - 1 - ((i * dRight) >> 8), i);
 		      	}
 		}
 		if (borderRight > 0 && computedStyle.getEnum(CssProperty.BORDER_RIGHT_STYLE) != CssEnum.NONE) {
@@ -143,8 +188,8 @@ public abstract class AbstractSwingComponentElement extends JComponent implement
 			int dBottom = (borderBottom << 8) / borderRight;
 			for (int i = 0; i < borderRight; i++) {
 				g2d.drawLine(
-						w - i - 1, ((i * dTop) >> 8),
-						w - i - 1, h - ((i * dBottom) >> 8));
+						w - 1 - i, ((i * dTop) >> 8),
+						w - 1 - i, h - 1 - ((i * dBottom) >> 8));
 		    }
 		}
 		if (borderBottom > 0 && computedStyle.getEnum(CssProperty.BORDER_BOTTOM_STYLE) != CssEnum.NONE) {
@@ -153,8 +198,8 @@ public abstract class AbstractSwingComponentElement extends JComponent implement
 		    int dRight = (borderRight << 8) / borderBottom;
 		    for (int i = 0; i < borderBottom; i++) {
 		       g2d.drawLine(
-		            ((i * dLeft) >> 8) + 1, h - i - 1,
-		            w - ((i * dRight) >> 8) + 1, h - i - 1);
+		            ((i * dLeft) >> 8), h - 1 - i,
+		            w - 1 - ((i * dRight) >> 8) - 1, h - 1 - i);
 		    }
 		}
 		if (borderLeft > 0 && computedStyle.getEnum(CssProperty.BORDER_LEFT_STYLE) != CssEnum.NONE) {
@@ -163,8 +208,8 @@ public abstract class AbstractSwingComponentElement extends JComponent implement
 		    int dBottom = (borderBottom << 8) / borderLeft;
 		    for (int i = 0; i < borderLeft; i++) {
 		        g2d.drawLine(
-		            i, ((i * dTop) >> 8) + 1,
-		            i, h - ((i * dBottom) >> 8) + 1);
+		            i, ((i * dTop) >> 8),
+		            i, h - 1 - ((i * dBottom) >> 8));
 	      }
 	    }
 	}

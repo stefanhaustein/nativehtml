@@ -60,15 +60,15 @@ public class Document {
         return result == null ? ContentType.COMPONENTS : result;
     }
 
-	private final ElementFactory elementFactory;
+	private final Platform platform;
     private final WebSettings webSettings;
     private RequestHandler requestHandler;
     private URI baseUri;
     private Element head;
     private Element body;
 
-	public Document(ElementFactory elementFactory, RequestHandler requestHandler, WebSettings webSettings, URI baseUri) {
-		this.elementFactory = elementFactory;
+	public Document(Platform elementFactory, RequestHandler requestHandler, WebSettings webSettings, URI baseUri) {
+		this.platform = elementFactory;
 		this.requestHandler = requestHandler;
 		this.webSettings = webSettings == null ? new WebSettings() : webSettings;
 		this.baseUri = baseUri;
@@ -76,7 +76,7 @@ public class Document {
     
     public Element createElement(String name) {
     	ElementType elementType = getElementType(name);
-        Element result = elementFactory.createElement(this, elementType, name);
+        Element result = platform.createElement(this, elementType, name);
     	ContentType contentType = getContentType(name);
         return result == null ? new ElementImpl(this, name, elementType, contentType) : result;
     }
@@ -108,5 +108,12 @@ public class Document {
   public Element getHead() {
     return head;
   }
+
+  public Platform getPlatform() {
+    return platform;
+  }
   
+  public WebSettings getSettings() {
+    return webSettings;
+  }
 }

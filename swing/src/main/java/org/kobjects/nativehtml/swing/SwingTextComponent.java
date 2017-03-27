@@ -158,14 +158,13 @@ public class SwingTextComponent extends JTextPane implements org.kobjects.native
 	  @Override
 	  public int getIntrinsicContentBoxHeightForWidth(int contentBoxWidth, int parentContentBoxWidth) {
 		check();
-		if (contentBoxWidth == getWidth()) {
-			return getPreferredSize().height;
+		float scale = document.getSettings().getScale();
+		if (Math.round(contentBoxWidth * scale) == getWidth()) {
+			return Math.round(getPreferredSize().height / scale);
 		}
 		
 		String html = serialize();
 		if (resizer == null) {
-		  
-	                
 			resizer = new JEditorPane();
 			configureEditor(resizer);
 		} else {
@@ -180,15 +179,13 @@ public class SwingTextComponent extends JTextPane implements org.kobjects.native
         System.out.println("TexComponent height (w=" + width + "):" + h);
         */
 		
-		resizer.setSize(contentBoxWidth, Short.MAX_VALUE);
+		resizer.setSize(Math.round(contentBoxWidth * scale), Short.MAX_VALUE);
 		float h= resizer.getPreferredSize().height;
-		return Math.round(h) + HEIGHT_CORRECTION;	
+		return Math.round((h + HEIGHT_CORRECTION) / scale) ;	
 	}
 	
 	void configureEditor(JEditorPane editor) {
-      final Dictionary<URL, Image> imageCache =
-          (document.getRequestHandler() instanceof SwingDefaultRequestHandler) ?
-              ((SwingDefaultRequestHandler) document.getRequestHandler()).imageCache : null;
+      final Dictionary<URL, Image> imageCache = ((SwingPlatform) document.getPlatform()).imageCache;
               
       editor.setEditorKit(new HTMLEditorKit() {
         @Override
@@ -211,13 +208,15 @@ public class SwingTextComponent extends JTextPane implements org.kobjects.native
 	  
 	@Override
 	public void setBorderBoxBounds(int x, int y, int width, int height, int containingBoxWidth) {
-		setBounds(x, y, width, height);
+	  float scale = document.getSettings().getScale();
+		setBounds(Math.round(x * scale), Math.round(y * scale), Math.round(width * scale), Math.round(height * scale));
 		check();
 	}
 
 	@Override
 	public void moveRelative(int dx, int dy) {
-		setBounds(getX() + dx, getY() + dy, getWidth(), getHeight());
+	  float scale = document.getSettings().getScale();
+		setLocation(getX() + Math.round(dx * scale), getY() + Math.round(dy * scale));
 	}
 
 	@Override
@@ -264,10 +263,9 @@ public class SwingTextComponent extends JTextPane implements org.kobjects.native
       if (src != null && !src.isEmpty()) {
         if (!imagesRequested) {
           Document document = element.getOwnerDocument();
-          document.getRequestHandler().requestImage(element, 
-              document.getBaseURI().resolve(src));
+          ((SwingPlatform) document.getPlatform()).getImage(element, document.getBaseURI().resolve(src));
         }
-        src = SwingDefaultRequestHandler.fakeDataUrl(src);
+        src = SwingPlatform.fakeDataUrl(src);
       } else {
         src = "#";
       }

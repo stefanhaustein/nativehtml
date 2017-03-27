@@ -4,7 +4,7 @@ import org.kobjects.nativehtml.css.CssStyleSheet;
 import org.kobjects.nativehtml.dom.ContentType;
 import org.kobjects.nativehtml.dom.Document;
 import org.kobjects.nativehtml.dom.Element;
-import org.kobjects.nativehtml.dom.ElementFactory;
+import org.kobjects.nativehtml.dom.Platform;
 import org.kobjects.nativehtml.dom.ElementType;
 import org.kobjects.nativehtml.layout.WebSettings;
 import org.xmlpull.v1.XmlPullParser;
@@ -23,13 +23,13 @@ import java.net.URI;
  */
 public class HtmlParser {
   private final HtmlNormalizer input;
-  private final ElementFactory elementFactory;
+  private final Platform elementFactory;
   private CssStyleSheet styleSheet;
   private Document document;
   private WebSettings webSettings;
   private RequestHandler requestHandler;
 
-  public HtmlParser(ElementFactory elementFactory, RequestHandler requestHandler, WebSettings webSettins) {
+  public HtmlParser(Platform elementFactory, RequestHandler requestHandler, WebSettings webSettins) {
     this.elementFactory = elementFactory;
     this.requestHandler = requestHandler;
     this.webSettings = webSettings == null ? new WebSettings() : webSettings;

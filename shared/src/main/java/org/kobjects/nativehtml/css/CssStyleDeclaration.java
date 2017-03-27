@@ -203,7 +203,9 @@ public class CssStyleDeclaration {
       case NUMBER:
         break;  // No conversion
       case ENUM:
-        if (id >= CssProperty.BORDER_TOP_WIDTH.ordinal()
+        if (value == CssEnum.NONE.ordinal()) {
+          // 0 = 0
+        } else if (id >= CssProperty.BORDER_TOP_WIDTH.ordinal()
             && id <= CssProperty.BORDER_LEFT_WIDTH.ordinal()) {
           if (value == CssEnum.THIN.ordinal()) {
             value = 1;
@@ -213,8 +215,8 @@ public class CssStyleDeclaration {
             value = 2;
           }
         } else {
-          value = 0;
           System.err.println("CssStyleDeclaration: Can't convert enum " + value + " to " + requestUnit + " for " + property);
+          value = 0;
         }
         break;
       case EM:
