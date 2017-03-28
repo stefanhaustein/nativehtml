@@ -10,10 +10,10 @@ import org.kobjects.nativehtml.dom.HtmlCollection;
 public class BlockLayout implements Layout {
 
 	@Override 
-	public int measureWidth(ComponentElement parent, Directive directive, int parentContentBoxWidth) {
+	public float measureWidth(ComponentElement parent, Directive directive, float parentContentBoxWidth) {
 	  HtmlCollection children = parent.getChildren();
-      int width = 0;
-      int lineWidth = 0;
+      float width = 0;
+      float lineWidth = 0;
       
       for (int i = 0; i < children.getLength(); i++) {
         ComponentElement child = (ComponentElement) parent.getChildren().item(i);
@@ -25,8 +25,8 @@ public class BlockLayout implements Layout {
           continue;
         }
 
-        int childMarginLeft = childStyle.getPx(CssProperty.MARGIN_LEFT, parentContentBoxWidth);
-        int childMarginRight = childStyle.getPx(CssProperty.MARGIN_RIGHT, parentContentBoxWidth);
+        float childMarginLeft = childStyle.getPx(CssProperty.MARGIN_LEFT, parentContentBoxWidth);
+        float childMarginRight = childStyle.getPx(CssProperty.MARGIN_RIGHT, parentContentBoxWidth);
             
         if (display == CssEnum.BLOCK || display == CssEnum.TABLE || display == CssEnum.LIST_ITEM 
             || directive == Directive.MINIMUM)  {
@@ -34,7 +34,7 @@ public class BlockLayout implements Layout {
             width = Math.max(lineWidth, width);
           }
           
-          int childMinWidth = childMarginLeft 
+          float childMinWidth = childMarginLeft 
               + ElementLayoutHelper.getBorderBoxWidth(child, directive, parentContentBoxWidth)
               + childMarginRight;
                
@@ -50,12 +50,12 @@ public class BlockLayout implements Layout {
 	}
 	
 	@Override
-	public int layout(ComponentElement parent, int xOfs, int yOfs, int containingBoxWidth, boolean measureOnly) {
+	public float layout(ComponentElement parent, float xOfs, float yOfs, float containingBoxWidth, boolean measureOnly) {
 	  HtmlCollection children = parent.getChildren();
-	  int x = 0;
-	  int y = 0;
-	  int pendingMargin = 0;
-	  int lineHeight = 0;
+	  float x = 0;
+	  float y = 0;
+	  float pendingMargin = 0;
+	  float lineHeight = 0;
 	  StringBuilder indicesAndHeights = measureOnly ? null : new StringBuilder();
 		
 	  for (int i = 0; i < parent.getChildren().getLength(); i++) {
@@ -68,8 +68,8 @@ public class BlockLayout implements Layout {
 	      continue;
 	    }
 
-	    int childMarginLeft = childStyle.getPx(CssProperty.MARGIN_LEFT, containingBoxWidth);
-	    int childMarginRight = childStyle.getPx(CssProperty.MARGIN_RIGHT, containingBoxWidth);
+	    float childMarginLeft = childStyle.getPx(CssProperty.MARGIN_LEFT, containingBoxWidth);
+	    float childMarginRight = childStyle.getPx(CssProperty.MARGIN_RIGHT, containingBoxWidth);
 		    
 	    if (display == CssEnum.BLOCK || display == CssEnum.TABLE || display == CssEnum.LIST_ITEM) {
 	      if (x > 0) {
@@ -80,9 +80,9 @@ public class BlockLayout implements Layout {
 	      }
 	      y += Math.max(pendingMargin, childStyle.getPx(CssProperty.MARGIN_TOP, containingBoxWidth));
 	      
-	      int childContentBoxWidth = ElementLayoutHelper.getContentBoxWidth(child, Layout.Directive.STRETCH, containingBoxWidth);
-	      int childBorderBoxWidth = ElementLayoutHelper.getBorderBoxWidth(child, Layout.Directive.STRETCH, containingBoxWidth);
-	      int childBorderBoxHeight = ElementLayoutHelper.getBorderBoxHeight(child, childContentBoxWidth, containingBoxWidth);
+	      float childContentBoxWidth = ElementLayoutHelper.getContentBoxWidth(child, Layout.Directive.STRETCH, containingBoxWidth);
+	      float childBorderBoxWidth = ElementLayoutHelper.getBorderBoxWidth(child, Layout.Directive.STRETCH, containingBoxWidth);
+	      float childBorderBoxHeight = ElementLayoutHelper.getBorderBoxHeight(child, childContentBoxWidth, containingBoxWidth);
 			
 	      if (!measureOnly) {
 	        child.setBorderBoxBounds(xOfs + childMarginLeft, y + xOfs, 
@@ -96,10 +96,10 @@ public class BlockLayout implements Layout {
 	        y += pendingMargin;
 	        pendingMargin = 0;
 	      }
-	      int childContentBoxWidth = ElementLayoutHelper.getContentBoxWidth(child, Layout.Directive.FIT_CONTENT, containingBoxWidth);
-	      int childBorderBoxWidth = ElementLayoutHelper.getBorderBoxWidth(child, Layout.Directive.FIT_CONTENT, containingBoxWidth);
-	      int childMarginBoxWidth = childMarginLeft + childBorderBoxWidth + childMarginRight;
-	      int childBorderBoxHeight = ElementLayoutHelper.getBorderBoxHeight(child, childContentBoxWidth, containingBoxWidth);
+	      float childContentBoxWidth = ElementLayoutHelper.getContentBoxWidth(child, Layout.Directive.FIT_CONTENT, containingBoxWidth);
+	      float childBorderBoxWidth = ElementLayoutHelper.getBorderBoxWidth(child, Layout.Directive.FIT_CONTENT, containingBoxWidth);
+	      float childMarginBoxWidth = childMarginLeft + childBorderBoxWidth + childMarginRight;
+	      float childBorderBoxHeight = ElementLayoutHelper.getBorderBoxHeight(child, childContentBoxWidth, containingBoxWidth);
 	      if (x > 0 && x + childMarginBoxWidth > containingBoxWidth) {
 	        adjustLastLine(parent, indicesAndHeights, x, containingBoxWidth, lineHeight);
 	        y += lineHeight;
@@ -117,9 +117,9 @@ public class BlockLayout implements Layout {
 	    // Common child processing code
 		    
 	    if (childStyle.getEnum(CssProperty.POSITION) == CssEnum.RELATIVE) {
-	      int dx = childStyle.getPx(CssProperty.LEFT, containingBoxWidth)
+	      float dx = childStyle.getPx(CssProperty.LEFT, containingBoxWidth)
 	          - childStyle.getPx(CssProperty.RIGHT, containingBoxWidth);
-	      int dy = childStyle.getPx(CssProperty.TOP, containingBoxWidth)
+	      float dy = childStyle.getPx(CssProperty.TOP, containingBoxWidth)
 	          - childStyle.getPx(CssProperty.BOTTOM, containingBoxWidth);
 		        
 	      if (dx != 0 || dy != 0) {
@@ -136,13 +136,13 @@ public class BlockLayout implements Layout {
 	}
 	
 
-    private static void adjustLastLine(Element parent, StringBuilder indicesAndHeights, int usedSpace, int availableSpace, int lineHeight) {
+    private static void adjustLastLine(Element parent, StringBuilder indicesAndHeights, float usedSpace, float availableSpace, float lineHeight) {
         if (indicesAndHeights == null) {
             return;
         }
         CssEnum align = parent.getComputedStyle().getEnum(CssProperty.TEXT_ALIGN);
         CssEnum vAlign = parent.getComputedStyle().getEnum(CssProperty.VERTICAL_ALIGN);
-        int addXOffset = 0;
+        float addXOffset = 0;
         if (align == CssEnum.RIGHT) {
           addXOffset = availableSpace - usedSpace;
         } else if (align == CssEnum.CENTER) {
@@ -150,8 +150,8 @@ public class BlockLayout implements Layout {
         }
         for (int i = 0; i < indicesAndHeights.length(); i += 2) {
             int index = indicesAndHeights.charAt(i);
-            int h = indicesAndHeights.charAt(i + 1);
-            int addYOffset;
+            float h = indicesAndHeights.charAt(i + 1);
+            float addYOffset;
             switch(vAlign) {
             case TOP:
                 addYOffset = 0;

@@ -146,7 +146,7 @@ public class SwingTextComponent extends JTextPane implements org.kobjects.native
 
 
 	  @Override
-	  public int getIntrinsicContentBoxWidth(Directive directive, int parentContentBoxWidth) {
+	  public float getIntrinsicContentBoxWidth(Directive directive, float parentContentBoxWidth) {
         check();
         
         // It's ok to use the outer size here because this element can't have borders or padding.
@@ -156,7 +156,7 @@ public class SwingTextComponent extends JTextPane implements org.kobjects.native
 	  }
 
 	  @Override
-	  public int getIntrinsicContentBoxHeightForWidth(int contentBoxWidth, int parentContentBoxWidth) {
+	  public float getIntrinsicContentBoxHeightForWidth(float contentBoxWidth, float parentContentBoxWidth) {
 		check();
 		float scale = document.getSettings().getScale();
 		if (Math.round(contentBoxWidth * scale) == getWidth()) {
@@ -207,14 +207,14 @@ public class SwingTextComponent extends JTextPane implements org.kobjects.native
 	  
 	  
 	@Override
-	public void setBorderBoxBounds(int x, int y, int width, int height, int containingBoxWidth) {
+	public void setBorderBoxBounds(float x, float y, float width, float height, float containingBoxWidth) {
 	  float scale = document.getSettings().getScale();
 		setBounds(Math.round(x * scale), Math.round(y * scale), Math.round(width * scale), Math.round(height * scale));
 		check();
 	}
 
 	@Override
-	public void moveRelative(int dx, int dy) {
+	public void moveRelative(float dx, float dy) {
 	  float scale = document.getSettings().getScale();
 		setLocation(getX() + Math.round(dx * scale), getY() + Math.round(dy * scale));
 	}

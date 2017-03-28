@@ -267,8 +267,8 @@ public class CssStyleDeclaration {
     }
   }
 
-  public int getPx(CssProperty property, float base) {
-	  return Math.round(get(property, CssUnit.PX, base));
+  public float getPx(CssProperty property, float base) {
+	  return get(property, CssUnit.PX, base);
   }
   
   public int getBackgroundReferencePoint(CssProperty property, int containerLength, int imageLength) {

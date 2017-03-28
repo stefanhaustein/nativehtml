@@ -25,7 +25,8 @@ public abstract class AbstractSwingComponentElement extends JComponent implement
 	private HashMap<String, String> attributes;
 	private CssStyleDeclaration style;
 	protected CssStyleDeclaration computedStyle;
-	private int containingBoxWidth;
+	// Set in setBounds, use for padding in paint
+	private float containingBoxWidth;
 	
 	protected AbstractSwingComponentElement(Document document, String name) {
 		this.document = document;
@@ -93,14 +94,14 @@ public abstract class AbstractSwingComponentElement extends JComponent implement
 
 	
 	@Override
-	public void setBorderBoxBounds(int x, int y, int width, int height, int containingBoxWidth) {
+	public void setBorderBoxBounds(float x, float y, float width, float height, float containingBoxWidth) {
 	    float scale = document.getSettings().getScale();
 		setBounds(Math.round(x * scale), Math.round(y * scale), Math.round(width * scale), Math.round(height * scale));	
 		this.containingBoxWidth = containingBoxWidth;
 	}
 	
 	@Override
-	public void moveRelative(int dx, int dy) {
+	public void moveRelative(float dx, float dy) {
       float scale = document.getSettings().getScale();
       setLocation(getX() + Math.round(dx * scale), getY() + Math.round(dy * scale));
 	}
@@ -160,10 +161,11 @@ public abstract class AbstractSwingComponentElement extends JComponent implement
 	@Override
 	public void paintComponent(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
-		int borderLeft = computedStyle.getPx(CssProperty.BORDER_LEFT_WIDTH, containingBoxWidth);
-		int borderRight = computedStyle.getPx(CssProperty.BORDER_RIGHT_WIDTH, containingBoxWidth);
-		int borderTop = computedStyle.getPx(CssProperty.BORDER_TOP_WIDTH, containingBoxWidth);
-		int borderBottom = computedStyle.getPx(CssProperty.BORDER_BOTTOM_WIDTH, containingBoxWidth);
+		float scale = getOwnerDocument().getSettings().getScale();
+		int borderLeft = Math.round(scale * computedStyle.getPx(CssProperty.BORDER_LEFT_WIDTH, containingBoxWidth));
+		int borderRight = Math.round(scale * computedStyle.getPx(CssProperty.BORDER_RIGHT_WIDTH, containingBoxWidth));
+		int borderTop = Math.round(scale * computedStyle.getPx(CssProperty.BORDER_TOP_WIDTH, containingBoxWidth));
+		int borderBottom = Math.round(scale * computedStyle.getPx(CssProperty.BORDER_BOTTOM_WIDTH, containingBoxWidth));
 
 		int w = getWidth() ;
 		int h = getHeight();

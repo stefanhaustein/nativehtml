@@ -35,12 +35,12 @@ public class TableLayout implements Layout {
   }
 
 
-  static int determineColumnData(ComponentElement parent, Directive directive, int contentBoxWidth, ArrayList<ColumnData> columnDataList) {
+  static float determineColumnData(ComponentElement parent, Directive directive, float contentBoxWidth, ArrayList<ColumnData> columnDataList) {
     HtmlCollection rowCollection = parent.getChildren();
     int columnCount = 0;
     columnDataList.clear();
     
-    int borderSpacing = parent.getComputedStyle().getPx(CssProperty.BORDER_SPACING, contentBoxWidth);
+    float borderSpacing = parent.getComputedStyle().getPx(CssProperty.BORDER_SPACING, contentBoxWidth);
 
     Directive cellDirective = directive == Directive.MINIMUM ? directive : Directive.FIT_CONTENT;
     
@@ -68,7 +68,7 @@ public class TableLayout implements Layout {
 
         System.out.println("columnIndex after first loop: " + columnIndex);
         
-        int cellBorderBoxWidth = ElementLayoutHelper.getBorderBoxWidth(cell, cellDirective, contentBoxWidth);
+        float cellBorderBoxWidth = ElementLayoutHelper.getBorderBoxWidth(cell, cellDirective, contentBoxWidth);
         int colSpan = getColSpan(cell);
         int rowSpan = getRowSpan(cell);
         
@@ -78,7 +78,7 @@ public class TableLayout implements Layout {
           if (columnData.maxWidthForColspan == null) {
             columnData.maxWidthForColspan = new HashMap<>();
           }
-          Integer old = columnData.maxWidthForColspan.get(colSpan);
+          Float old = columnData.maxWidthForColspan.get(colSpan);
           columnData.maxWidthForColspan.put(colSpan, old == null ? cellBorderBoxWidth : Math.max(old, cellBorderBoxWidth));
           while (columnDataList.size() < columnIndex + colSpan) {
             columnDataList.add(new ColumnData());
@@ -110,15 +110,15 @@ public class TableLayout implements Layout {
       ColumnData columnData = columnDataList.get(i);
       columnData.remainingRowSpan = 0;
       if (columnData.maxWidthForColspan != null) {
-        for (Map.Entry<Integer,Integer> e : columnData.maxWidthForColspan.entrySet()) {
+        for (Map.Entry<Integer,Float> e : columnData.maxWidthForColspan.entrySet()) {
           int span = e.getKey();
-          int spanWidth = e.getValue();
-          int curWidth = 0;
+          float spanWidth = e.getValue();
+          float curWidth = 0;
           for (int j = i; j < i + span; j++) {
             curWidth += columnDataList.get(j).maxMeasuredWidth;
           }
           if (curWidth < spanWidth) {
-            int distribute = (spanWidth - curWidth) / span;
+            float distribute = (spanWidth - curWidth) / span;
             for (int j = i; j < i + span; j++) {
               columnDataList.get(j).maxMeasuredWidth += distribute;
             }
@@ -133,26 +133,26 @@ public class TableLayout implements Layout {
   }
 
   @Override
-  public int measureWidth(ComponentElement parent, Directive directive, int parentContentBoxWidth) {
+  public float measureWidth(ComponentElement parent, Directive directive, float parentContentBoxWidth) {
     return determineColumnData(parent, directive, parentContentBoxWidth, new ArrayList<ColumnData>());
   }
   
 
   
   @Override
-  public int layout(ComponentElement parent, int xOfs, int yOfs, int contentWidth, boolean measureOnly) {
+  public float layout(ComponentElement parent, float xOfs, float yOfs, float contentWidth, boolean measureOnly) {
      
     HtmlCollection rowCollection = parent.getChildren();
 		  
     // Phase one: Measure
     
     ArrayList<ColumnData> columnDataList = new ArrayList<>();
-    int totalWidth = determineColumnData(parent, Directive.FIT_CONTENT, contentWidth, columnDataList);
+    float totalWidth = determineColumnData(parent, Directive.FIT_CONTENT, contentWidth, columnDataList);
 
-    int borderSpacing = parent.getComputedStyle().getPx(CssProperty.BORDER_SPACING, contentWidth);
+    float borderSpacing = parent.getComputedStyle().getPx(CssProperty.BORDER_SPACING, contentWidth);
     
-    int totalBorderSpacing = (columnDataList.size() - 1) * borderSpacing;
-    int availableWidth = contentWidth - totalBorderSpacing;
+    float totalBorderSpacing = (columnDataList.size() - 1) * borderSpacing;
+    float availableWidth = contentWidth - totalBorderSpacing;
     totalWidth -= totalBorderSpacing;
 
     if (totalWidth > availableWidth /* || widthMeasureSpec == View.MeasureSpec.EXACTLY */) {
@@ -165,11 +165,11 @@ public class TableLayout implements Layout {
 
     // Phase three: Layout
 
-    int currentY = 0;
+    float currentY = 0;
     for (int rowIndex = 0; rowIndex < rowCollection.getLength(); rowIndex++) {
       ComponentElement row = (ComponentElement) rowCollection.item(rowIndex);
       int columnIndex = 0;
-      int rowHeight = 0;
+      float rowHeight = 0;
       
       HtmlCollection cellCollection = row.getChildren();
       for (int physicalCellIndex = 0; physicalCellIndex < cellCollection.getLength(); physicalCellIndex++) {
@@ -188,13 +188,13 @@ public class TableLayout implements Layout {
           columnIndex++;
         }
         CssStyleDeclaration cellStyle = cell.getComputedStyle();
-        int topOffset = cellStyle.getPx(CssProperty.BORDER_TOP_WIDTH, contentWidth) 
+        float topOffset = cellStyle.getPx(CssProperty.BORDER_TOP_WIDTH, contentWidth) 
             + cellStyle.getPx(CssProperty.PADDING_TOP, contentWidth);
-        int bottomOffset = cellStyle.getPx(CssProperty.BORDER_BOTTOM_WIDTH, contentWidth) 
+        float bottomOffset = cellStyle.getPx(CssProperty.BORDER_BOTTOM_WIDTH, contentWidth) 
             + cellStyle.getPx(CssProperty.PADDING_BOTTOM, contentWidth);
-        int leftOffset = cellStyle.getPx(CssProperty.BORDER_LEFT_WIDTH, contentWidth) 
+        float leftOffset = cellStyle.getPx(CssProperty.BORDER_LEFT_WIDTH, contentWidth) 
             + cellStyle.getPx(CssProperty.PADDING_LEFT, contentWidth);
-        int rightOffset = cellStyle.getPx(CssProperty.BORDER_RIGHT_WIDTH, contentWidth)
+        float rightOffset = cellStyle.getPx(CssProperty.BORDER_RIGHT_WIDTH, contentWidth)
             + cellStyle.getPx(CssProperty.PADDING_RIGHT, contentWidth);
         int colSpan = getColSpan(cell);
         int spanWidth = 0;
@@ -209,7 +209,7 @@ public class TableLayout implements Layout {
         
 //        cellParams.setMeasuredPosition(currentX + leftOffset, currentY + topOffset);
 
-        int cellContentBoxHeight = ElementLayoutHelper.getContentBoxHeight(cell, spanWidth - leftOffset - rightOffset, contentWidth);
+        float cellContentBoxHeight = ElementLayoutHelper.getContentBoxHeight(cell, spanWidth - leftOffset - rightOffset, contentWidth);
         //columnData.
             
         columnData.remainingRowSpan = getRowSpan(cell);
@@ -260,14 +260,14 @@ public class TableLayout implements Layout {
 
   
   static class ColumnData {
-    int maxMeasuredWidth;
-    Map<Integer,Integer> maxWidthForColspan;
+    float maxMeasuredWidth;
+    Map<Integer,Float> maxWidthForColspan;
 
-    int spanWidth;
+    float spanWidth;
     int remainingRowSpan;
-    int remainingHeight;
+    float remainingHeight;
     ComponentElement startCell;
-    int yOffset;
+    float yOffset;
   }
 
 }

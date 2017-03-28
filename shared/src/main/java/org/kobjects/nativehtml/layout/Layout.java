@@ -6,9 +6,9 @@ public interface Layout {
     MINIMUM, FIT_CONTENT, STRETCH
   }
   
-  int measureWidth(ComponentElement parent, Directive directive, int contentBoxWidth);
+  float measureWidth(ComponentElement parent, Directive directive, float contentBoxWidth);
   
   
-  int layout(ComponentElement parent, int xOfs, int yOfs, int contentWidth, boolean measureOnly);
+  float layout(ComponentElement parent, float xOfs, float yOfs, float contentWidth, boolean measureOnly);
 	
 }

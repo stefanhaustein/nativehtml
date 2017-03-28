@@ -33,17 +33,20 @@ public class SwingLayoutAdapter implements LayoutManager {
     CssStyleDeclaration style = ((ComponentElement) parent).getComputedStyle();
     int containingBoxWidth = 300;
 		
-    int bottom = style.getPx(CssProperty.BORDER_BOTTOM_WIDTH, containingBoxWidth) + 
+    float bottom = style.getPx(CssProperty.BORDER_BOTTOM_WIDTH, containingBoxWidth) + 
         style.getPx(CssProperty.PADDING_BOTTOM, containingBoxWidth);
-    int left = style.getPx(CssProperty.BORDER_LEFT_WIDTH, containingBoxWidth) + 
+    float left = style.getPx(CssProperty.BORDER_LEFT_WIDTH, containingBoxWidth) + 
         style.getPx(CssProperty.PADDING_LEFT, containingBoxWidth);
-    int top = style.getPx(CssProperty.BORDER_TOP_WIDTH, containingBoxWidth) + 
+    float top = style.getPx(CssProperty.BORDER_TOP_WIDTH, containingBoxWidth) + 
         style.getPx(CssProperty.PADDING_TOP, containingBoxWidth);
-    int right = style.getPx(CssProperty.BORDER_RIGHT_WIDTH, containingBoxWidth) + 
+    float right = style.getPx(CssProperty.BORDER_RIGHT_WIDTH, containingBoxWidth) + 
         style.getPx(CssProperty.PADDING_RIGHT, containingBoxWidth);
 		
-    int contentHeight = layout.layout(parent, left, top, containingBoxWidth - left - right, true);
-    return new Dimension(left + containingBoxWidth + right, top + contentHeight + bottom);
+    float contentHeight = layout.layout(parent, left, top, containingBoxWidth - left - right, true);
+    
+    float scale = parent.getOwnerDocument().getSettings().getScale();
+    return new Dimension(Math.round(scale * (left + containingBoxWidth + right)), 
+        Math.round(scale * (top + contentHeight + bottom)));
   }
 
   @Override
@@ -52,18 +55,20 @@ public class SwingLayoutAdapter implements LayoutManager {
     CssStyleDeclaration style = parent.getComputedStyle();
     int containingBoxWidth = 300;
 
-    int bottom = style.getPx(CssProperty.BORDER_BOTTOM_WIDTH, containingBoxWidth) + 
+    float bottom = style.getPx(CssProperty.BORDER_BOTTOM_WIDTH, containingBoxWidth) + 
         style.getPx(CssProperty.PADDING_BOTTOM, containingBoxWidth);
-    int left = style.getPx(CssProperty.BORDER_LEFT_WIDTH, containingBoxWidth) + 
+    float left = style.getPx(CssProperty.BORDER_LEFT_WIDTH, containingBoxWidth) + 
         style.getPx(CssProperty.PADDING_LEFT, containingBoxWidth);    
-    int top = style.getPx(CssProperty.BORDER_TOP_WIDTH, containingBoxWidth) + 
+    float top = style.getPx(CssProperty.BORDER_TOP_WIDTH, containingBoxWidth) + 
         style.getPx(CssProperty.PADDING_TOP, containingBoxWidth);
-    int right = style.getPx(CssProperty.BORDER_RIGHT_WIDTH, containingBoxWidth) + 
+    float right = style.getPx(CssProperty.BORDER_RIGHT_WIDTH, containingBoxWidth) + 
         style.getPx(CssProperty.PADDING_RIGHT, containingBoxWidth);
 
-    int width = layout.measureWidth(parent, Layout.Directive.MINIMUM, containingBoxWidth);
-      int contentHeight = layout.layout(parent, left, top, width, true);
-      return new Dimension(left + width + right, top + contentHeight + bottom); 
+    float scale = parent.getOwnerDocument().getSettings().getScale();
+    float width = layout.measureWidth(parent, Layout.Directive.MINIMUM, containingBoxWidth);
+      float  contentHeight = layout.layout(parent, left, top, width, true);
+      return new Dimension(Math.round(scale * (left + width + right)), 
+          Math.round(scale * (top + contentHeight + bottom))); 
   }
 
   @Override
@@ -71,13 +76,14 @@ public class SwingLayoutAdapter implements LayoutManager {
     ComponentElement parent = (ComponentElement) container;
     CssStyleDeclaration style = ((ComponentElement) parent).getComputedStyle();
 
-    int containingBoxWidth = container.getWidth();
+    float scale = parent.getOwnerDocument().getSettings().getScale();
+    float containingBoxWidth = container.getWidth() / scale;
 		
-    int left = style.getPx(CssProperty.BORDER_LEFT_WIDTH, containingBoxWidth) + 
+    float left = style.getPx(CssProperty.BORDER_LEFT_WIDTH, containingBoxWidth) + 
         style.getPx(CssProperty.PADDING_LEFT, containingBoxWidth);
-    int top = style.getPx(CssProperty.BORDER_TOP_WIDTH, containingBoxWidth) + 
+    float top = style.getPx(CssProperty.BORDER_TOP_WIDTH, containingBoxWidth) + 
         style.getPx(CssProperty.PADDING_TOP, containingBoxWidth);
-    int right = style.getPx(CssProperty.BORDER_RIGHT_WIDTH, containingBoxWidth) + 
+    float right = style.getPx(CssProperty.BORDER_RIGHT_WIDTH, containingBoxWidth) + 
         style.getPx(CssProperty.PADDING_RIGHT, containingBoxWidth);
     
     layout.layout(parent, left, top, container.getWidth() - left - right, false);

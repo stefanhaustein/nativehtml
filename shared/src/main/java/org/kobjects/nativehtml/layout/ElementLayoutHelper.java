@@ -7,13 +7,13 @@ import org.kobjects.nativehtml.layout.Layout.Directive;
 
 public class ElementLayoutHelper {
   
-	static int getContentBoxWidth(ComponentElement element, Layout.Directive directive, int parentContentBoxWidth) {
+	static float getContentBoxWidth(ComponentElement element, Layout.Directive directive, float parentContentBoxWidth) {
 		CssStyleDeclaration style = element.getComputedStyle();
 		if (style.isSet(CssProperty.WIDTH)) {
 			return style.getPx(CssProperty.WIDTH, parentContentBoxWidth);
 		}
 		// TODO: Take box model into account.
-		int available = parentContentBoxWidth 
+		float available = parentContentBoxWidth 
 				- style.getPx(CssProperty.MARGIN_LEFT, parentContentBoxWidth)
 				- style.getPx(CssProperty.BORDER_LEFT_WIDTH, parentContentBoxWidth)
 				- style.getPx(CssProperty.PADDING_LEFT, parentContentBoxWidth)
@@ -27,7 +27,7 @@ public class ElementLayoutHelper {
 		return Math.min(available, element.getIntrinsicContentBoxWidth(directive, available));
 	}
 	
-	static int getBorderBoxWidth(ComponentElement element, Layout.Directive directive, int parentContentBoxWidth) {
+	static float getBorderBoxWidth(ComponentElement element, Layout.Directive directive, float parentContentBoxWidth) {
 		CssStyleDeclaration style = element.getComputedStyle();
 		return style.getPx(CssProperty.BORDER_LEFT_WIDTH, parentContentBoxWidth)
 				+ style.getPx(CssProperty.PADDING_LEFT, parentContentBoxWidth)
@@ -37,7 +37,7 @@ public class ElementLayoutHelper {
 	}
 
 
-	static int getContentBoxHeight(ComponentElement component, int contentBoxWidth, int parentContentBoxWidth) {
+	static float getContentBoxHeight(ComponentElement component, float contentBoxWidth, float parentContentBoxWidth) {
 		CssStyleDeclaration style = component.getComputedStyle();
 		if (style.isSet(CssProperty.HEIGHT)) {
 			return style.getPx(CssProperty.WIDTH, parentContentBoxWidth);
@@ -45,7 +45,7 @@ public class ElementLayoutHelper {
 		return component.getIntrinsicContentBoxHeightForWidth(contentBoxWidth, parentContentBoxWidth);
 	}
 
-	static int getBorderBoxHeight(ComponentElement component, int contentBoxWidth, int parentContentBoxWidth) {
+	static float getBorderBoxHeight(ComponentElement component, float contentBoxWidth, float parentContentBoxWidth) {
 		CssStyleDeclaration style = component.getComputedStyle();
 		return style.getPx(CssProperty.BORDER_TOP_WIDTH, parentContentBoxWidth)
 				+ style.getPx(CssProperty.PADDING_TOP, parentContentBoxWidth)
@@ -63,7 +63,12 @@ public class ElementLayoutHelper {
 	            && childStyle.getEnum(CssProperty.POSITION) == CssEnum.ABSOLUTE);
 	  }
 	
-  public static boolean specialHandling(ComponentElement parent, int xOfs, int yOfs, int containingBoxWidth,
+	
+  /** 
+   * Returns true if the given child element requires special handling in the layout process, e.g. if it has 
+   * display set to none or needs absolute positioning.
+   */
+  public static boolean specialHandling(ComponentElement parent, float xOfs, float yOfs, float containingBoxWidth,
       boolean measureOnly, ComponentElement child) {
     boolean result = needsSpecialHandling(child);
     if (!result || measureOnly || child.getComputedStyle().getEnum(CssProperty.DISPLAY) == CssEnum.NONE ) {
@@ -72,25 +77,25 @@ public class ElementLayoutHelper {
     
     CssStyleDeclaration childStyle = child.getComputedStyle();
 
-    int childLeft = childStyle.getPx(CssProperty.BORDER_LEFT_WIDTH, containingBoxWidth)
+    float childLeft = childStyle.getPx(CssProperty.BORDER_LEFT_WIDTH, containingBoxWidth)
         + childStyle.getPx(CssProperty.PADDING_LEFT, containingBoxWidth);
     
-    int childRight = childStyle.getPx(CssProperty.BORDER_RIGHT_WIDTH, containingBoxWidth)
+    float childRight = childStyle.getPx(CssProperty.BORDER_RIGHT_WIDTH, containingBoxWidth)
         + childStyle.getPx(CssProperty.PADDING_RIGHT, containingBoxWidth);
     
-    int childTop = childStyle.getPx(CssProperty.BORDER_TOP_WIDTH, containingBoxWidth)
+    float childTop = childStyle.getPx(CssProperty.BORDER_TOP_WIDTH, containingBoxWidth)
         + childStyle.getPx(CssProperty.PADDING_TOP, containingBoxWidth);
     
-    int childBottom = childStyle.getPx(CssProperty.BORDER_BOTTOM_WIDTH, containingBoxWidth)
+    float childBottom = childStyle.getPx(CssProperty.BORDER_BOTTOM_WIDTH, containingBoxWidth)
         + childStyle.getPx(CssProperty.PADDING_BOTTOM, containingBoxWidth);
 
-    int contentWidth = ElementLayoutHelper.getContentBoxWidth(child, Directive.MINIMUM, containingBoxWidth);
-    int contentHeight = ElementLayoutHelper.getContentBoxHeight(child, contentWidth, containingBoxWidth);
+    float contentWidth = ElementLayoutHelper.getContentBoxWidth(child, Directive.MINIMUM, containingBoxWidth);
+    float contentHeight = ElementLayoutHelper.getContentBoxHeight(child, contentWidth, containingBoxWidth);
     
-    int boxWidth = childLeft + contentWidth + childRight;
-    int boxHeight = childTop + contentHeight + childBottom;
+    float boxWidth = childLeft + contentWidth + childRight;
+    float boxHeight = childTop + contentHeight + childBottom;
     
-    int measuredX;
+    float measuredX;
     if (childStyle.isSet(CssProperty.LEFT)) {
       measuredX = xOfs + childStyle.getPx(CssProperty.LEFT, containingBoxWidth);
     } else if (childStyle.isSet(CssProperty.RIGHT)) {
@@ -99,7 +104,7 @@ public class ElementLayoutHelper {
       measuredX = xOfs;
     }
 
-    int measuredY;
+    float measuredY;
     if (childStyle.isSet(CssProperty.TOP)) {
       measuredY = yOfs + childStyle.getPx(CssProperty.TOP, containingBoxWidth);
   //  } else if (childParams.computedStyle.isSet(CssProperty.BOTTOM)) {

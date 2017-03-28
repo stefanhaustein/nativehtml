@@ -69,7 +69,7 @@ public class SwingComponentContainerElement extends AbstractSwingComponentElemen
 	}
 	
 	@Override
-	public void setBorderBoxBounds(int x, int y, int width, int height, int containingBoxWidth) {
+	public void setBorderBoxBounds(float x, float y, float width, float height, float containingBoxWidth) {
 		super.setBorderBoxBounds(x, y, width, height, containingBoxWidth);
 		
 		if (layout == null) {
@@ -78,13 +78,13 @@ public class SwingComponentContainerElement extends AbstractSwingComponentElemen
 		
 		CssStyleDeclaration style = getComputedStyle();
 
-		int bottom = style.getPx(CssProperty.BORDER_BOTTOM_WIDTH, containingBoxWidth) + 
+		float bottom = style.getPx(CssProperty.BORDER_BOTTOM_WIDTH, containingBoxWidth) + 
 				style.getPx(CssProperty.PADDING_BOTTOM, containingBoxWidth);
-		int left = style.getPx(CssProperty.BORDER_LEFT_WIDTH, containingBoxWidth) + 
+		float left = style.getPx(CssProperty.BORDER_LEFT_WIDTH, containingBoxWidth) + 
 				style.getPx(CssProperty.PADDING_LEFT, containingBoxWidth);
-		int top = style.getPx(CssProperty.BORDER_TOP_WIDTH, containingBoxWidth) + 
+		float top = style.getPx(CssProperty.BORDER_TOP_WIDTH, containingBoxWidth) + 
 				style.getPx(CssProperty.PADDING_TOP, containingBoxWidth);
-		int right = style.getPx(CssProperty.BORDER_RIGHT_WIDTH, containingBoxWidth) + 
+		float right = style.getPx(CssProperty.BORDER_RIGHT_WIDTH, containingBoxWidth) + 
 				style.getPx(CssProperty.PADDING_RIGHT, containingBoxWidth);
 		
 		layout.layout(this, left, top, width - left - right, false);
@@ -92,7 +92,7 @@ public class SwingComponentContainerElement extends AbstractSwingComponentElemen
 
 	
 	@Override
-	public int getIntrinsicContentBoxWidth(Layout.Directive directive, int contentBoxWidth) {
+	public float getIntrinsicContentBoxWidth(Layout.Directive directive, float contentBoxWidth) {
 	  return layout.measureWidth(this, directive, contentBoxWidth);
 	}
 
@@ -102,7 +102,8 @@ public class SwingComponentContainerElement extends AbstractSwingComponentElemen
 	  int listIndex = 1;
 	  CssEnum listStyleType = getComputedStyle().getEnum(CssProperty.LIST_STYLE_TYPE);
 	  int lastAbsoluteChild = -1;
-	      
+	  float scale = getOwnerDocument().getSettings().getScale();    
+	  
 	  for (int i = 0; i < getComponentCount(); i++) {
 	    Component component = getComponent(i);
 	    Element element = (Element) component;
@@ -121,12 +122,15 @@ public class SwingComponentContainerElement extends AbstractSwingComponentElemen
 
 	      // TODO: Add util to translate colors, fonts etc. -- and use them properly!
 	      g.setFont(new Font(element.getComputedStyle().getString(CssProperty.FONT_FAMILY), 0, 
-	          element.getComputedStyle().getPx(CssProperty.FONT_SIZE, 0)));
+	          Math.round(scale * element.getComputedStyle().getPx(CssProperty.FONT_SIZE, 0))));
 	        
 	      FontMetrics fontMetrics = g.getFontMetrics();
 	      int dx = -fontMetrics.stringWidth(bullet);
-	      int dy = fontMetrics.getAscent() + fontMetrics.getLeading() 
-	        + childStyle.getPx(CssProperty.PADDING_TOP, 0) + childStyle.getPx(CssProperty.BORDER_TOP_WIDTH, 0);
+	      int dy = fontMetrics.getAscent() 
+	          + fontMetrics.getLeading() 
+	          + Math.round(scale 
+	              * (childStyle.getPx(CssProperty.PADDING_TOP, 0) 
+	                  + childStyle.getPx(CssProperty.BORDER_TOP_WIDTH, 0)));
 	      g.setColor(Color.BLACK);
 	      g.drawString(bullet, component.getX() + dx, component.getY() + dy);
 	    }
@@ -150,7 +154,7 @@ public class SwingComponentContainerElement extends AbstractSwingComponentElemen
 	}
 	
 	@Override
-	public int getIntrinsicContentBoxHeightForWidth(int contentBoxWidth, int parentContentBoxWidth) {
+	public float getIntrinsicContentBoxHeightForWidth(float contentBoxWidth, float parentContentBoxWidth) {
 		return layout.layout(this, 0, 0, contentBoxWidth, true /* measureOnly */);
 	}
 

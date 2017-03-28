@@ -4,11 +4,11 @@ import org.kobjects.nativehtml.dom.Element;
 
 public interface ComponentElement extends Element {
 	
-	public void setBorderBoxBounds(int x, int y, int width, int height, int parentContentBoxWidth);
+	public void setBorderBoxBounds(float x, float y, float width, float height, float parentContentBoxWidth);
 	
-	public void moveRelative(int dx, int dy);
+	public void moveRelative(float dx, float dy);
 	
-	public int getIntrinsicContentBoxWidth(Layout.Directive directive, int parentContentBoxWidth);
-	public int getIntrinsicContentBoxHeightForWidth(int contentBoxWidth, int parentContentBoxWidth);
+	public float getIntrinsicContentBoxWidth(Layout.Directive directive, float parentContentBoxWidth);
+	public float getIntrinsicContentBoxHeightForWidth(float contentBoxWidth, float parentContentBoxWidth);
 
 }

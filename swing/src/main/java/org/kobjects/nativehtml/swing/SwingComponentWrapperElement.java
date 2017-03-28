@@ -32,15 +32,15 @@ public abstract class SwingComponentWrapperElement<T extends JComponent> extends
 	
 	
 	@Override
-	public int getIntrinsicContentBoxWidth(Layout.Directive directive, int parentContentBoxWidth) {
+	public float getIntrinsicContentBoxWidth(Layout.Directive directive, float parentContentBoxWidth) {
 	  float scale = getOwnerDocument().getSettings().getScale();
-      return Math.round((directive == Layout.Directive.MINIMUM ? component.getMinimumSize() : component.getPreferredSize()).width / scale);
+      return (directive == Layout.Directive.MINIMUM ? component.getMinimumSize() : component.getPreferredSize()).width / scale;
 	}
 
 	@Override
-	public int getIntrinsicContentBoxHeightForWidth(int contentBoxWidth, int parentContentBoxWidth) {
+	public float getIntrinsicContentBoxHeightForWidth(float contentBoxWidth, float parentContentBoxWidth) {
 	  float scale = getOwnerDocument().getSettings().getScale();
-		return Math.round(component.getPreferredSize().height / scale);
+		return component.getPreferredSize().height / scale;
 	}
 
 	@Override
