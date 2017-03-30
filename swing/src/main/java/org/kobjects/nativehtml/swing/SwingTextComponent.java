@@ -41,7 +41,7 @@ public class SwingTextComponent extends JTextPane implements org.kobjects.native
 	private CssStyleDeclaration computedStyle;
 	private JEditorPane resizer;
 	
-	public SwingTextComponent(Document document)  {
+	public SwingTextComponent(final Document document)  {
 	  //super("text/html");
 		this.document = document;
 		

@@ -24,8 +24,8 @@ public class SwingDemo {
 
 	
     public static void main(String[] args) throws IOException, URISyntaxException {
-    	HtmlComponent htmlComponent = new HtmlComponent();
-    	URI url = SwingDemo.class.getResource("index.html").toURI();
+    	final HtmlComponent htmlComponent = new HtmlComponent();
+    	final URI url = SwingDemo.class.getResource("/index.html").toURI();
     	String prefix = url.toString();
     	int cut = prefix.lastIndexOf('/');
     	prefix = prefix.substring(0, cut + 1);

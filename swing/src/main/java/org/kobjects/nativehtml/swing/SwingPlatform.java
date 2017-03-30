@@ -53,7 +53,7 @@ public class SwingPlatform implements Platform {
 	}
 	
 	
-	public Image getImage(Element element, URI uri) {
+	public Image getImage(final Element element, final URI uri) {
 	  try {
 	      String s = uri.toString();
 	      boolean isDataUrl = s.startsWith("data:");

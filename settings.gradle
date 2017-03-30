@@ -1,2 +1,5 @@
+include ':android'
+include ':demo-swing'
+include ':demo-shared'
 include ':shared'
 include ':swing'
