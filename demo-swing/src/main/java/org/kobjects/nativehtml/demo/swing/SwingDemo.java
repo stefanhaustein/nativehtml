@@ -37,12 +37,7 @@ public class SwingDemo {
     	Action loadIndexAction = new AbstractAction("Back") {
           @Override
           public void actionPerformed(ActionEvent event) {
-            try {
-              htmlComponent.loadHtml(
-                  new InputStreamReader(url.toURL().openStream(), "utf-8"), url);
-            } catch (IOException e) {
-              throw new RuntimeException(e);
-            }
+            htmlComponent.loadHtml(url);
           }
         };
         loadIndexAction.actionPerformed(null);

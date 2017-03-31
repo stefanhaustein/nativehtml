@@ -1,7 +1,5 @@
-apply plugin: 'com.android.library'
-apply plugin: 'android-maven'
+apply plugin: 'com.android.application'
 
-group = 'com.github.stefanhaustein'
 
 android {
     compileSdkVersion 24
@@ -19,5 +17,7 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     //  compile 'com.android.support:appcompat-v7:24.0.0'
+    compile project(':android')
+    compile project(':demo-shared')
     compile project(':shared')
 }

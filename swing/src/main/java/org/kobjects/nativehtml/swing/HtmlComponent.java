@@ -14,21 +14,30 @@ import org.kobjects.nativehtml.dom.Element;
 import org.kobjects.nativehtml.dom.Platform;
 import org.kobjects.nativehtml.io.DefaultRequestHandler;
 import org.kobjects.nativehtml.io.HtmlParser;
+import org.kobjects.nativehtml.io.InternalLinkHandler;
 
 /**
  * Convenience Swing HTML component 
  */
-public class HtmlComponent extends JComponent {
+public class HtmlComponent extends JComponent implements InternalLinkHandler {
   private final SwingPlatform platform = new SwingPlatform();
-  private final HtmlParser htmlProcessor = 
-      new HtmlParser(platform, new HtmlComponentRequestHandler(platform), null);
+  private DefaultRequestHandler requestHandler = new DefaultRequestHandler(platform);
+  private HtmlParser htmlProcessor = new HtmlParser(platform, requestHandler, null);
   
-  private TreeSet<String> internalLinkPrefixSet = new TreeSet<>();
   
   public HtmlComponent() {
     this.setLayout(new BorderLayout());
+    requestHandler.setInternalLinkHandler(this);
   }
-  
+
+  public void addInternalLinkPrefix(String s) {
+    requestHandler.addInternalLinkPrefix(s);
+  }
+
+  public void loadHtml(URI url) {
+    requestHandler.openInternalLink(url);
+  }
+
   public void loadHtml(String html, URI baseUrl) {
     loadHtml(new StringReader(html), baseUrl);
   }
@@ -44,31 +53,5 @@ public class HtmlComponent extends JComponent {
     revalidate();
   }
 
-  public void addInternalLinkPrefix(String s) {
-    internalLinkPrefixSet.add(s);
-  }
   
-  class HtmlComponentRequestHandler extends DefaultRequestHandler {
-    HtmlComponentRequestHandler(Platform platform) {
-      super(platform);
-    }
-
-    @Override 
-    public void openLink(URI url) {
-      String s = url.toString();
-      // TODO: Take advantage of order and start scan just before s.
-      for (String prefix : internalLinkPrefixSet) {
-        if (s.startsWith(prefix)) {
-          // TODO: Async
-          try {
-            loadHtml(new InputStreamReader(url.toURL().openStream(), "utf-8"), url);
-          } catch(IOException e) {
-            throw new RuntimeException(e);
-          }
-          return;
-        }
-      }
-      super.openLink(url);
-    } 
-  }
 }

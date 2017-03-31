@@ -7,7 +7,7 @@ compileJava {
 
 
 dependencies {
-  compile project(':shared')
-  compile project(':swing')
-  compile project(':demo-shared')
+    compile project(':shared')
+    compile project(':swing')
+    compile project(':demo-shared')
 }
