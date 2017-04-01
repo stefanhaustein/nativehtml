@@ -127,8 +127,7 @@ public class SwingTextComponent extends JTextPane implements org.kobjects.native
 
 	@Override
 	public void insertBefore(Element newChild, Element referenceChild) {
-		children.insertBefore(newChild, referenceChild);
-		newChild.setParentElement(this);
+		children.insertBefore(this, newChild, referenceChild);
 		notifyContentChanged();
 	}
 	

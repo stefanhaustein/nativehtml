@@ -97,6 +97,16 @@ public class SwingComponentContainerElement extends AbstractSwingComponentElemen
 	}
 
 	@Override
+	public float getIntrinsicContentBoxHeightForWidth(float contentBoxWidth, float parentContentBoxWidth) {
+		return layout.layout(this, 0, 0, contentBoxWidth, true /* measureOnly */);
+	}
+
+	@Override
+	public ContentType getElementContentType() {
+		return ContentType.COMPONENTS;
+	}
+
+	@Override
 	public void paint(Graphics g) {
 	  paintComponent(g);
 	  int listIndex = 1;
@@ -151,16 +161,6 @@ public class SwingComponentContainerElement extends AbstractSwingComponentElemen
         component.paint(g);
         g.translate(-component.getX(), -component.getY());
 	  }
-	}
-	
-	@Override
-	public float getIntrinsicContentBoxHeightForWidth(float contentBoxWidth, float parentContentBoxWidth) {
-		return layout.layout(this, 0, 0, contentBoxWidth, true /* measureOnly */);
-	}
-
-	@Override
-	public ContentType getElementContentType() {
-		return ContentType.COMPONENTS;
 	}
 
 }

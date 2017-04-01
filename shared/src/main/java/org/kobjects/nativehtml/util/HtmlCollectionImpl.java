@@ -16,7 +16,8 @@ public class HtmlCollectionImpl extends ArrayList<Element> implements HtmlCollec
         return get(index);
     }
 
-	public void insertBefore(Element newChild, Element referenceChild) {
+	public void insertBefore(Element parent, Element newChild, Element referenceChild) {
 		add(newChild);
+		newChild.setParentElement(parent);
 	}
 }

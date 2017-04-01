@@ -12,10 +12,11 @@ import org.kobjects.nativehtml.layout.ComponentElement;
 import org.kobjects.nativehtml.util.ElementImpl;
 
 public abstract class AbstractAndroidComponentElement extends ViewGroup implements ComponentElement, HtmlCollection {
-    private final Document document;
-    private final String name;
-    private CssStyleDeclaration style;
-    private CssStyleDeclaration computedStyle;
+    final Document document;
+    final String name;
+    CssStyleDeclaration style;
+    CssStyleDeclaration computedStyle;
+    float parentContentBoxWidth;
 
 
     public AbstractAndroidComponentElement(Context context, Document document, String name) {
@@ -60,7 +61,9 @@ public abstract class AbstractAndroidComponentElement extends ViewGroup implemen
 
     @Override
     public void setParentElement(Element parent) {
-
+        if (parent == null && getParent() instanceof ViewGroup) {
+            ((ViewGroup) getParent()).removeView(this);
+        }
     }
 
     @Override
@@ -105,7 +108,11 @@ public abstract class AbstractAndroidComponentElement extends ViewGroup implemen
 
     @Override
     public void setBorderBoxBounds(float x, float y, float width, float height, float parentContentBoxWidth) {
-
+        this.parentContentBoxWidth = parentContentBoxWidth;
+        float scale = document.getSettings().getScale();
+        setX(x * scale);
+        setY(y * scale);
+        setMeasuredDimension(Math.round(width * scale), Math.round(height * scale));
     }
 
     @Override

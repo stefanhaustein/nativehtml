@@ -188,8 +188,12 @@ public class HtmlParser {
 	  boolean preserveLeadingSpace = false;
 	  parent.insertBefore(textComponent, null);
 	  Element current = textComponent;
-	  
-	  loop:
+
+      if (current == null) {
+          throw new RuntimeException();
+      }
+
+      loop:
 	  while (true) {
 		  switch(input.getEventType()) {
 		  	case XmlPullParser.END_DOCUMENT:
@@ -198,7 +202,10 @@ public class HtmlParser {
 		  	case XmlPullParser.END_TAG:
 		  		if (current == textComponent) {
 		  			break loop;
-		  		} 
+		  		}
+                if (current.getParentElement() == null) {
+                    throw new RuntimeException("null parent for " + current + current.getClass());
+                }
 		  		current = current.getParentElement();
 		  		input.next();
 		  		break;
@@ -226,7 +233,6 @@ public class HtmlParser {
 		  			textComponent = newTextComponent;
 		  			preserveLeadingSpace = false;
 		  			parent.insertBefore(textComponent, null);
-		  			assert current != null;
 		  			input.next();
 		  		}
 		  		break;
