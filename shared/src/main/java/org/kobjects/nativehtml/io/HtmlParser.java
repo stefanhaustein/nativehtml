@@ -29,10 +29,10 @@ public class HtmlParser {
   private WebSettings webSettings;
   private RequestHandler requestHandler;
 
-  public HtmlParser(Platform elementFactory, RequestHandler requestHandler, WebSettings webSettins) {
+  public HtmlParser(Platform elementFactory, RequestHandler requestHandler, WebSettings webSettings) {
     this.elementFactory = elementFactory;
     this.requestHandler = requestHandler;
-    this.webSettings = webSettings == null ? new WebSettings() : webSettings;
+    this.webSettings = webSettings;
     try {
       this.input = new HtmlNormalizer();
     } catch (XmlPullParserException e) {

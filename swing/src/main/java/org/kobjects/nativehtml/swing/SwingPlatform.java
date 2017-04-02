@@ -110,4 +110,9 @@ public class SwingPlatform implements Platform {
 	    }
 	  }
 
+	@Override
+	public float getPixelPerDp() {
+		return 1;
+	}
+
 }

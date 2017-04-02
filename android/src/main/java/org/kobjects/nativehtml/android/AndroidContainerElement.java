@@ -22,12 +22,12 @@ public class AndroidContainerElement extends AbstractAndroidComponentElement {
 
         CssStyleDeclaration style = getComputedStyle();
 
-        float left = style.getPx(CssProperty.BORDER_LEFT_WIDTH, parentContentBoxWidth) +
-                style.getPx(CssProperty.PADDING_LEFT, parentContentBoxWidth);
-        float top = style.getPx(CssProperty.BORDER_TOP_WIDTH, parentContentBoxWidth) +
-                style.getPx(CssProperty.PADDING_TOP, parentContentBoxWidth);
-        float right = style.getPx(CssProperty.BORDER_RIGHT_WIDTH, parentContentBoxWidth) +
-                style.getPx(CssProperty.PADDING_RIGHT, parentContentBoxWidth);
+        float left = style.getPx(CssProperty.BORDER_LEFT_WIDTH, containingBoxWidth) +
+                style.getPx(CssProperty.PADDING_LEFT, containingBoxWidth);
+        float top = style.getPx(CssProperty.BORDER_TOP_WIDTH, containingBoxWidth) +
+                style.getPx(CssProperty.PADDING_TOP, containingBoxWidth);
+        float right = style.getPx(CssProperty.BORDER_RIGHT_WIDTH, containingBoxWidth) +
+                style.getPx(CssProperty.PADDING_RIGHT, containingBoxWidth);
 
         float scale = getOwnerDocument().getSettings().getScale();
         float contentBoxWidth = (r - l) / scale - left - right;
@@ -36,7 +36,7 @@ public class AndroidContainerElement extends AbstractAndroidComponentElement {
         for (int i = 0; i < getChildCount(); i++) {
             View child = getChildAt(i);
             if (child instanceof AbstractAndroidComponentElement) {
-                ((AbstractAndroidComponentElement) child).parentContentBoxWidth = parentContentBoxWidth;
+                ((AbstractAndroidComponentElement) child).containingBoxWidth = containingBoxWidth;
             }
             child.layout(0, 0, child.getMeasuredWidth(), child.getMeasuredHeight());
         }
@@ -103,7 +103,7 @@ public class AndroidContainerElement extends AbstractAndroidComponentElement {
         float borderBoxWidth = left + contentBoxWidth + right;
         float borderBoxHeight = top + contentBoxHeight + bottom;
 
-        setMeasuredDimension(Math.round(borderBoxWidth / scale), Math.round(borderBoxHeight / scale));
+        setMeasuredDimension(Math.round(borderBoxWidth * scale), Math.round(borderBoxHeight * scale));
     }
 
     @Override

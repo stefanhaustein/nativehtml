@@ -1,6 +1,7 @@
 package org.kobjects.nativehtml.dom;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.LinkedHashMap;
 
 import org.kobjects.nativehtml.io.RequestHandler;
@@ -70,7 +71,12 @@ public class Document {
 	public Document(Platform elementFactory, RequestHandler requestHandler, WebSettings webSettings, URI baseUri) {
 		this.platform = elementFactory;
 		this.requestHandler = requestHandler;
-		this.webSettings = webSettings == null ? new WebSettings() : webSettings;
+		if (webSettings == null) {
+		    this.webSettings = new WebSettings();
+		    this.webSettings.setScale(platform.getPixelPerDp());
+        } else {
+            this.webSettings = webSettings;
+        }
 		this.baseUri = baseUri;
 	}
     
@@ -88,6 +94,23 @@ public class Document {
 	public URI getBaseURI() {
 		return baseUri;
 	}
+
+	public URI resolveUrl(String url) {
+	    if (baseUri.isOpaque()) {
+            try {
+                URI uri = new URI(url);
+                if (uri.isAbsolute()) {
+                    return uri;
+                }
+                String s = baseUri.toString();
+                int cut = s.lastIndexOf('/');
+                return new URI(s.substring(0, cut + 1) + url);
+            } catch (URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return baseUri.resolve(url);
+    }
 
   public RequestHandler getRequestHandler() {
     return requestHandler;

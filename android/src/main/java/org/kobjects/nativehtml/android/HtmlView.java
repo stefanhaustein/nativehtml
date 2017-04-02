@@ -15,8 +15,6 @@ public class HtmlView extends FrameLayout implements InternalLinkHandler {
     private final HtmlParser htmlParser;
     private DefaultRequestHandler requestHandler;
 
-    private TreeSet<String> internalLinkPrefixSet = new TreeSet<>();
-
     public HtmlView(Context context) {
         super(context);
         platform = new AndroidPlatform(context);

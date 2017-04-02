@@ -5,7 +5,7 @@ public class WebSettings {
   public float getScale() {
     return scale;
   }
-  void setScale(float scale) {
+  public void setScale(float scale) {
     this.scale = scale;
   }
 }

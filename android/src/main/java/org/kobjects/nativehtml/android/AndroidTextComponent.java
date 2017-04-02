@@ -1,20 +1,22 @@
 package org.kobjects.nativehtml.android;
 
 import android.content.Context;
+import android.graphics.Paint;
 import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
+import android.text.style.AbsoluteSizeSpan;
 import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StrikethroughSpan;
+import android.text.style.StyleSpan;
 import android.text.style.SubscriptSpan;
 import android.text.style.SuperscriptSpan;
+import android.text.style.TypefaceSpan;
 import android.text.style.UnderlineSpan;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import org.kobjects.nativehtml.css.CssEnum;
 import org.kobjects.nativehtml.css.CssProperty;
@@ -32,6 +34,7 @@ import org.kobjects.nativehtml.util.HtmlCollectionImpl;
 public class AndroidTextComponent extends TextView implements ComponentElement {
     private static final String TAG = "AndroidTextComponent";
     private static final CssStyleDeclaration EMTPY_STYLE = new CssStyleDeclaration();
+    static final int PAINT_MASK = ~(Paint.STRIKE_THRU_TEXT_FLAG | Paint.UNDERLINE_TEXT_FLAG);
 
     private final Document document;
     private CssStyleDeclaration computedStyle;
@@ -77,7 +80,6 @@ public class AndroidTextComponent extends TextView implements ComponentElement {
 
     @Override
     public void setParentElement(Element parent) {
-        //
     }
 
     @Override
@@ -173,15 +175,14 @@ public class AndroidTextComponent extends TextView implements ComponentElement {
         }
     }
 
-
     public void setComputedStyle(CssStyleDeclaration computedStyle) {
         this.computedStyle = computedStyle;
         // System.out.println("applyRootStyle to '" + content + "': " + computedStyle);
         float scale = document.getSettings().getScale();
         setTextSize(TypedValue.COMPLEX_UNIT_PX, computedStyle.getPx(CssProperty.FONT_SIZE, 0) * scale);
-        setTextColor(this.computedStyle.getColor(CssProperty.COLOR));
-        // setTypeface(CssConversion.getTypeface(this.computedStyle)); // , CssConversion.getTextStyle(this.computedStyle));
-        // setPaintFlags((getPaintFlags() & HtmlView.PAINT_MASK) | CssConversion.getPaintFlags(this.computedStyle));
+        setTextColor(computedStyle.getColor(CssProperty.COLOR));
+        setTypeface(AndroidCss.getTypeface(computedStyle)); // , AndroidCss.getTextStyle(this.computedStyle));
+        setPaintFlags((getPaintFlags() & PAINT_MASK) | AndroidCss.getPaintFlags(computedStyle));
         switch (this.computedStyle.getEnum(CssProperty.TEXT_ALIGN)) {
             case RIGHT:
                 setGravity(Gravity.RIGHT);
@@ -195,7 +196,6 @@ public class AndroidTextComponent extends TextView implements ComponentElement {
         }
         dirty = true;
     }
-
 
     void updateChild(final Element element, CssStyleDeclaration parentStyle) {
         HtmlCollection children = element.getChildren();
@@ -231,23 +231,24 @@ public class AndroidTextComponent extends TextView implements ComponentElement {
                     Math.round(imageHeight * htmlTextView.htmlView.scale));
 
             spans.add(new ImageSpan(drawable, ImageSpan.ALIGN_BASELINE));
-        }
-        String typefaceName = CssConversion.getFontFamilyName(element.computedStyle);
-        if (!typefaceName.equals(CssConversion.getFontFamilyName(parentStyle))) {
+        }*/
+        ArrayList<Object> spans = new ArrayList<Object>();
+        float scale = document.getSettings().getScale();
+
+        String typefaceName = AndroidCss.getFontFamilyName(computedStyle);
+        if (!typefaceName.equals(AndroidCss.getFontFamilyName(parentStyle))) {
             spans.add(new TypefaceSpan(typefaceName));
         }
 
-        int typefaceFlags = CssConversion.getTextStyle(element.computedStyle);
-        if (typefaceFlags != CssConversion.getTextStyle(parentStyle)) {
+        int typefaceFlags = AndroidCss.getTextStyle(computedStyle);
+        if (typefaceFlags != AndroidCss.getTextStyle(parentStyle)) {
             spans.add(new StyleSpan(typefaceFlags));
         }
 
-        int size = htmlTextView.htmlView.getTextSize(element.computedStyle);
-        if (size != htmlTextView.htmlView.getTextSize(parentStyle)) {
-            spans.add(new AbsoluteSizeSpan(size));
-        }*/
-
-        ArrayList<Object> spans = new ArrayList<Object>();
+        float size = parentStyle.getPx(CssProperty.FONT_SIZE, 0);
+        if (size != computedStyle.getPx(CssProperty.FONT_SIZE, 0)) {
+            spans.add(new AbsoluteSizeSpan(Math.round(size * scale)));
+        }
 
         int color = computedStyle.getColor(CssProperty.COLOR);
         if (color != parentStyle.getColor(CssProperty.COLOR)) {
@@ -281,7 +282,7 @@ public class AndroidTextComponent extends TextView implements ComponentElement {
             spans.add(new ClickableSpan() {
                 @Override
                 public void onClick(View widget) {
-                    document.getRequestHandler().openLink(document.getBaseURI().resolve(element.getAttribute("href")));
+                    document.getRequestHandler().openLink(document.resolveUrl(element.getAttribute("href")));
                 }
             });
         }

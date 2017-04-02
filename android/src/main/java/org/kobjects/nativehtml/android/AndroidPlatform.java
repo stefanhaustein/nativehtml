@@ -1,15 +1,25 @@
 package org.kobjects.nativehtml.android;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.util.DisplayMetrics;
 import java.net.URI;
-import org.kobjects.nativehtml.dom.ContentType;
 import org.kobjects.nativehtml.dom.Document;
 import org.kobjects.nativehtml.dom.Element;
 import org.kobjects.nativehtml.dom.ElementType;
 import org.kobjects.nativehtml.dom.Platform;
-import org.kobjects.nativehtml.util.ElementImpl;
 
 public class AndroidPlatform implements Platform {
+    @Override
+    public float getPixelPerDp() {
+        Resources resources = context.getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        return metrics.density;
+    }
+
     private final Context context;
 
     public AndroidPlatform(Context context) {
@@ -31,6 +41,12 @@ public class AndroidPlatform implements Platform {
 
     @Override
     public void openInBrowser(URI url) {
-        throw new RuntimeException("NYI: open url " + url);
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(url.toString()));
+        context.startActivity(intent);
+    }
+
+    public Bitmap getImage(Element element, URI uri) {
+        return null;
     }
 }
