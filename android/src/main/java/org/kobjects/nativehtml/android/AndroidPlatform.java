@@ -32,6 +32,10 @@ public class AndroidPlatform implements Platform {
             return null;
         }
         switch (name) {
+            case "input":
+                return new AndroidInputElement(context, document);
+            case "select":
+                return new AndroidSelectElement(context, document);
             case "text-component":
                 return new AndroidTextComponent(context, document);
             default:

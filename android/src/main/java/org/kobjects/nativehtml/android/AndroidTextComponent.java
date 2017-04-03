@@ -138,19 +138,7 @@ public class AndroidTextComponent extends TextView implements ComponentElement {
         validateContent();
         float scale = document.getSettings().getScale();
         int widthSpec = Math.round(parentContentBoxWidth * scale);
-        switch (directive) {
-            case MINIMUM:
-                widthSpec |= MeasureSpec.AT_MOST;
-                break;
-            case STRETCH:
-                widthSpec |= MeasureSpec.EXACTLY;
-                break;
-            case FIT_CONTENT:
-                widthSpec |= MeasureSpec.UNSPECIFIED;
-                break;
-            default:
-                throw new IllegalArgumentException();
-        }
+
         measure(widthSpec, MeasureSpec.UNSPECIFIED);
         return getMeasuredWidth() / scale;
     }
@@ -175,6 +163,7 @@ public class AndroidTextComponent extends TextView implements ComponentElement {
         }
     }
 
+    @Override
     public void setComputedStyle(CssStyleDeclaration computedStyle) {
         this.computedStyle = computedStyle;
         // System.out.println("applyRootStyle to '" + content + "': " + computedStyle);
@@ -206,6 +195,8 @@ public class AndroidTextComponent extends TextView implements ComponentElement {
             for (int i = 0; i < children.getLength(); i++) {
                 updateChild(children.item(i), computedStyle);
             }
+        } else if (element.getLocalName().equals("br")) {
+            content.append("\n");
         } else {
             content.append(element.getTextContent());
         }

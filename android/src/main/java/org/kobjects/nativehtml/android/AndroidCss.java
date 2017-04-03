@@ -2,11 +2,13 @@ package org.kobjects.nativehtml.android;
 
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.view.View;
 import org.kobjects.nativehtml.css.Css;
 import org.kobjects.nativehtml.css.CssEnum;
 import org.kobjects.nativehtml.css.CssProperty;
 import org.kobjects.nativehtml.css.CssStyleDeclaration;
 import org.kobjects.nativehtml.css.CssUnit;
+import org.kobjects.nativehtml.layout.Layout;
 
 
 class AndroidCss {
@@ -48,4 +50,19 @@ class AndroidCss {
       int cut = fontFamily.lastIndexOf(',');
       return fontFamily.substring(cut + 1).trim();
     }
+
+    static int directiveToMeasureSpec(Layout.Directive directive) {
+        switch (directive) {
+            case MINIMUM:
+                return View.MeasureSpec.AT_MOST;
+            case STRETCH:
+                return View.MeasureSpec.EXACTLY;
+            case FIT_CONTENT:
+                return View.MeasureSpec.UNSPECIFIED;
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
+
+
 }

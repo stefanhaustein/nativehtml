@@ -68,6 +68,6 @@ public class SwingHtmlSelectElement extends SwingComponentWrapperElement<JComboB
 
 	@Override
 	public void insertBefore(Element newChild, Element referenceChild) {
-		children.insertBefore(newChild, referenceChild);
+		children.insertBefore(this, newChild, referenceChild);
 	}
 }

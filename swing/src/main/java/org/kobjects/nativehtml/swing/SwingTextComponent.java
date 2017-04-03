@@ -158,17 +158,13 @@ public class SwingTextComponent extends JTextPane implements org.kobjects.native
 	  public float getIntrinsicContentBoxHeightForWidth(float contentBoxWidth, float parentContentBoxWidth) {
 		check();
 		float scale = document.getSettings().getScale();
-		if (Math.round(contentBoxWidth * scale) == getWidth()) {
-			return Math.round(getPreferredSize().height / scale);
-		}
-		
 		String html = serialize();
 		if (resizer == null) {
 			resizer = new JEditorPane();
 			configureEditor(resizer);
-		} else {
-			resizer.setText(html);
 		}
+		resizer.setText(html);
+
 		 
 	 /*   View view = (View) resizer.getClientProperty(
 	                javax.swing.plaf.basic.BasicHTML.propertyKey);

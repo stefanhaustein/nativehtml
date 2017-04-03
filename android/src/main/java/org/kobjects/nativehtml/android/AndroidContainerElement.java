@@ -6,11 +6,13 @@ import org.kobjects.nativehtml.css.CssProperty;
 import org.kobjects.nativehtml.css.CssStyleDeclaration;
 import org.kobjects.nativehtml.dom.ContentType;
 import org.kobjects.nativehtml.dom.Document;
+import org.kobjects.nativehtml.dom.Element;
+import org.kobjects.nativehtml.dom.HtmlCollection;
 import org.kobjects.nativehtml.layout.BlockLayout;
 import org.kobjects.nativehtml.layout.Layout;
 import org.kobjects.nativehtml.layout.TableLayout;
 
-public class AndroidContainerElement extends AbstractAndroidComponentElement {
+public class AndroidContainerElement extends AbstractAndroidComponentElement implements  HtmlCollection{
     Layout layout;
 
     public AndroidContainerElement(Context context, Document document, String name) {
@@ -107,7 +109,39 @@ public class AndroidContainerElement extends AbstractAndroidComponentElement {
     }
 
     @Override
+    public void insertBefore(Element newChild, Element referenceChild) {
+        if (referenceChild == null) {
+            addView((View) newChild);
+        } else {
+            int refIndex = indexOfChild((View) referenceChild);
+            addView((View) newChild, refIndex);
+        }
+    }
+
+    @Override
     public ContentType getElementContentType() {
         return ContentType.COMPONENTS;
     }
+
+
+
+
+    @Override
+    public HtmlCollection getChildren() {
+        return this;
+    }
+
+
+
+    @Override
+    public int getLength() {
+        return getChildCount();
+    }
+
+
+    @Override
+    public Element item(int index) {
+        return (Element) getChildAt(index);
+    }
+
 }

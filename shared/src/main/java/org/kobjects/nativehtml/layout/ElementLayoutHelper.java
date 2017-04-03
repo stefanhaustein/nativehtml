@@ -7,7 +7,7 @@ import org.kobjects.nativehtml.layout.Layout.Directive;
 
 public class ElementLayoutHelper {
   
-	static float getContentBoxWidth(ComponentElement element, Layout.Directive directive, float parentContentBoxWidth) {
+	public static float getContentBoxWidth(ComponentElement element, Layout.Directive directive, float parentContentBoxWidth) {
 		CssStyleDeclaration style = element.getComputedStyle();
 		if (style.isSet(CssProperty.WIDTH)) {
 			return style.getPx(CssProperty.WIDTH, parentContentBoxWidth);
@@ -27,7 +27,7 @@ public class ElementLayoutHelper {
 		return Math.min(available, element.getIntrinsicContentBoxWidth(directive, available));
 	}
 	
-	static float getBorderBoxWidth(ComponentElement element, Layout.Directive directive, float parentContentBoxWidth) {
+	public static float getBorderBoxWidth(ComponentElement element, Layout.Directive directive, float parentContentBoxWidth) {
 		CssStyleDeclaration style = element.getComputedStyle();
 		return style.getPx(CssProperty.BORDER_LEFT_WIDTH, parentContentBoxWidth)
 				+ style.getPx(CssProperty.PADDING_LEFT, parentContentBoxWidth)
@@ -37,7 +37,7 @@ public class ElementLayoutHelper {
 	}
 
 
-	static float getContentBoxHeight(ComponentElement component, float contentBoxWidth, float parentContentBoxWidth) {
+	public static float getContentBoxHeight(ComponentElement component, float contentBoxWidth, float parentContentBoxWidth) {
 		CssStyleDeclaration style = component.getComputedStyle();
 		if (style.isSet(CssProperty.HEIGHT)) {
 			return style.getPx(CssProperty.WIDTH, parentContentBoxWidth);
@@ -45,7 +45,19 @@ public class ElementLayoutHelper {
 		return component.getIntrinsicContentBoxHeightForWidth(contentBoxWidth, parentContentBoxWidth);
 	}
 
-	static float getBorderBoxHeight(ComponentElement component, float contentBoxWidth, float parentContentBoxWidth) {
+	public static float[] getBorderBoxSize(ComponentElement element, Layout.Directive directive, float parentContentBoxWidth) {
+		float contentBoxWidth = getContentBoxWidth(element, directive, parentContentBoxWidth);
+		CssStyleDeclaration style = element.getComputedStyle();
+		return new float[] {
+				style.getPx(CssProperty.BORDER_LEFT_WIDTH, parentContentBoxWidth)
+					+ style.getPx(CssProperty.PADDING_LEFT, parentContentBoxWidth)
+					+ contentBoxWidth
+					+ style.getPx(CssProperty.PADDING_RIGHT, parentContentBoxWidth)
+					+ style.getPx(CssProperty.BORDER_RIGHT_WIDTH, parentContentBoxWidth),
+				getBorderBoxHeight(element, contentBoxWidth, parentContentBoxWidth)};
+	}
+
+	public static float getBorderBoxHeight(ComponentElement component, float contentBoxWidth, float parentContentBoxWidth) {
 		CssStyleDeclaration style = component.getComputedStyle();
 		return style.getPx(CssProperty.BORDER_TOP_WIDTH, parentContentBoxWidth)
 				+ style.getPx(CssProperty.PADDING_TOP, parentContentBoxWidth)

@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.view.View;
 import android.view.ViewGroup;
+import java.util.HashMap;
 import org.kobjects.nativehtml.css.CssEnum;
 import org.kobjects.nativehtml.css.CssProperty;
 import org.kobjects.nativehtml.css.CssStyleDeclaration;
@@ -16,13 +17,14 @@ import org.kobjects.nativehtml.dom.HtmlCollection;
 import org.kobjects.nativehtml.layout.ComponentElement;
 import org.kobjects.nativehtml.util.ElementImpl;
 
-public abstract class AbstractAndroidComponentElement extends ViewGroup implements ComponentElement, HtmlCollection {
+public abstract class AbstractAndroidComponentElement extends ViewGroup implements ComponentElement {
     final Document document;
     final String name;
     CssStyleDeclaration style;
     CssStyleDeclaration computedStyle;
     float containingBoxWidth;
     Paint paint = new Paint();
+    private HashMap<String,String> attributes;
 
     public AbstractAndroidComponentElement(Context context, Document document, String name) {
         super(context);
@@ -41,12 +43,18 @@ public abstract class AbstractAndroidComponentElement extends ViewGroup implemen
 
     @Override
     public void setAttribute(String name, String value) {
-
+        if (attributes == null) {
+            this.attributes = new HashMap<>();
+        }
+        attributes.put(name, value);
+        if (name.equals("style")) {
+            style = CssStyleDeclaration.fromString(value);
+        }
     }
 
     @Override
     public String getAttribute(String name) {
-        return null;
+        return attributes == null ? null : attributes.get(name);
     }
 
 
@@ -74,11 +82,6 @@ public abstract class AbstractAndroidComponentElement extends ViewGroup implemen
     }
 
     @Override
-    public HtmlCollection getChildren() {
-        return this;
-    }
-
-    @Override
     public CssStyleDeclaration getStyle() {
         return style;
     }
@@ -96,16 +99,6 @@ public abstract class AbstractAndroidComponentElement extends ViewGroup implemen
     @Override
     public void setTextContent(String textContent) {
 
-    }
-
-    @Override
-    public void insertBefore(Element newChild, Element referenceChild) {
-        if (referenceChild == null) {
-            addView((View) newChild);
-        } else {
-            int refIndex = indexOfChild((View) referenceChild);
-            addView((View) newChild, refIndex);
-        }
     }
 
     @Override
@@ -128,12 +121,6 @@ public abstract class AbstractAndroidComponentElement extends ViewGroup implemen
         setX(dx * scale + getX());
         setY(dy * scale + getY());
     }
-
-    @Override
-    public int getLength() {
-        return getChildCount();
-    }
-
 
     private void drawBackground(Canvas canvas, int x, int y, int w, int h) {
         CssStyleDeclaration style = getComputedStyle();
@@ -241,10 +228,4 @@ public abstract class AbstractAndroidComponentElement extends ViewGroup implemen
             }
         }
     }
-
-    @Override
-    public Element item(int index) {
-        return (Element) getChildAt(index);
-    }
-
 }
