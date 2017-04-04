@@ -1,12 +1,15 @@
 package org.kobjects.nativehtml.android;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
 import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
+import android.text.style.ImageSpan;
 import android.text.style.StrikethroughSpan;
 import android.text.style.StyleSpan;
 import android.text.style.SubscriptSpan;
@@ -17,6 +20,7 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
+import java.net.URI;
 import java.util.ArrayList;
 import org.kobjects.nativehtml.css.CssEnum;
 import org.kobjects.nativehtml.css.CssProperty;
@@ -41,6 +45,7 @@ public class AndroidTextComponent extends TextView implements ComponentElement {
     private HtmlCollectionImpl children = new HtmlCollectionImpl();
     private boolean dirty;
     SpannableStringBuilder content = new SpannableStringBuilder("");
+    float contentBoxWidth;
 
     public AndroidTextComponent(Context context, Document document) {
         super(context);
@@ -120,6 +125,7 @@ public class AndroidTextComponent extends TextView implements ComponentElement {
 
     @Override
     public void setBorderBoxBounds(float x, float y, float width, float height, float parentContentBoxWidth) {
+        this.contentBoxWidth = parentContentBoxWidth;
         float scale = document.getSettings().getScale();
         setX(x * scale);
         setY(y * scale);
@@ -187,44 +193,62 @@ public class AndroidTextComponent extends TextView implements ComponentElement {
     }
 
     void updateChild(final Element element, CssStyleDeclaration parentStyle) {
+        if (element.getLocalName().equals("br")) {
+            return;
+        }
+        int start = content.length();
+        if (element.getLocalName().equals("img")) {
+            content.append(' ');
+        }
+
+
         HtmlCollection children = element.getChildren();
 
         CssStyleDeclaration computedStyle = element.getComputedStyle();
-        int start = content.length();
-        if (children.getLength() != 0) {
+        if (element.getLocalName().equals("br")) {
+            content.append("\n");
+        } else if (element.getLocalName().equals("img")) {
+            content.append("\u25a1");
+        } else if (children.getLength() != 0) {
             for (int i = 0; i < children.getLength(); i++) {
                 updateChild(children.item(i), computedStyle);
             }
-        } else if (element.getLocalName().equals("br")) {
-            content.append("\n");
-        } else {
+        }  else {
             content.append(element.getTextContent());
         }
         int end = content.length();
-        /*
-        if (drawable != null) {
-            Bitmap bitmap = drawable.getBitmap();
-            float imageWidth = bitmap.getWidth();
-            float imageHeight = bitmap.getHeight();
-            int cssContentWidth = ((HtmlViewGroup) htmlTextView.getParent()).cssContentWidth;
-            if (element.computedStyle.isSet(CssProperty.WIDTH)) {
-                imageWidth = element.computedStyle.get(CssProperty.WIDTH, CssUnit.PX, cssContentWidth);
-                if (element.computedStyle.isSet((CssProperty.HEIGHT))) {
-                    imageHeight = element.computedStyle.get(CssProperty.WIDTH, CssUnit.PX, cssContentWidth);
-                } else {
-                    imageHeight *= imageWidth / bitmap.getWidth();
-                }
-            } else if (element.computedStyle.isSet(CssProperty.HEIGHT)) {
-                imageHeight = element.computedStyle.get(CssProperty.HEIGHT, CssUnit.PX, cssContentWidth);
-                imageWidth *= imageHeight / bitmap.getHeight();
-            }
-            drawable.setBounds(0, 0, Math.round(imageWidth * htmlTextView.htmlView.scale),
-                    Math.round(imageHeight * htmlTextView.htmlView.scale));
 
-            spans.add(new ImageSpan(drawable, ImageSpan.ALIGN_BASELINE));
-        }*/
         ArrayList<Object> spans = new ArrayList<Object>();
         float scale = document.getSettings().getScale();
+
+        if (element.getLocalName().equals("img")) {
+            String src = element.getAttribute("src");
+            if (src != null && !src.isEmpty()) {
+                URI uri = document.resolveUrl(src);
+                Bitmap bitmap = ((AndroidPlatform) document.getPlatform()).getImage(element, uri);
+                BitmapDrawable drawable = new BitmapDrawable(getContext().getResources(), bitmap);
+                if (bitmap != null) {
+                    float imageWidth = bitmap.getWidth();
+                    float imageHeight = bitmap.getHeight();
+                    if (computedStyle.isSet(CssProperty.WIDTH)) {
+                        imageWidth = computedStyle.getPx(CssProperty.WIDTH, contentBoxWidth);
+                        if (computedStyle.isSet((CssProperty.HEIGHT))) {
+                            imageHeight = computedStyle.getPx(CssProperty.WIDTH, contentBoxWidth);
+                        } else {
+                            imageHeight *= imageWidth / bitmap.getWidth();
+                        }
+                    } else if (computedStyle.isSet(CssProperty.HEIGHT)) {
+                        imageHeight = computedStyle.getPx(CssProperty.HEIGHT, contentBoxWidth);
+                        imageWidth *= imageHeight / bitmap.getHeight();
+                    }
+                    drawable.setBounds(0, 0,
+                            Math.round(imageWidth * scale),
+                            Math.round(imageHeight * scale));
+
+                    spans.add(new ImageSpan(drawable, ImageSpan.ALIGN_BASELINE));
+                }
+            }
+        }
 
         String typefaceName = AndroidCss.getFontFamilyName(computedStyle);
         if (!typefaceName.equals(AndroidCss.getFontFamilyName(parentStyle))) {

@@ -4,15 +4,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.util.Base64;
 import android.util.DisplayMetrics;
 import java.net.URI;
+import java.util.HashMap;
 import org.kobjects.nativehtml.dom.Document;
 import org.kobjects.nativehtml.dom.Element;
 import org.kobjects.nativehtml.dom.ElementType;
 import org.kobjects.nativehtml.dom.Platform;
 
 public class AndroidPlatform implements Platform {
+
+    HashMap<URI, Bitmap> imageCache = new HashMap<>();
+
     @Override
     public float getPixelPerDp() {
         Resources resources = context.getResources();
@@ -51,6 +57,18 @@ public class AndroidPlatform implements Platform {
     }
 
     public Bitmap getImage(Element element, URI uri) {
-        return null;
+        // TODO: fingerprint data urls!
+        Bitmap result = imageCache.get(uri);
+        if (result == null) {
+            String s = uri.toString();
+            if (s.startsWith("data:")) {
+                int cut = s.indexOf(",");
+                String data = s.substring(cut + 1);
+                byte[] decodedBytes = Base64.decode(data, Base64.DEFAULT);
+                result = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+                imageCache.put(uri, result);
+            }
+        }
+        return result;
     }
 }
