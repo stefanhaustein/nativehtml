@@ -5,6 +5,7 @@ import android.view.View;
 import org.kobjects.nativehtml.dom.Document;
 import org.kobjects.nativehtml.dom.Element;
 import org.kobjects.nativehtml.dom.HtmlCollection;
+import org.kobjects.nativehtml.layout.ElementLayoutHelper;
 import org.kobjects.nativehtml.layout.Layout;
 
 public abstract class AndroidWrapperElement extends AbstractAndroidComponentElement {
@@ -56,6 +57,14 @@ public abstract class AndroidWrapperElement extends AbstractAndroidComponentElem
         int widthSpec = Math.round(contentBoxWidth * scale) | MeasureSpec.EXACTLY;
         child.measure(widthSpec, MeasureSpec.UNSPECIFIED);
         return child.getMeasuredHeight() / scale;
+    }
+
+    @Override
+    public void onMeasure(int widthSpec, int heightSpec) {
+        float scale = document.getSettings().getScale();
+        float[] size = ElementLayoutHelper.getBorderBoxSize(this, Layout.Directive.FIT_CONTENT, containingBoxWidth);
+        setMeasuredDimension(Math.round(size[0] * scale), Math.round(size[1] * scale));
+
     }
 
 }

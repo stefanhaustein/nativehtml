@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.view.View;
 import android.view.ViewGroup;
 import java.util.HashMap;
 import org.kobjects.nativehtml.css.CssEnum;
@@ -13,7 +12,6 @@ import org.kobjects.nativehtml.css.CssStyleDeclaration;
 import org.kobjects.nativehtml.dom.Document;
 import org.kobjects.nativehtml.dom.Element;
 import org.kobjects.nativehtml.dom.ElementType;
-import org.kobjects.nativehtml.dom.HtmlCollection;
 import org.kobjects.nativehtml.layout.ComponentElement;
 import org.kobjects.nativehtml.util.ElementImpl;
 
