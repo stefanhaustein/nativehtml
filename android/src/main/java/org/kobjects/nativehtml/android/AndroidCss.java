@@ -12,6 +12,8 @@ import org.kobjects.nativehtml.layout.Layout;
 
 
 class AndroidCss {
+    static final int PAINT_MASK = ~(Paint.STRIKE_THRU_TEXT_FLAG | Paint.UNDERLINE_TEXT_FLAG);
+
     static int getTextStyle(CssStyleDeclaration style) {
       int flags = 0;
       if (style.get(CssProperty.FONT_WEIGHT, CssUnit.NUMBER) > 600) {
@@ -65,4 +67,10 @@ class AndroidCss {
     }
 
 
+    public static void setTextPaint(CssStyleDeclaration style, float scale, Paint paint) {
+        paint.setTextSize(style.getPx(CssProperty.FONT_SIZE, 0) * scale);
+        paint.setTypeface(getTypeface(style));
+        paint.setFlags((paint.getFlags() & PAINT_MASK) | getPaintFlags(style));
+        paint.setColor(style.getColor(CssProperty.COLOR));
+    }
 }

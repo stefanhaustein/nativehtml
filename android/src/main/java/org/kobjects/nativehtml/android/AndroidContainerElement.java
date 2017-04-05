@@ -1,7 +1,10 @@
 package org.kobjects.nativehtml.android;
 
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.view.View;
+import org.kobjects.nativehtml.css.CssEnum;
 import org.kobjects.nativehtml.css.CssProperty;
 import org.kobjects.nativehtml.css.CssStyleDeclaration;
 import org.kobjects.nativehtml.dom.ContentType;
@@ -11,6 +14,7 @@ import org.kobjects.nativehtml.dom.HtmlCollection;
 import org.kobjects.nativehtml.layout.BlockLayout;
 import org.kobjects.nativehtml.layout.Layout;
 import org.kobjects.nativehtml.layout.TableLayout;
+import org.kobjects.nativehtml.util.Strings;
 
 public class AndroidContainerElement extends AbstractAndroidComponentElement implements  HtmlCollection{
     Layout layout;
@@ -123,7 +127,41 @@ public class AndroidContainerElement extends AbstractAndroidComponentElement imp
         return ContentType.COMPONENTS;
     }
 
+    @Override
+    public void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        int listIndex = 1;
+        CssEnum listStyleType = getComputedStyle().getEnum(CssProperty.LIST_STYLE_TYPE);
+        float scale = getOwnerDocument().getSettings().getScale();
+        Paint.FontMetrics bulletMetrics = null;
 
+        for (int i = 0; i < getChildCount(); i++) {
+            View component = getChildAt(i);
+            Element element = (Element) component;
+            CssStyleDeclaration childStyle = element.getComputedStyle();
+
+            if (childStyle.getEnum(CssProperty.DISPLAY) == CssEnum.LIST_ITEM
+                    && listStyleType != CssEnum.NONE) {
+                if (bulletMetrics == null) {
+                    bulletMetrics = new Paint.FontMetrics();
+                }
+                String bullet = Strings.getBullet(listStyleType, listIndex++);
+                AndroidCss.setTextPaint(childStyle, scale, paint);
+                paint.getFontMetrics(bulletMetrics);
+
+                float top = childStyle.getPx(CssProperty.BORDER_TOP_WIDTH, 0)
+                        + childStyle.getPx(CssProperty.PADDING_TOP, 0);
+                float left = childStyle.getPx(CssProperty.BORDER_LEFT_WIDTH, 0)
+                        + childStyle.getPx(CssProperty.PADDING_LEFT, 0);
+
+                canvas.drawText(
+                        bullet,
+                        component.getX() + left * scale - paint.measureText(bullet),
+                        component.getY() + top * scale - bulletMetrics.top,
+                        paint);
+            }
+        }
+    }
 
 
     @Override
