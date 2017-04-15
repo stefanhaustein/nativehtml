@@ -7,6 +7,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Dictionary;
 
+import java.util.HashMap;
 import javax.swing.JEditorPane;
 import javax.swing.JTextPane;
 import javax.swing.event.HyperlinkEvent;
@@ -40,7 +41,7 @@ public class SwingTextComponent extends JTextPane implements org.kobjects.native
 	private HtmlCollectionImpl children = new HtmlCollectionImpl();
 	private CssStyleDeclaration computedStyle;
 	private JEditorPane resizer;
-	
+
 	public SwingTextComponent(final Document document)  {
 	  //super("text/html");
 		this.document = document;
@@ -192,7 +193,8 @@ public class SwingTextComponent extends JTextPane implements org.kobjects.native
                 e.printStackTrace();
               }
               result.putProperty("imageCache", imageCache);
-              return result;
+
+			return result;
         }
       });
       editor.setMargin(new Insets(0,0,0,0));
@@ -269,17 +271,30 @@ public class SwingTextComponent extends JTextPane implements org.kobjects.native
       sb.append("\">");
       return;
     }
-    
+
+	HtmlCollection children = element.getChildren();
+    String textContent = children.getLength() == 0 ? element.getTextContent() : "";
+    boolean writeTag = textContent != null && !"".equals(textContent);
     if (name.equals("a") && element.getAttribute("href") != null) {
         name = "a href=\"" + HtmlSerializer.htmlEscape(element.getAttribute("href")) + "\"";
+        writeTag = true;
     } else {
         name = "span";
     }
-    sb.append("<").append(name).append(" style=\"");
-    sb.append(element.getComputedStyle());
-    sb.append("\">");
-    
-    HtmlCollection children = element.getChildren();
+
+	if (writeTag) {
+		sb.append("<").append(name).append(" style=\"");
+		// px seems to scale up
+		sb.append("font-size:").append(Math.round(element.getComputedStyle().getPx(CssProperty.FONT_SIZE, 0))).append(";");
+		sb.append("line-height:").append(Math.round(element.getComputedStyle().getPx(CssProperty.LINE_HEIGHT, 0))).append(";");
+
+		String color = "00000" + Integer.toHexString(element.getComputedStyle().getColor(CssProperty.COLOR) & 0x0ffffff);
+		color = color.substring(color.length() - 6);
+
+		sb.append("color:#").append(color).append(';');
+		//		sb.append(element.getComputedStyle());
+		sb.append("\">");
+	}
     if (children.getLength() == 0) {
         HtmlSerializer.htmlEscape(element.getTextContent(), sb);
     } else {
@@ -287,7 +302,9 @@ public class SwingTextComponent extends JTextPane implements org.kobjects.native
             serializeInner(children.item(i), sb);
         }
     }
-    sb.append("</").append(name).append(">");
+    if (writeTag) {
+		sb.append("</").append(element.getLocalName()).append(">");
+	}
 }
 
 }

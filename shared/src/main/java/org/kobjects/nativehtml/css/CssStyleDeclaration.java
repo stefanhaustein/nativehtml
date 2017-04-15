@@ -197,7 +197,16 @@ public class CssStyleDeclaration {
 
     switch (valueUnit) {
       case PERCENT:
-        value = base * value / 100;
+        // Percentages for font-size and line-height should be resolved in the inherit step already,
+        // but can't for the root element.
+        // TODO: Avoid fixed values, see EM and inherit resolution.
+        if (property == CssProperty.FONT_SIZE) {
+          value = 16;
+        } else if (property == CssProperty.LINE_HEIGHT) {
+          value = 20;
+        } else {
+          value = base * value / 100;
+        }
         break;
       case PX:
       case NUMBER:
@@ -220,10 +229,21 @@ public class CssStyleDeclaration {
         }
         break;
       case EM:
-        value *= get(CssProperty.FONT_SIZE, CssUnit.PX);
+        // Should be resolved at the inheritance step, except for the root element.
+        // TODO: Explicitly save the default font size in the stylesheet and resolve accordingly if inherit == null,
+        // or store a dummy inherit base there.
+        if (property == CssProperty.FONT_SIZE) {
+          value = 16;
+        } else {
+          value *= get(CssProperty.FONT_SIZE, CssUnit.PX);
+        }
         break;
       case EX:
-        value *= get(CssProperty.FONT_SIZE, CssUnit.PX) / 2;
+        if (property == CssProperty.FONT_SIZE) {
+          value = 8;
+        } else {
+          value *= get(CssProperty.FONT_SIZE, CssUnit.PX) / 2;
+        }
         break;
       case IN:
         value *= DPI;
@@ -406,6 +426,12 @@ public class CssStyleDeclaration {
           CssUnit unit = getUnit(CssProperty.FONT_SIZE);
           set(property, get(CssProperty.FONT_SIZE, unit) * get(property, CssUnit.PERCENT) / 100.0f, unit);
         }
+      } else if (getUnit(property) == CssUnit.EM && property == CssProperty.FONT_SIZE) {
+        CssUnit unit = from.getUnit(property);
+        set(property, from.get(property, unit) * get(property, CssUnit.EM), unit);
+      } else if (getUnit(property) == CssUnit.EX && property == CssProperty.FONT_SIZE) {
+        CssUnit unit = from.getUnit(property);
+        set(property, from.get(property, unit) * get(property, CssUnit.EX) / 2, unit);
       } else if (from.isSet(property) && id < CssProperty.TEXT_PROPERTY_COUNT
           && property != CssProperty.BACKGROUND_COLOR
           && property != CssProperty.DISPLAY) {

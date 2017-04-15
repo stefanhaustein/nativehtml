@@ -1,0 +1,157 @@
+<html>
+<head>
+<meta name="viewport" content="width=device-width, user-scalable=no" />
+<style>
+  body {
+    background-color: #eee;
+    padding: 0px;
+    margin: 0px;
+  /*  color: #222; */
+    height: 100%;
+  }
+
+  a {
+    color: rgb(26, 13, 171);
+  }
+
+  .searchbox {
+    padding: 10px;
+  }
+
+  .card {
+    box-shadow: 0 2px 1px rgba(0,0,0,0.08);
+    border: 1px solid #ddd;
+    background-color: #fff;
+    margin: 8px;
+  }
+
+  .card-section {
+    margin: 0px;
+    padding: 10px;
+    border-top: 1px solid rgba(224,224,224,1);
+  }
+
+  .card-header {
+    padding: 14px 10px;
+  }
+
+  .card-footer {
+    background-color: #f5f5f5;
+    text-align: center;
+  }
+
+  .places-filter {
+    color: #757575;
+    padding: 16px 10px;
+  }
+
+  .place-details {
+    color: #757575;
+    font-size: 14px;
+  }
+
+  .review-score {
+    color: #ef6c00;
+  }
+
+  .result-title {
+    font-size: 18px;
+    display: block;
+  }
+
+  .result-visurl {
+    color: #062;
+    overflow: hidden;
+  }
+
+  android-button {
+    display: inline-block;
+  }
+  android-map {
+    display: block;
+  }
+</style>
+</head>
+<body id="body">
+<div id="searchbox" class="searchbox card">
+  pizza nyc
+</div>
+<div class="card" id="luresultcard">
+  <!--<android-map id="lumap" style="height: 120px; width: 100%" lat="37.402212" lng="-122.084044"></android-map> -->
+  <div class="card-section places-filter" id="lufilter">
+    <div>
+      Any price · Any rating · Any hours
+    </div>
+  </div>
+  <div class="card-section" id="luresult1">
+    <div class="place-title">Maldonado's Pizzeria</div>
+    <div class="place-details">
+      <div><span class="review-score">4.0</span> <review-stars rating="4.0"></review-stars> (141) · $$ · 1.9 mi</div>
+      <div>Pizza · S Rengstorff Ave</div>
+      <div>Takeout-only pies and slices</div>
+    </div>
+  </div>
+  <div class="card-section" id="luresult2">
+    <div class="place-title">Napoletana Pizzeria</div>
+    <div class="place-details">
+      <div><span class="review-score">4.3</span> <review-stars rating="4.3"></review-stars> (94) · $ · 2.7 mi</div>
+      <div>Pizza · W El Camino Real</div>
+      <div>Low-key place for wood-fired pizza</div>
+    </div>
+  </div>
+  <div class="card-section" id="luresult3">
+    <div class="place-title">Cucina Venti</div>
+    <div class="place-details">
+      <div><span class="review-score">3.6</span> <review-stars rating="3.6"></review-stars> (93) · $$ · 0.9 mi</div>
+      <div>Italian · Pear Ave</div>
+      <div>&nbsp;</div>
+    </div>
+  </div>
+  <div class="card-section card-footer" jsaction="transitionToFullscreen">
+    More pizza
+  </div>
+</div>
+<div class="card">
+  <div class="card-section">
+    <a class="result-title">The 10 Best Pizzas in NYC | Village Voice - Village Voice Blogs</a>
+    <div class="result-visurl">blogs.villagevoice.com/.../the_10_best_<b>pi</b>...</div>
+    We've been fuming since TripAdvisor's bogus <b>pizza</b> rankings placed <b>New York</b> fourth in the country...
+  </div>
+</div>
+<div class="card">
+  <div class="card-section">
+    <a class="result-title">Best New York pizza: The top 25 pies in the city - Time Out</a>
+    <div class="result-visurl">www.timeout.com/<b>newyork</b>/.../best-<b>new-</b>...</div>
+    Our five-borough tour of the best <b>New York pizza</b> skips from legendary institutions to new-wave joints.
+  </div>
+</div>
+<div class="card">
+  <div class="card-section card-header">
+    In the news
+  </div>
+  <div class="card-section">
+    <a class="result-title">The Quest for New York City's Most Adequate Dollar Slice</a>
+    <div class="result-visurl">Lucky Peach</div>
+  </div>
+  <div class="card-section">
+    <a class="result-title">Easy Toppings for Fast Weeknight Pizza</a>
+    <div class="result-visurl">New York Times</div>
+  </div>
+  <div class="card-section">
+    <a class="result-title">NYC pizza franchisee sliced paychecks too thin</a>
+    <div class="result-visurl">Business Management Daily</div>
+  </div>
+</div>
+<!--
+<div style="margin: 8px;">
+  <android-card>
+    <div class="card-section">
+      <a class="result-title">The 10 Best Pizzas in NYC | Village Voice - Village Voice Blogs</a>
+      <div class="result-visurl">blogs.villagevoice.com/.../the_10_best_<b>pi</b>...</div>
+      We've been fuming since TripAdvisor's bogus <b>pizza</b> rankings placed <b>New York</b> fourth in the country...
+    </div>
+  </android-card>
+</div>
+-->
+</body>
+</html>

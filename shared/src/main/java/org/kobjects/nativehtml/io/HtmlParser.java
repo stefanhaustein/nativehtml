@@ -58,6 +58,9 @@ public class HtmlParser {
         result.setParentElement(null);
       }
       document.setBody(result);
+
+      System.out.println("applying stylesheet: " + styleSheet);
+
       styleSheet.apply(result, document.getBaseURI());
       return result;
 
@@ -144,7 +147,11 @@ public class HtmlParser {
       case TEXT_ONLY: {
         StringBuilder sb = new StringBuilder();
         parseTextContentToString(sb);
-        element.setTextContent(sb.toString());
+        String textContent = sb.toString();
+        if ("style".equals(element.getLocalName())) {
+            styleSheet.read(textContent, document.getBaseURI(), new int[0], null, null);
+        }
+        element.setTextContent(textContent);
         break;
       }
       default:
