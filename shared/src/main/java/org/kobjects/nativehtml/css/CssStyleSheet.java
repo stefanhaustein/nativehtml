@@ -716,6 +716,9 @@ public class CssStyleSheet {
   private static void apply(Element element, URI baseUri, CssStyleDeclaration inherit,
                             List<CssStyleSheet> applyHere, List<CssStyleSheet> applyAnywhere) {
     CssStyleDeclaration style = new CssStyleDeclaration();
+    if (inherit != null) {
+      style.inherit(inherit);
+    }
 
     ArrayList<CssStyleDeclaration> queue = new ArrayList<>();
     ArrayList<CssStyleSheet> childStyles = new ArrayList<>();
@@ -736,13 +739,10 @@ public class CssStyleSheet {
     for (int i = 0; i < queue.size(); i++) {
       style.setFrom((queue.get(i)));
     }
-  
+
     style.setFrom(element.getStyle());
   
-    if (inherit != null) {
-      style.inherit(inherit);
-    }
-  
+
     element.setComputedStyle(style);
     // recurse....
     
