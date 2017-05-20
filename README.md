@@ -1,1 +1,3 @@
-# html2native
+# nativehtml
+
+Renders HTML to native Android components. 
