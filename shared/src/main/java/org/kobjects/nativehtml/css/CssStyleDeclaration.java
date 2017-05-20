@@ -16,6 +16,7 @@ package org.kobjects.nativehtml.css;
 
 import java.net.URI;
 import java.util.LinkedHashMap;
+import org.w3c.dom.css.CSSValue;
 
 public class CssStyleDeclaration {
   /**
@@ -288,7 +289,29 @@ public class CssStyleDeclaration {
   }
 
   public float getPx(CssProperty property, float base) {
-	  return get(property, CssUnit.PX, base);
+    switch (property) {
+      case BORDER_TOP_WIDTH:
+        if (getEnum(CssProperty.BORDER_TOP_STYLE) == CssEnum.NONE) {
+          return 0;
+        }
+        break;
+      case BORDER_LEFT_WIDTH:
+        if (getEnum(CssProperty.BORDER_LEFT_STYLE) == CssEnum.NONE) {
+          return 0;
+        }
+        break;
+      case BORDER_RIGHT_WIDTH:
+        if (getEnum(CssProperty.BORDER_RIGHT_STYLE) == CssEnum.NONE) {
+          return 0;
+        }
+        break;
+      case BORDER_BOTTOM_WIDTH:
+        if (getEnum(CssProperty.BORDER_BOTTOM_STYLE) == CssEnum.NONE) {
+          return 0;
+        }
+        break;
+    }
+    return get(property, CssUnit.PX, base);
   }
   
   public int getBackgroundReferencePoint(CssProperty property, int containerLength, int imageLength) {
