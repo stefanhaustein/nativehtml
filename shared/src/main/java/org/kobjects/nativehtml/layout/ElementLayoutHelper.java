@@ -36,11 +36,10 @@ public class ElementLayoutHelper {
 				+ style.getPx(CssProperty.BORDER_RIGHT_WIDTH, parentContentBoxWidth);
 	}
 
-
 	public static float getContentBoxHeight(ComponentElement component, float contentBoxWidth, float parentContentBoxWidth) {
 		CssStyleDeclaration style = component.getComputedStyle();
 		if (style.isSet(CssProperty.HEIGHT)) {
-			return style.getPx(CssProperty.WIDTH, parentContentBoxWidth);
+			return style.getPx(CssProperty.HEIGHT, parentContentBoxWidth);
 		}
 		return component.getIntrinsicContentBoxHeightForWidth(contentBoxWidth, parentContentBoxWidth);
 	}
