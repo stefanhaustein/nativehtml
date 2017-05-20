@@ -23,6 +23,8 @@ public abstract class AbstractAndroidComponentElement extends ViewGroup implemen
     float containingBoxWidth;
     Paint paint = new Paint();
     private HashMap<String,String> attributes;
+    float x;
+    float y;
 
     public AbstractAndroidComponentElement(Context context, Document document, String name) {
         super(context);
@@ -107,17 +109,16 @@ public abstract class AbstractAndroidComponentElement extends ViewGroup implemen
     @Override
     public void setBorderBoxBounds(float x, float y, float width, float height, float parentContentBoxWidth) {
         this.containingBoxWidth = parentContentBoxWidth;
+        this.x = x;
+        this.y = y;
         float scale = document.getSettings().getScale();
-        setX(x * scale);
-        setY(y * scale);
         setMeasuredDimension(Math.round(width * scale), Math.round(height * scale));
     }
 
     @Override
     public void moveRelative(float dx, float dy) {
-        float scale = document.getSettings().getScale();
-        setX(dx * scale + getX());
-        setY(dy * scale + getY());
+        x += dx;
+        y += dy;
     }
 
     private void drawBackground(Canvas canvas, int x, int y, int w, int h) {

@@ -2,6 +2,7 @@ package org.kobjects.nativehtml.android;
 
 import android.content.Context;
 import android.view.View;
+import org.kobjects.nativehtml.css.CssProperty;
 import org.kobjects.nativehtml.dom.Document;
 import org.kobjects.nativehtml.dom.Element;
 import org.kobjects.nativehtml.dom.HtmlCollection;
@@ -22,9 +23,16 @@ public abstract class AndroidWrapperElement extends AbstractAndroidComponentElem
 
     @Override
     protected void  onLayout(boolean changed, int l, int t, int r, int b) {
+        float scale = getOwnerDocument().getSettings().getScale();
+
+        int left = Math.round(scale * (style.getPx(CssProperty.BORDER_LEFT_WIDTH, containingBoxWidth) +
+                style.getPx(CssProperty.PADDING_LEFT, containingBoxWidth)));
+        int top = Math.round(scale * (style.getPx(CssProperty.BORDER_TOP_WIDTH, containingBoxWidth) +
+                style.getPx(CssProperty.PADDING_TOP, containingBoxWidth)));
+
         for (int i = 0; i < getChildCount(); i++) {
             View child = getChildAt(i);
-            child.layout(0, 0, child.getMeasuredWidth(), child.getMeasuredHeight());
+            child.layout(left, top, child.getMeasuredWidth(), child.getMeasuredHeight());
         }
     }
 

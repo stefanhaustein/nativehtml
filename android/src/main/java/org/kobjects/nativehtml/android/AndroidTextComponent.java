@@ -46,6 +46,8 @@ public class AndroidTextComponent extends TextView implements ComponentElement {
     private boolean dirty;
     SpannableStringBuilder content = new SpannableStringBuilder("");
     float contentBoxWidth;
+    float x;
+    float y;
 
     public AndroidTextComponent(Context context, Document document) {
         super(context);
@@ -126,24 +128,23 @@ public class AndroidTextComponent extends TextView implements ComponentElement {
     @Override
     public void setBorderBoxBounds(float x, float y, float width, float height, float parentContentBoxWidth) {
         this.contentBoxWidth = parentContentBoxWidth;
+        this.x = x;
+        this.y = y;
         float scale = document.getSettings().getScale();
-        setX(x * scale);
-        setY(y * scale);
         setMeasuredDimension(Math.round(width * scale), Math.round(height * scale));
     }
 
     @Override
     public void moveRelative(float dx, float dy) {
-        float scale = document.getSettings().getScale();
-        setX(getX() + dx * scale);
-        setY(getY() + dy * scale);
+        x += dx;
+        y += dy;
     }
 
     @Override
     public float getIntrinsicContentBoxWidth(Layout.Directive directive, float parentContentBoxWidth) {
         validateContent();
         float scale = document.getSettings().getScale();
-        int widthSpec = Math.round(parentContentBoxWidth * scale);
+        int widthSpec = Math.round(parentContentBoxWidth * scale) | MeasureSpec.AT_MOST;
 
         measure(widthSpec, MeasureSpec.UNSPECIFIED);
         return getMeasuredWidth() / scale;

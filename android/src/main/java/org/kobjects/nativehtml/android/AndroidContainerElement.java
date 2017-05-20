@@ -25,26 +25,38 @@ public class AndroidContainerElement extends AbstractAndroidComponentElement imp
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-
-        CssStyleDeclaration style = getComputedStyle();
-
-        float left = style.getPx(CssProperty.BORDER_LEFT_WIDTH, containingBoxWidth) +
-                style.getPx(CssProperty.PADDING_LEFT, containingBoxWidth);
-        float top = style.getPx(CssProperty.BORDER_TOP_WIDTH, containingBoxWidth) +
-                style.getPx(CssProperty.PADDING_TOP, containingBoxWidth);
-        float right = style.getPx(CssProperty.BORDER_RIGHT_WIDTH, containingBoxWidth) +
-                style.getPx(CssProperty.PADDING_RIGHT, containingBoxWidth);
-
         float scale = getOwnerDocument().getSettings().getScale();
-        float contentBoxWidth = (r - l) / scale - left - right;
-        getLayout().layout(this, left, top, contentBoxWidth, false);
+
+        if (!getLocalName().equals("tr")) {
+            CssStyleDeclaration style = getComputedStyle();
+
+            float left = style.getPx(CssProperty.BORDER_LEFT_WIDTH, containingBoxWidth) +
+                    style.getPx(CssProperty.PADDING_LEFT, containingBoxWidth);
+            float top = style.getPx(CssProperty.BORDER_TOP_WIDTH, containingBoxWidth) +
+                    style.getPx(CssProperty.PADDING_TOP, containingBoxWidth);
+            float right = style.getPx(CssProperty.BORDER_RIGHT_WIDTH, containingBoxWidth) +
+                    style.getPx(CssProperty.PADDING_RIGHT, containingBoxWidth);
+
+            float contentBoxWidth = (r - l) / scale - left - right;
+            getLayout().layout(this, left, top, contentBoxWidth, false);
+        }
 
         for (int i = 0; i < getChildCount(); i++) {
             View child = getChildAt(i);
+            float x = 0;
+            float y = 0;
             if (child instanceof AbstractAndroidComponentElement) {
-                ((AbstractAndroidComponentElement) child).containingBoxWidth = containingBoxWidth;
+                AbstractAndroidComponentElement childElement = (AbstractAndroidComponentElement) child;
+                x = scale * childElement.x;
+                y = scale * childElement.y;
+            } else if (child instanceof AndroidTextComponent) {
+                AndroidTextComponent childElement = (AndroidTextComponent) child;
+                x = scale * childElement.x;
+                y = scale * childElement.y;
             }
-            child.layout(0, 0, child.getMeasuredWidth(), child.getMeasuredHeight());
+            child.layout(Math.round(x), Math.round(y),
+                    Math.round(x +  child.getMeasuredWidth()),
+                    Math.round(y + child.getMeasuredHeight()));
         }
     }
 
@@ -72,6 +84,10 @@ public class AndroidContainerElement extends AbstractAndroidComponentElement imp
 
     @Override
     public void onMeasure(int withSpec, int heightSpec) {
+        if ((getParent() instanceof AndroidContainerElement)) {
+            throw new RuntimeException("onMeasure expected for root HTML container only");
+        }
+
         int widthMode = MeasureSpec.getMode(withSpec);
         int width = MeasureSpec.getSize(withSpec);
 
@@ -79,31 +95,22 @@ public class AndroidContainerElement extends AbstractAndroidComponentElement imp
         float containingBoxWidth = width / scale;
         CssStyleDeclaration style = getComputedStyle();
 
-        float bottom = style.getPx(CssProperty.BORDER_BOTTOM_WIDTH, containingBoxWidth) +
-                style.getPx(CssProperty.PADDING_BOTTOM, containingBoxWidth);
         float left = style.getPx(CssProperty.BORDER_LEFT_WIDTH, containingBoxWidth) +
                 style.getPx(CssProperty.PADDING_LEFT, containingBoxWidth);
         float top = style.getPx(CssProperty.BORDER_TOP_WIDTH, containingBoxWidth) +
                 style.getPx(CssProperty.PADDING_TOP, containingBoxWidth);
+        float bottom = style.getPx(CssProperty.BORDER_BOTTOM_WIDTH, containingBoxWidth) +
+                style.getPx(CssProperty.PADDING_BOTTOM, containingBoxWidth);
         float right = style.getPx(CssProperty.BORDER_RIGHT_WIDTH, containingBoxWidth) +
                 style.getPx(CssProperty.PADDING_RIGHT, containingBoxWidth);
 
-        Layout.Directive directive;
-        switch (widthMode) {
-            case MeasureSpec.AT_MOST:
-                directive = Layout.Directive.MINIMUM;
-                break;
-            case MeasureSpec.EXACTLY:
-                directive = Layout.Directive.STRETCH;
-                break;
-            case MeasureSpec.UNSPECIFIED:
-                directive = Layout.Directive.FIT_CONTENT;
-                break;
-            default:
-                directive = Layout.Directive.FIT_CONTENT;
+        float contentBoxWidth;
+        if (widthMode == MeasureSpec.EXACTLY) {
+            contentBoxWidth = containingBoxWidth - left - right;
+        } else {
+            contentBoxWidth = getLayout().measureWidth(this, widthMode == MeasureSpec.AT_MOST ? Layout.Directive.MINIMUM : Layout.Directive.FIT_CONTENT, containingBoxWidth);
         }
 
-        float contentBoxWidth = getLayout().measureWidth(this, directive, containingBoxWidth);
         float contentBoxHeight = getLayout().layout(this, left, top, contentBoxWidth, true);
 
         float borderBoxWidth = left + contentBoxWidth + right;
