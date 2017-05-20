@@ -105,6 +105,12 @@ public class AndroidTextComponent extends TextView implements ComponentElement {
     }
 
     @Override
+    public void requestLayout() {
+        dirty = true;
+        super.requestLayout();
+    }
+
+    @Override
     public String getTextContent() {
         return ElementImpl.getTextContent(this);
     }
