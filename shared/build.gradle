@@ -1,4 +1,5 @@
 apply plugin: 'java'
+apply plugin: 'maven'
 
 compileJava {
     sourceCompatibility = 1.7
