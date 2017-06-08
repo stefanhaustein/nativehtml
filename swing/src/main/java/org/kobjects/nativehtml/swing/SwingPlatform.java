@@ -82,8 +82,8 @@ public class SwingPlatform implements Platform {
 	          }
 	        }).start();
 	      }
-	    } catch (IOException e) {
-	      throw new RuntimeException(e);
+	    } catch (Exception e) {
+	      e.printStackTrace();
 	    }
 	  return null;
 	}
