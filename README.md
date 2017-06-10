@@ -43,5 +43,5 @@ Step 1: Add jitpack to your root build.gradle at the end of repositories:
 Step 2: Add the HtmlView2 dependency
 
 	dependencies {
-		compile 'com.github.stefanhaustein.nativehtml:android:v1.0.0'
+		compile 'com.github.stefanhaustein.nativehtml:android:v1.0.1'
 	}
