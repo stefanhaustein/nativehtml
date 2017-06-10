@@ -22,4 +22,26 @@ The main use case for this library is rendering HTML-formatted text or (custom) 
  * Platform-independent and platform-specific parts of the code base are clearly separated, so it should be straightforward to port the code to any platform that supports Java and provides a component for formatted text. 
  * Layout managers are separated from containers. So while flexbox is currently not supported, it should be relatively straightforward to implement in a way similar to the existing `BlockLayout` and `TableLayout` classes.
  
- 
+## Usage
+
+For a simple example, please refer to the [demo](
+https://github.com/stefanhaustein/nativehtml/blob/master/demo-android/src/main/java/org/kobjects/nativehtml/demo/android/MainActivity.java)
+
+## Gradle
+
+Jitpack for the win!
+
+Step 1: Add jitpack to your root build.gradle at the end of repositories:
+
+    allprojects {
+		    repositories {
+			  ...
+			  maven { url 'https://jitpack.io' }
+		    }
+	    }
+
+Step 2: Add the HtmlView2 dependency
+
+	dependencies {
+		compile 'com.github.stefanhaustein.nativehtml:android:v1.0.0'
+	}
