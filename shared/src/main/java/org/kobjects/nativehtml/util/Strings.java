@@ -37,15 +37,15 @@ public class Strings {
       case DECIMAL:
         return String.valueOf(listIndex) + ". ";
       case LOWER_LATIN:
-        return toLetters(listIndex, 'a', 26) + " ";
+        return toLetters(listIndex, 'a', 26) + ". ";
       case LOWER_GREEK:
-        return toLetters(listIndex, '\u03b1', 25) + " ";
+        return toLetters(listIndex, '\u03b1', 25) + ". ";
       case LOWER_ROMAN:
-        return toRoman(listIndex) + " ";
+        return toRoman(listIndex) + ". ";
       case UPPER_LATIN:
-        return toLetters(listIndex, 'a', 26) + " ";
+        return toLetters(listIndex, 'a', 26) + ". ";
       case UPPER_ROMAN:
-        return toRoman(listIndex).toUpperCase() + " ";
+        return toRoman(listIndex).toUpperCase() + ". ";
       case SQUARE:
         return "\u25aa ";
       default:
