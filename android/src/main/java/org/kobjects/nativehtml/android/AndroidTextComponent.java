@@ -52,6 +52,7 @@ public class AndroidTextComponent extends TextView implements ComponentElement {
     public AndroidTextComponent(Context context, Document document) {
         super(context);
         this.document = document;
+        setTextIsSelectable(true);
     }
 
 
@@ -102,12 +103,6 @@ public class AndroidTextComponent extends TextView implements ComponentElement {
     @Override
     public CssStyleDeclaration getComputedStyle() {
         return computedStyle;
-    }
-
-    @Override
-    public void requestLayout() {
-        dirty = true;
-        super.requestLayout();
     }
 
     @Override
@@ -200,14 +195,7 @@ public class AndroidTextComponent extends TextView implements ComponentElement {
     }
 
     void updateChild(final Element element, CssStyleDeclaration parentStyle) {
-        if (element.getLocalName().equals("br")) {
-            return;
-        }
         int start = content.length();
-        if (element.getLocalName().equals("img")) {
-            content.append(' ');
-        }
-
 
         HtmlCollection children = element.getChildren();
 
@@ -300,6 +288,7 @@ public class AndroidTextComponent extends TextView implements ComponentElement {
         }
 
         if (element.getLocalName().equals("a") && element.getAttribute("href") != null) {
+            setTextIsSelectable(false);
             setMovementMethod(LinkMovementMethod.getInstance());
             spans.add(new ClickableSpan() {
                 @Override
