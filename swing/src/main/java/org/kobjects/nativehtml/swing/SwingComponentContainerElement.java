@@ -62,7 +62,7 @@ public class SwingComponentContainerElement extends AbstractSwingComponentElemen
 	@Override
 	public void insertBefore(Element newChild, Element referenceChild) {
 		if (!(newChild instanceof ComponentElement)) {
-			System.out.println("Ignoring child " + newChild + " for " + this);
+			// System.out.println("Ignoring child " + newChild + " for " + this);
 		} else {
 			add((Component) newChild);
 		}

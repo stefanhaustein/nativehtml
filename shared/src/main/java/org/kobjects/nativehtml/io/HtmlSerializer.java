@@ -34,7 +34,7 @@ public class HtmlSerializer {
 			sb.append('<').append(name).append('>');
 			HtmlCollection children = element.getChildren();
 			if (children == null) {
-				System.out.println("ERROR: children null for '" + element + "'");
+				System.err.println("ERROR: children null for '" + element + "'");
 			} else {
 				sb.append(HtmlSerializer.toString(element.getChildren()));
 			}

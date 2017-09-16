@@ -59,8 +59,6 @@ public class HtmlParser {
       }
       document.setBody(result);
 
-      System.out.println("applying stylesheet: " + styleSheet);
-
       styleSheet.apply(result, document.getBaseURI());
       return result;
 
@@ -123,8 +121,6 @@ public class HtmlParser {
     assert input.getEventType() == XmlPullParser.START_TAG;
 
     String elementName = input.getName();
-    
-    System.out.println(indent + "Entering " + elementName);
     indent += "  ";
     
     Element element = document.createElement(elementName);
@@ -161,9 +157,7 @@ public class HtmlParser {
 
     assert input.getEventType() == XmlPullParser.END_TAG;
     indent = indent.substring(2);
-    System.out.println(indent + "Leaving " + elementName);
 
-    
     return element;
   }
   

@@ -138,8 +138,7 @@ public class SwingTextComponent extends JTextPane implements org.kobjects.native
 			return;
 		}
 		String htmlContent = serialize();
-		System.out.println("Update: "+ htmlContent);
-		setText(htmlContent); 
+		setText(htmlContent);
 		imagesRequested = true;
 		dirty = false;
 	}

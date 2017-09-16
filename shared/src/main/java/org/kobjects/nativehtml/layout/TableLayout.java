@@ -48,7 +48,6 @@ public class TableLayout implements Layout {
       Element row = rowCollection.item(rowIndex);
       int columnIndex = 0;
       HtmlCollection columnCollection = row.getChildren();
-      System.out.println("row " + rowIndex + " column count: " + columnCollection.getLength());
       for (int rawColumnIndex = 0; rawColumnIndex < columnCollection.getLength(); rawColumnIndex++) {
         ColumnData columnData;
         ComponentElement cell = (ComponentElement) columnCollection.item(rawColumnIndex);
@@ -66,8 +65,6 @@ public class TableLayout implements Layout {
           columnIndex++;
         }
 
-        System.out.println("columnIndex after first loop: " + columnIndex);
-        
         float cellBorderBoxWidth = ElementLayoutHelper.getBorderBoxWidth(cell, cellDirective, contentBoxWidth);
         int colSpan = getColSpan(cell);
         int rowSpan = getRowSpan(cell);
@@ -92,8 +89,6 @@ public class TableLayout implements Layout {
         columnIndex += colSpan;
       }
       columnCount = Math.max(columnCount, columnIndex);
-      
-      System.out.println("ColumnCount: " + columnCount + " columnIndex: " + columnIndex);
     }
     
     while (columnDataList.size() <= columnCount) {
@@ -157,7 +152,6 @@ public class TableLayout implements Layout {
 
     if (totalWidth > availableWidth /* || widthMeasureSpec == View.MeasureSpec.EXACTLY */) {
       for (ColumnData columnData : columnDataList) {
-        System.out.println("Reducing column width " + columnData.maxMeasuredWidth + " to " + (columnData.maxMeasuredWidth * availableWidth / totalWidth));
         columnData.maxMeasuredWidth = columnData.maxMeasuredWidth * availableWidth / totalWidth;
       }
       totalWidth = availableWidth;

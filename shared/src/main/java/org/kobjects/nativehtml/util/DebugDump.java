@@ -4,8 +4,6 @@ import org.kobjects.nativehtml.dom.Element;
 import org.kobjects.nativehtml.dom.HtmlCollection;
 
 public class DebugDump {
-	
-	
 	public static final void dump(Element element, String indent) {
 		
 		System.out.println(indent + "<" + element.getLocalName() + ">");
