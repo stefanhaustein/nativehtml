@@ -180,6 +180,7 @@ public class AndroidTextComponent extends TextView implements ComponentElement {
         setTextColor(computedStyle.getColor(CssProperty.COLOR));
         setTypeface(AndroidCss.getTypeface(computedStyle)); // , AndroidCss.getTextStyle(this.computedStyle));
         setPaintFlags((getPaintFlags() & PAINT_MASK) | AndroidCss.getPaintFlags(computedStyle));
+        setTextIsSelectable(computedStyle.getEnum(CssProperty.USER_SELECT) != CssEnum.NONE);
         switch (this.computedStyle.getEnum(CssProperty.TEXT_ALIGN)) {
             case RIGHT:
                 setGravity(Gravity.RIGHT);

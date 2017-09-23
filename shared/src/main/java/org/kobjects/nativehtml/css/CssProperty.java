@@ -21,6 +21,7 @@ public enum CssProperty {
   TEXT_DECORATION,
   TEXT_INDENT,
   TEXT_TRANSFORM,
+  USER_SELECT,
   VISIBILITY,
   WHITE_SPACE,
 
@@ -91,6 +92,6 @@ public enum CssProperty {
   MARGIN,
   PADDING, MAX_WIDTH;
 
-  public static final int TEXT_PROPERTY_COUNT = BACKGROUND_POSITION_X.ordinal();
+  public static final int TEXT_PROPERTY_COUNT = BACKGROUND_COLOR.ordinal();
   public static final int REGULAR_PROPERTY_COUNT = BACKGROUND.ordinal();
 }

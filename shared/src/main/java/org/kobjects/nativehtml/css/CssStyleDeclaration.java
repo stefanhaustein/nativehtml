@@ -147,6 +147,9 @@ public class CssStyleDeclaration {
         case LIST_STYLE_TYPE:
           value = CssEnum.DISC.ordinal();
           break;
+        case USER_SELECT:
+          value = CssEnum.TEXT.ordinal();
+          break;
         case POSITION:
           value = CssEnum.STATIC.ordinal();
           break;
