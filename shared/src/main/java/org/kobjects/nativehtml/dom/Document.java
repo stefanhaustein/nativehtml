@@ -103,8 +103,16 @@ public class Document {
                     return uri;
                 }
                 String s = baseUri.toString();
-                int cut = s.lastIndexOf('/');
-                return new URI(s.substring(0, cut + 1) + url);
+                int cut;
+                if (url.startsWith("#")) {
+                    cut = s.indexOf('#');
+                    if (cut == -1) {
+                        cut = s.length();
+                    }
+                } else {
+                    cut = s.lastIndexOf('/') + 1;
+                }
+                return new URI(s.substring(0, cut) + url);
             } catch (URISyntaxException e) {
                 throw new RuntimeException(e);
             }
