@@ -31,7 +31,7 @@ public class AndroidPlatform implements Platform {
         return metrics.density;
     }
 
-    private final Context context;
+    final Context context;
 
     public AndroidPlatform(Context context) {
         this.context = context;

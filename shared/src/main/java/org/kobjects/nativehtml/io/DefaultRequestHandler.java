@@ -11,7 +11,7 @@ public class DefaultRequestHandler implements RequestHandler {
 
   private final Platform platform;
   private TreeSet<String> internalLinkPrefixSet = new TreeSet<>();
-  private InternalLinkHandler internalLinkHandler;
+  protected InternalLinkHandler internalLinkHandler;
   
   public DefaultRequestHandler(Platform platform) {
     this.platform = platform;

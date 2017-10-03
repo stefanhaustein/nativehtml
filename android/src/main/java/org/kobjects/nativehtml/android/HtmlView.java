@@ -2,6 +2,8 @@ package org.kobjects.nativehtml.android;
 
 import android.content.Context;
 import android.widget.FrameLayout;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URI;
 import java.util.TreeSet;
@@ -18,7 +20,7 @@ public class HtmlView extends FrameLayout implements InternalLinkHandler {
     public HtmlView(Context context) {
         super(context);
         platform = new AndroidPlatform(context);
-        requestHandler = new DefaultRequestHandler(platform);
+        requestHandler = new AndroidDefaultRequestHandler(platform);
         requestHandler.setInternalLinkHandler(this);
         htmlParser = new HtmlParser(platform, requestHandler, null);
     }
