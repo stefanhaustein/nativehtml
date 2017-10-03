@@ -8,7 +8,7 @@ import java.net.URI;
 import org.kobjects.nativehtml.io.DefaultRequestHandler;
 
 public class AndroidDefaultRequestHandler extends DefaultRequestHandler {
-    Context context;
+    private final Context context;
     public AndroidDefaultRequestHandler(AndroidPlatform platform) {
         super(platform);
         this.context = platform.context;
@@ -20,7 +20,8 @@ public class AndroidDefaultRequestHandler extends DefaultRequestHandler {
 
         InputStream is;
         try {
-            if (s.startsWith("file:") && s.indexOf("/android_asset/") < 8) {
+            if (s.startsWith("file:/android_asset/") ||
+                    s.startsWith("file:///android_asset/")) {
                 int cut = s.indexOf('/', 10);
                 is = context.getAssets().open(s.substring(cut + 1));
             } else {
