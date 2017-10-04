@@ -39,7 +39,7 @@ public class DefaultRequestHandler implements RequestHandler {
   public void openInternalLink(URI url) {
     // TODO: Async
     try {
-      internalLinkHandler.loadHtml(new InputStreamReader(url.toURL().openStream(), "utf-8"), url);
+      internalLinkHandler.loadHtml(new InputStreamReader(platform.openInputStream(url), "utf-8"), url);
     } catch(IOException e) {
       throw new RuntimeException(e);
     }

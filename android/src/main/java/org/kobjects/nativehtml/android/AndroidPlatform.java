@@ -61,6 +61,17 @@ public class AndroidPlatform implements Platform {
         context.startActivity(intent);
     }
 
+    @Override
+    public InputStream openInputStream(URI url) throws IOException {
+        String s = url.toString();
+        if (s.startsWith("file:/") && s.indexOf("/android_asset/") <= 8) {
+            int cut0 = s.indexOf('/', 20) + 1;
+            int cut1 = s.indexOf('#', cut0);
+            return context.getAssets().open(s.substring(cut0, cut1 == -1 ? s.length() : cut1));
+        }
+        return url.toURL().openStream();
+    }
+
     public Bitmap getImage(Element element, final URI uri) {
         // TODO: fingerprint data urls!
         CacheEntry cacheEntry = imageCache.get(uri);
@@ -81,7 +92,7 @@ public class AndroidPlatform implements Platform {
                     protected Void doInBackground(CacheEntry... cacheEntries) {
                         for (CacheEntry cacheEntry: cacheEntries) {
                             try {
-                                InputStream is = uri.toURL().openStream();
+                                InputStream is = openInputStream(uri);
                                 cacheEntry.bitmap = BitmapFactory.decodeStream(is);
                                 synchronized (cacheEntry.elements) {
                                     for (Element element : cacheEntry.elements) {

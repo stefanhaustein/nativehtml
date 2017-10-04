@@ -1,5 +1,7 @@
 package org.kobjects.nativehtml.swing;
 
+import java.io.InputStream;
+import java.net.MalformedURLException;
 import org.kobjects.nativehtml.dom.Platform;
 import org.kobjects.nativehtml.util.ElementImpl;
 
@@ -109,6 +111,11 @@ public class SwingPlatform implements Platform {
 	        }
 	    }
 	  }
+
+	@Override
+	public InputStream openInputStream(URI url) throws IOException {
+		return url.toURL().openStream();
+	}
 
 	@Override
 	public float getPixelPerDp() {
