@@ -65,7 +65,7 @@ public class AndroidPlatform implements Platform {
     public InputStream openInputStream(URI url) throws IOException {
         String s = url.toString();
         if (s.startsWith("file:/") && s.indexOf("/android_asset/") <= 8) {
-            int cut0 = s.indexOf('/', 20) + 1;
+            int cut0 = s.indexOf('/', 15) + 1;
             int cut1 = s.indexOf('#', cut0);
             return context.getAssets().open(s.substring(cut0, cut1 == -1 ? s.length() : cut1));
         }
