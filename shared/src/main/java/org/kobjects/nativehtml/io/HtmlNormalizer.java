@@ -52,7 +52,7 @@ public class HtmlNormalizer {
     DTD.put("p", new ElementData(false,
         "address", "article", "aside", "blockquote", "dir", "div", "dl", "fieldset", "footer",
         "form", "h1", "h2", "h3", "h4", "h5", "h6", "header", "hr", "menu", "nav", "ol", "p", "pre",
-        "section", "table", "or", "ul"));
+        "section", "table", "ul"));
     DTD.put("param", new ElementData(true));
     DTD.put("source", new ElementData(true));
     DTD.put("td", new ElementData(false, "td", "th", "tr"));
@@ -160,7 +160,7 @@ public class HtmlNormalizer {
         insertedEvent = true;
         currentName = openTags.get(openTags.size() - 1);
       }
-      openTags.remove(openTags.get(openTags.size() - 1));
+      openTags.remove(openTags.size() - 1);
     } else if (currentEvent == XmlPullParser.END_DOCUMENT && openTags.size() > 0) {
       currentName = openTags.get(openTags.size() - 1);
       currentEvent = XmlPullParser.END_TAG;
