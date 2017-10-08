@@ -1,7 +1,6 @@
 package org.kobjects.nativehtml.io;
 
 import org.kobjects.nativehtml.css.CssStyleSheet;
-import org.kobjects.nativehtml.dom.ContentType;
 import org.kobjects.nativehtml.dom.Document;
 import org.kobjects.nativehtml.dom.Element;
 import org.kobjects.nativehtml.dom.Platform;
@@ -59,7 +58,7 @@ public class HtmlParser {
       }
       document.setBody(result);
 
-      styleSheet.apply(result, document.getBaseURI());
+      styleSheet.apply(result, document.getUrl());
       return result;
 
     } catch (XmlPullParserException e) {
@@ -145,7 +144,7 @@ public class HtmlParser {
         parseTextContentToString(sb);
         String textContent = sb.toString();
         if ("style".equals(element.getLocalName())) {
-            styleSheet.read(textContent, document.getBaseURI(), new int[0], null, null);
+            styleSheet.read(textContent, document.getUrl(), new int[0], null, null);
         }
         element.setTextContent(textContent);
         break;

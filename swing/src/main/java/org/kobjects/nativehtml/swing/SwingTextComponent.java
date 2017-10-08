@@ -7,7 +7,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Dictionary;
 
-import java.util.HashMap;
 import javax.swing.JEditorPane;
 import javax.swing.JTextPane;
 import javax.swing.event.HyperlinkEvent;
@@ -187,7 +186,7 @@ public class SwingTextComponent extends JTextPane implements org.kobjects.native
         public javax.swing.text.Document createDefaultDocument() {
           HTMLDocument result = (HTMLDocument) super.createDefaultDocument();
               try {
-                result.setBase(document.getBaseURI().toURL());
+                result.setBase(document.getUrl().toURL());
               } catch (MalformedURLException e) {
                 e.printStackTrace();
               }
@@ -259,7 +258,7 @@ public class SwingTextComponent extends JTextPane implements org.kobjects.native
       if (src != null && !src.isEmpty()) {
         if (!imagesRequested) {
           Document document = element.getOwnerDocument();
-          ((SwingPlatform) document.getPlatform()).getImage(element, document.getBaseURI().resolve(src));
+          ((SwingPlatform) document.getPlatform()).getImage(element, document.getUrl().resolve(src));
         }
         src = SwingPlatform.fakeDataUrl(src);
       } else {

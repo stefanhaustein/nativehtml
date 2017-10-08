@@ -64,11 +64,11 @@ public class Document {
 	private final Platform platform;
     private final WebSettings webSettings;
     private RequestHandler requestHandler;
-    private URI baseUri;
+    private URI url;
     private Element head;
     private Element body;
 
-	public Document(Platform elementFactory, RequestHandler requestHandler, WebSettings webSettings, URI baseUri) {
+	public Document(Platform elementFactory, RequestHandler requestHandler, WebSettings webSettings, URI uri) {
 		this.platform = elementFactory;
 		this.requestHandler = requestHandler;
 		if (webSettings == null) {
@@ -77,7 +77,7 @@ public class Document {
         } else {
             this.webSettings = webSettings;
         }
-		this.baseUri = baseUri;
+		this.url = url;
 	}
     
     public Element createElement(String name) {
@@ -87,22 +87,19 @@ public class Document {
         return result == null ? new ElementImpl(this, name, elementType, contentType) : result;
     }
 
-    public void setBaseURI(URI baseURI) {
-    	this.baseUri = baseURI;
-    }
 
-	public URI getBaseURI() {
-		return baseUri;
+	public URI getUrl() {
+		return url;
 	}
 
 	public URI resolveUrl(String url) {
-	    if (baseUri.isOpaque()) {
+	    if (this.url.isOpaque()) {
             try {
                 URI uri = new URI(url);
                 if (uri.isAbsolute()) {
                     return uri;
                 }
-                String s = baseUri.toString();
+                String s = this.url.toString();
                 int cut;
                 if (url.startsWith("#")) {
                     cut = s.indexOf('#');
@@ -117,7 +114,7 @@ public class Document {
                 throw new RuntimeException(e);
             }
         }
-        return baseUri.resolve(url);
+        return this.url.resolve(url);
     }
 
   public RequestHandler getRequestHandler() {

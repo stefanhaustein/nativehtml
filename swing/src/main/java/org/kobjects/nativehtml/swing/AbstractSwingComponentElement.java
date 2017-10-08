@@ -1,11 +1,9 @@
 package org.kobjects.nativehtml.swing;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Rectangle;
 import java.awt.Shape;
 import java.util.HashMap;
 
@@ -16,7 +14,6 @@ import org.kobjects.nativehtml.css.CssProperty;
 import org.kobjects.nativehtml.css.CssStyleDeclaration;
 import org.kobjects.nativehtml.dom.Document;
 import org.kobjects.nativehtml.dom.Element;
-import org.kobjects.nativehtml.layout.ComponentElement;
 import org.kobjects.nativehtml.util.ElementImpl;
 
 public abstract class AbstractSwingComponentElement extends JComponent implements org.kobjects.nativehtml.layout.ComponentElement {
@@ -122,7 +119,7 @@ public abstract class AbstractSwingComponentElement extends JComponent implement
 	  }
 
 	  String bgImage = style.getString(CssProperty.BACKGROUND_IMAGE);
-	  Image image = ((SwingPlatform) getOwnerDocument().getPlatform()).getImage(this, getOwnerDocument().getBaseURI().resolve(bgImage));
+	  Image image = ((SwingPlatform) getOwnerDocument().getPlatform()).getImage(this, getOwnerDocument().getUrl().resolve(bgImage));
 	  
 	  if (image == null) {
 	    return;
