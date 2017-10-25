@@ -77,7 +77,7 @@ public class Document {
         } else {
             this.webSettings = webSettings;
         }
-		this.url = url;
+		this.url = uri;
 	}
     
     public Element createElement(String name) {
