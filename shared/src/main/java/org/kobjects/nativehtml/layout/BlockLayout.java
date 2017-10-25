@@ -158,6 +158,7 @@ public class BlockLayout implements Layout {
                 break;
             case BOTTOM:
                 addYOffset = lineHeight - h;
+                break;
             default:
                 addYOffset = (lineHeight - h) / 2;
             }
