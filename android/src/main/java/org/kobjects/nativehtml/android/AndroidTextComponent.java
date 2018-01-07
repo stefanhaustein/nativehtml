@@ -122,6 +122,12 @@ public class AndroidTextComponent extends TextView implements ComponentElement {
     }
 
     @Override
+    public void requestLayout() {
+        dirty = true;
+        super.requestLayout();
+    }
+
+    @Override
     public Document getOwnerDocument() {
         return document;
     }
@@ -222,8 +228,8 @@ public class AndroidTextComponent extends TextView implements ComponentElement {
             if (src != null && !src.isEmpty()) {
                 URI uri = document.resolveUrl(src);
                 Bitmap bitmap = ((AndroidPlatform) document.getPlatform()).getImage(element, uri);
-                BitmapDrawable drawable = new BitmapDrawable(getContext().getResources(), bitmap);
                 if (bitmap != null) {
+                    BitmapDrawable drawable = new BitmapDrawable(getContext().getResources(), bitmap);
                     float imageWidth = bitmap.getWidth();
                     float imageHeight = bitmap.getHeight();
                     if (computedStyle.isSet(CssProperty.WIDTH)) {

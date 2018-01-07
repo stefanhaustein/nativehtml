@@ -1,9 +1,12 @@
 apply plugin: 'java'
+apply plugin: 'application'
 
 compileJava {
     sourceCompatibility = 1.7
     targetCompatibility = 1.7
 }
+
+mainClassName = "org.kobjects.nativehtml.demo.swing.SwingDemo"
 
 
 dependencies {
